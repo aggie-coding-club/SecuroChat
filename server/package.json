@@ -1,0 +1,23 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "![rectangle-darkblue-white-logo](https://github.com/aggie-coding-club/SecuroChat/assets/113648300/f40acd68-1073-4604-ba87-9d5425d50487)",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aggie-coding-club/SecuroChat.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/aggie-coding-club/SecuroChat/issues"
+  },
+  "homepage": "https://github.com/aggie-coding-club/SecuroChat#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
