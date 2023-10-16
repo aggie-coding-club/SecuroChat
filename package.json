@@ -1,8 +1,0 @@
-{
-  "scripts": {
-    "install-all": "node install-all.js"
-  },
-  "devDependencies": {
-    "cross-spawn": "^7.0.3"
-  }
-}
