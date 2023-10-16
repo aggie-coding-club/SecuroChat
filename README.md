@@ -42,10 +42,7 @@ To set up SecuroChat, follow these steps:
    cd SecuroChat
 3. Install dependencies for client and server directories:
    ```sh
-   cd client
-   npm install
-   cd ..
-   cd server
-   npm install
+   cd client && npm install
+   cd ../server && npm install && cd ..
    ```
    
