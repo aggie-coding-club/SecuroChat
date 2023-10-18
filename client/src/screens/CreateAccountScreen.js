@@ -14,8 +14,9 @@ import GeneralButton from '../components/GeneralButton';
 
 /**
  * CreateAccountScreen is a custom component that generates the createAccount screen for SecuroChat
+ * @param {object} props - The component's props
  */
-const CreateAccountScreen = () => {
+const CreateAccountScreen = (props) => {
     const { rootContainer, pageHeader, welcomeText, mainTitle, inputContainer, actionContainer, infoStyle, inlineLink, loginInfo } = styles;
     return (
         <SafeAreaView style={rootContainer}>
