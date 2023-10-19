@@ -1,6 +1,12 @@
-// CreateAccountScreen.js
-// This is a custom React component generating the createAccountScreen
-// Renders the entire screen and uses the following external custom components {GeneralInput.js}
+/* CreateAccountScreen.js
+* This is a custom React component generating the createAccountScreen
+* Renders the entire screen and uses the following external custom components 
+*  { 
+*   GeneralInput.js,
+*   GeneralButton.js,
+*   BackButton.js 
+*  }
+*/
 
 import React from "react";
 import {
@@ -11,15 +17,17 @@ import {
 } from "react-native";
 import GeneralInput from '../components/GeneralInput';
 import GeneralButton from '../components/GeneralButton';
+import BackButton from '../components/BackButton';
 
 /**
  * CreateAccountScreen is a custom component that generates the createAccount screen for SecuroChat
- * @param {object} props - The component's props
+ * @param {object} navigation - Prop passed in from React Navigation to screen component
  */
-const CreateAccountScreen = (props) => {
+const CreateAccountScreen = ({ navigation }) => {
     const { rootContainer, pageHeader, welcomeText, mainTitle, inputContainer, actionContainer, infoStyle, inlineLink, loginInfo } = styles;
     return (
         <SafeAreaView style={rootContainer}>
+            <BackButton onPress={() => navigation.goBack()}></BackButton>
             <View style={pageHeader}>
                 <Text style={welcomeText}>Welcome to</Text>
                 <Text style={mainTitle}>SecuroChat</Text>
@@ -73,7 +81,7 @@ const styles = StyleSheet.create({
         justifyContent: "center",
     },
     pageHeader: {
-        marginTop: 50,
+        marginTop: 40,
         flex: 3,
         alignItems: "center",
     },
@@ -103,10 +111,12 @@ const styles = StyleSheet.create({
     },
     inlineLink: {
         color: "#0078D4",
+        fontWeight: "bold",
     },
     loginInfo: {
         fontSize: 16,
         marginBottom: 20,
+        fontWeight: "bold",
     },
 });
 
