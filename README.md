@@ -1,3 +1,6 @@
+
+![square-blue-white-logo](https://github.com/aggie-coding-club/SecuroChat/assets/113648300/e676541d-4b17-4a03-8365-a94528cebb41)
+
 # SecuroChat
 SecuroChat is an end-to-end Encrypted real-time chat application ensuring secure communication between users.
 
