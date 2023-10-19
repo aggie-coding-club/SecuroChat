@@ -29,9 +29,9 @@ const styles = StyleSheet.create({
   },
   textStyle: {
     color: "#FFFFFF",
-    fontWeight: "bold",
-    fontSize: 20,
+    fontSize: 24,
     textAlign: "center",
+    fontFamily: "RobotoCondensed_700Bold",
   },
 });
 

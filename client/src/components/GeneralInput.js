@@ -9,6 +9,7 @@ import { Text, StyleSheet, TextInput } from "react-native";
  * @param {object} props - The component's props
  * @param {string} props.content - The placeholder content for the input textbox
  * @param {string} props.color - The color of placeholder text
+ * @param {function} props.onFocus - Calls function when onFocus event is triggered
  */
 const GeneralInput = (props) => {
     const { inputStyle } = styles;
@@ -17,6 +18,7 @@ const GeneralInput = (props) => {
             style={inputStyle}
             placeholder={props.content}
             placeholderTextColor={props.color}
+            onFocus={props.onFocus}
         />
     );
 }

@@ -90,13 +90,13 @@ const styles = StyleSheet.create({
   mainTitle: {
     color: "#0078D4",
     fontSize: 50,
-    fontWeight: "bold",
     paddingTop: 20,
+    fontFamily: "RobotoCondensed_700Bold",
   },
   subTitle: {
     color: "#1E1E1E",
     fontSize: 18,
-    fontWeight: "bold",
+    fontFamily: "RobotoCondensed_700Bold",
   },
   mainContainer: {
     flex: 4,
@@ -113,14 +113,14 @@ const styles = StyleSheet.create({
   },
   googleButtonText: {
     color: "#1E1E1E",
-    fontWeight: "bold",
-    fontSize: 20,
+    fontSize: 22,
     textAlign: "center",
+    fontFamily: "RobotoCondensed_700Bold",
   },
   buttonTextContainer: {
     flexDirection: "row",
     alignItems: "center",
-    columnGap: 8,
+    columnGap: 14,
   },
   googleImage: {
     width: 50,
@@ -144,15 +144,16 @@ const styles = StyleSheet.create({
     fontSize: 15,
     width: 300,
     textAlign: "center",
+    fontFamily: "RobotoCondensed_400Regular",
   },
   inlineLink: {
     color: "#0078D4",
-    fontWeight: "bold",
+    fontFamily: "RobotoCondensed_700Bold",
   },
   loginInfo: {
     fontSize: 16,
-    marginBottom: 20,
-    fontWeight: "bold",
+    marginBottom: 30,
+    fontFamily: "RobotoCondensed_700Bold",
   },
 });
 
