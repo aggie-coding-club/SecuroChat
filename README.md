@@ -1,4 +1,4 @@
-![rectangle-darkblue-white-logo](https://github.com/aggie-coding-club/SecuroChat/assets/113648300/f40acd68-1073-4604-ba87-9d5425d50487)
+![square-blue-white-logo](https://github.com/aggie-coding-club/SecuroChat/assets/113648300/343a4385-6640-4329-9ff8-5ca79b6090a3)
 
 
 # SecuroChat
