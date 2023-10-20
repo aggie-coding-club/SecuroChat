@@ -83,13 +83,12 @@ const CreateAccountScreen = ({ navigation }) => {
           returnKeyType={"go"}
         ></GeneralInput>
         <View style={actionContainer}>
-          <GeneralButton content="Get Started"></GeneralButton>
-          <Text style={infoStyle}>
-            By signing up, you agree to our{" "}
-            <Text style={inlineLink}>Terms of Service</Text> and{" "}
-            <Text style={inlineLink}>Privacy Policy</Text>, including Cookie
-            Use.
-          </Text>
+            <GeneralButton content="Get Started" onPress={() => navigation.navigate("PhoneVerification")}></GeneralButton>
+            <Text style={infoStyle}>
+              By signing up, you agree to our{" "}
+              <Text style={inlineLink}>Terms of Service</Text> and{" "}
+              <Text style={inlineLink}>Privacy Policy</Text>, including Cookie Use.
+            </Text>
         </View>
       </View>
 
