@@ -1,40 +1,33 @@
-import React from "react";
+import React, { useRef } from "react";
 import { Text, StyleSheet, TextInput, View } from "react-native";
 
-const NumberInput = (props) => {
+const NumberInput = () => {
   const { inputStyle, container } = styles;
+  const inputRefs = Array(6).fill(0).map(() => useRef(null));
+
+  const handleTextChange = (text, index) => {
+    if (text.length === 1) {
+      if (index < 5) {
+        inputRefs[index + 1].current.focus();
+      }
+    }
+  };
+
   return (
     <View style={container}>
-      <TextInput
-        style={inputStyle}
-        placeholder={props.content}
-        placeholderTextColor={props.color}
-      />
-      <TextInput
-        style={inputStyle}
-        placeholder={props.content}
-        placeholderTextColor={props.color}
-      />
-      <TextInput
-        style={inputStyle}
-        placeholder={props.content}
-        placeholderTextColor={props.color}
-      />
-      <TextInput
-        style={inputStyle}
-        placeholder={props.content}
-        placeholderTextColor={props.color}
-      />
-      <TextInput
-        style={inputStyle}
-        placeholder={props.content}
-        placeholderTextColor={props.color}
-      />
-      <TextInput
-        style={inputStyle}
-        placeholder={props.content}
-        placeholderTextColor={props.color}
-      />
+      {Array(6)
+        .fill(0)
+        .map((_, index) => (
+          <TextInput
+            key={index}
+            ref={inputRefs[index]}
+            style={inputStyle}
+            placeholder=""
+            placeholderTextColor="#C0C0C0"
+            maxLength={1}
+            onChangeText={(text) => handleTextChange(text, index)}
+          />
+        ))}
     </View>
   );
 };

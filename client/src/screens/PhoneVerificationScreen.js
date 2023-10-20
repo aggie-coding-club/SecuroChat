@@ -12,7 +12,7 @@ import {
 import NumberInput from '../components/NumberInput';
 
 const PhoneVerificationScreen = () => {
-    const {veriPhone, enterCodeText, rootContainer, pageHeader, containers} = styles;
+    const {veriPhone, enterCodeText, rootContainer, pageHeader, containers, loginInfo, inlineLink} = styles;
     return (
         <SafeAreaView style={rootContainer}>
             
@@ -27,6 +27,10 @@ const PhoneVerificationScreen = () => {
                     color = "#1E1E1E"
                 ></NumberInput>
             </View>
+            <Text style={loginInfo}>
+                Didn't get a code? <Text style={inlineLink}>Resend the code</Text>
+            </Text>
+            
         </SafeAreaView>
     );
 };
@@ -47,7 +51,7 @@ const styles = StyleSheet.create({
         color: "#0078D4",
         fontSize: 30,
         fontWeight: "bold",
-        paddingTop: 150,
+        paddingTop: 100,
     },
     enterCodeText: {
         //color: "#000000"
@@ -61,6 +65,15 @@ const styles = StyleSheet.create({
         paddingTop: 20,
         flex: 8,
         rowGap: 15,
+    },
+    loginInfo: {
+        //TODO
+    },
+    inlineLink: {
+        color: "#0078D4",
+    },
+    loginInfo: {
+        paddingBottom: 50,
     }
 });
 
