@@ -2,7 +2,7 @@
 // A custom React Native component that generates input boxes based on passed in props
 
 import React from "react";
-import { Text, StyleSheet, TextInput } from "react-native";
+import { StyleSheet, TextInput } from "react-native";
 
 /**
  * GeneralInput is a custom component that generates unique TextInputs through passed in props.
@@ -10,6 +10,9 @@ import { Text, StyleSheet, TextInput } from "react-native";
  * @param {string} props.content - The placeholder content for the input textbox
  * @param {string} props.color - The color of placeholder text
  * @param {function} props.onFocus - Calls function when onFocus event is triggered
+ * @param {function} props.onBlur - Calls function when obBlur event is triggered
+ * @param {boolean} props.secureTextEntry - Determines whether to hide entered content in text input.
+ * @param {string} props.returnKeyType - Determines the type within return key of the keyboard
  */
 const GeneralInput = (props) => {
     const { inputStyle } = styles;
@@ -19,6 +22,10 @@ const GeneralInput = (props) => {
             placeholder={props.content}
             placeholderTextColor={props.color}
             onFocus={props.onFocus}
+            onBlur={props.onBlur}
+            secureTextEntry={props.secureTextEntry}
+            textContentType="oneTimeCode"
+            returnKeyType={props.returnKeyType}
         />
     );
 }
