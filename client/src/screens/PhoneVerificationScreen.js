@@ -1,8 +1,8 @@
 // PhoneVerficiationScreen.js
 // This is a custome React Native component that generates the Phone Verification Screen
 //
-import react from "react";
-import { View, Text, StyleSheet, SafeAreaView, TextInput } from "react-native";
+import React from "react";
+import { View, Text, StyleSheet, SafeAreaView, KeyboardAvoidingView } from "react-native";
 
 import NumberInput from "../components/NumberInput";
 import BackButton from "../components/BackButton";
@@ -30,9 +30,11 @@ const PhoneVerificationScreen = ( {navigation} ) => {
       <View style={containers}>
         <NumberInput content="" color="#1E1E1E"></NumberInput>
       </View>
-      <Text style={loginInfo}>
-        Didn't get a code? <Text style={inlineLink}>Resend the code</Text>
-      </Text>
+      <KeyboardAvoidingView behavior="position">
+        <Text style={loginInfo}>
+          Didn't get a code? <Text style={inlineLink}>Resend the code</Text>
+        </Text>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };
@@ -52,30 +54,28 @@ const styles = StyleSheet.create({
   veriPhone: {
     color: "#0078D4",
     fontSize: 30,
-    fontWeight: "bold",
     paddingTop: 100,
+    fontFamily: "RobotoCondensed_700Bold",
   },
   enterCodeText: {
-    //color: "#000000"
     color: "#1E1E1E",
     fontSize: 18,
-    fontWeight: "bold",
-    paddingTop: 20,
+    paddingTop: 10,
+    fontFamily: "RobotoCondensed_700Bold",
   },
   containers: {
-    //TODO
-    paddingTop: 20,
+    paddingTop: 10,
     flex: 8,
     rowGap: 15,
   },
   loginInfo: {
-    //TODO
+    fontSize: 16,
+    marginBottom: 30,
+    fontFamily: "RobotoCondensed_700Bold",
   },
   inlineLink: {
     color: "#0078D4",
-  },
-  loginInfo: {
-    paddingBottom: 50,
+    fontFamily: "RobotoCondensed_700Bold",
   },
 });
 
