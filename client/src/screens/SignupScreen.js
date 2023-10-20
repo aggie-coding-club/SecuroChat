@@ -15,8 +15,9 @@ import GeneralButton from "../components/GeneralButton";
 
 /**
  * SingupScreen is a custom component that generates the sign-up screen of SecuroChat
+ * @param {object} navigation - Prop passed in from React Navigation to screen component
  */
-const SignupScreen = () => {
+const SignupScreen = ({ navigation }) => {
   const {
     rootContainer,
     pageHeader,
@@ -56,7 +57,7 @@ const SignupScreen = () => {
           <Text>Or</Text>
           <View style={lineStyle}></View>
         </View>
-        <GeneralButton content="Create an Account"></GeneralButton>
+        <GeneralButton content="Create an Account" onPress={() => navigation.navigate("SignUp")}></GeneralButton>
         <Text style={infoStyle}>
           By signing up, you agree to our{" "}
           <Text style={inlineLink}>Terms of Service</Text> and{" "}
@@ -89,13 +90,13 @@ const styles = StyleSheet.create({
   mainTitle: {
     color: "#0078D4",
     fontSize: 50,
-    fontWeight: "bold",
     paddingTop: 20,
+    fontFamily: "RobotoCondensed_700Bold",
   },
   subTitle: {
     color: "#1E1E1E",
     fontSize: 18,
-    fontWeight: "bold",
+    fontFamily: "RobotoCondensed_700Bold",
   },
   mainContainer: {
     flex: 4,
@@ -112,14 +113,14 @@ const styles = StyleSheet.create({
   },
   googleButtonText: {
     color: "#1E1E1E",
-    fontWeight: "bold",
-    fontSize: 20,
+    fontSize: 22,
     textAlign: "center",
+    fontFamily: "RobotoCondensed_700Bold",
   },
   buttonTextContainer: {
     flexDirection: "row",
     alignItems: "center",
-    columnGap: 8,
+    columnGap: 14,
   },
   googleImage: {
     width: 50,
@@ -143,13 +144,16 @@ const styles = StyleSheet.create({
     fontSize: 15,
     width: 300,
     textAlign: "center",
+    fontFamily: "RobotoCondensed_400Regular",
   },
   inlineLink: {
     color: "#0078D4",
+    fontFamily: "RobotoCondensed_700Bold",
   },
   loginInfo: {
     fontSize: 16,
-    marginBottom: 20,
+    marginBottom: 30,
+    fontFamily: "RobotoCondensed_700Bold",
   },
 });
 
