@@ -6,6 +6,7 @@ import {useFonts, RobotoCondensed_400Regular, RobotoCondensed_700Bold } from '@e
 import SignupScreen from './src/screens/SignupScreen';
 import CreateAccountScreen from './src/screens/CreateAccountScreen';
 import PhoneVerificationScreen from './src/screens/PhoneVerificationScreen';
+import DUMMYSCREEN from './src/screens/DUMMYSCREEN';
 
 
 const Stack = createNativeStackNavigator();

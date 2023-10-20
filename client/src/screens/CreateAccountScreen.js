@@ -19,7 +19,7 @@ import BackButton from "../components/BackButton";
  * @param {object} navigation - Prop passed in from React Navigation to screen component
  */
 const CreateAccountScreen = ({ navigation }) => {
-  //handling state
+  //handling state deciding whether to show or hide pageHeader
   const [isHeaderHidden, setIsHeaderHidden] = useState(false);
   const hideHeader = () => {
     setIsHeaderHidden(true);
@@ -83,12 +83,13 @@ const CreateAccountScreen = ({ navigation }) => {
           returnKeyType={"go"}
         ></GeneralInput>
         <View style={actionContainer}>
-            <GeneralButton content="Get Started" onPress={() => navigation.navigate("PhoneVerification")}></GeneralButton>
-            <Text style={infoStyle}>
-              By signing up, you agree to our{" "}
-              <Text style={inlineLink}>Terms of Service</Text> and{" "}
-              <Text style={inlineLink}>Privacy Policy</Text>, including Cookie Use.
-            </Text>
+          <GeneralButton content="Get Started" onPress={() => navigation.navigate("PhoneVerification")}></GeneralButton>
+          <Text style={infoStyle}>
+            By signing up, you agree to our{" "}
+            <Text style={inlineLink}>Terms of Service</Text> and{" "}
+            <Text style={inlineLink}>Privacy Policy</Text>, including Cookie
+            Use.
+          </Text>
         </View>
       </View>
 
