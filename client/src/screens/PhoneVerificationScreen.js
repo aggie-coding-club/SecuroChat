@@ -5,8 +5,9 @@ import react from "react";
 import { View, Text, StyleSheet, SafeAreaView, TextInput } from "react-native";
 
 import NumberInput from "../components/NumberInput";
+import BackButton from "../components/BackButton";
 
-const PhoneVerificationScreen = () => {
+const PhoneVerificationScreen = ( {navigation} ) => {
   const {
     veriPhone,
     enterCodeText,
@@ -18,7 +19,7 @@ const PhoneVerificationScreen = () => {
   } = styles;
   return (
     <SafeAreaView style={rootContainer}>
-      {/* <BackButton></BackButton> */}
+      <BackButton onPress={() => navigation.navigate("SignUp")}></BackButton>
       <View style={pageHeader}>
         <Text style={veriPhone}>Verify your Number</Text>
         <Text style={enterCodeText}>
