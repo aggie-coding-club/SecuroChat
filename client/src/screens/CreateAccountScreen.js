@@ -53,7 +53,7 @@ const CreateAccountScreen = ({ navigation }) => {
         <GeneralInput content="Password" color="#1E1E1E" onFocus={toggleHeaderVisibility}></GeneralInput>
         <GeneralInput content="Re-enter Password" color="#1E1E1E" onFocus={toggleHeaderVisibility}></GeneralInput>
         <View style={actionContainer}>
-            <GeneralButton content="Get Started"></GeneralButton>
+            <GeneralButton content="Get Started" onPress={() => navigation.navigate("PhoneVerification")}></GeneralButton>
             <Text style={infoStyle}>
               By signing up, you agree to our{" "}
               <Text style={inlineLink}>Terms of Service</Text> and{" "}
