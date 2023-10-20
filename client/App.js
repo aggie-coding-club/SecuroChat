@@ -5,6 +5,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import {useFonts, RobotoCondensed_400Regular, RobotoCondensed_700Bold } from '@expo-google-fonts/roboto-condensed';
 import SignupScreen from './src/screens/SignupScreen';
 import CreateAccountScreen from './src/screens/CreateAccountScreen';
+import PhoneVerificationScreen from './src/screens/PhoneVerificationScreen';
 
 
 const Stack = createNativeStackNavigator();
@@ -24,6 +25,7 @@ const App = () => {
       <Stack.Navigator screenOptions={{headerShown: false}}>
         <Stack.Screen name="Home" component={SignupScreen}/>
         <Stack.Screen name="SignUp" component={CreateAccountScreen}/>
+        <Stack.Screen name="PhoneVerification" component={PhoneVerificationScreen}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
