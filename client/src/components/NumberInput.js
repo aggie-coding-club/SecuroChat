@@ -3,7 +3,9 @@ import { Text, StyleSheet, TextInput, View } from "react-native";
 
 const NumberInput = () => {
   const { inputStyle, container } = styles;
-  const inputRefs = Array(6).fill(0).map(() => useRef(null));
+  const inputRefs = Array(6)
+    .fill(0)
+    .map(() => useRef(null));
 
   const handleTextChange = (text, index) => {
     if (text.length === 1) {
@@ -25,6 +27,7 @@ const NumberInput = () => {
             placeholder=""
             placeholderTextColor="#C0C0C0"
             maxLength={1}
+            keyboardType="numeric"
             onChangeText={(text) => handleTextChange(text, index)}
           />
         ))}
