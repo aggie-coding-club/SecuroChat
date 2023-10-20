@@ -7,8 +7,9 @@
  *   BackButton.js
  *  }
  */
+
 import React, { useState } from "react";
-import { View, Text, StyleSheet, SafeAreaView } from "react-native";
+import { View, Text, StyleSheet, SafeAreaView, } from "react-native";
 import GeneralInput from "../components/GeneralInput";
 import GeneralButton from "../components/GeneralButton";
 import BackButton from "../components/BackButton";
@@ -20,8 +21,11 @@ import BackButton from "../components/BackButton";
 const CreateAccountScreen = ({ navigation }) => {
   //handling state
   const [isHeaderHidden, setIsHeaderHidden] = useState(false);
-  const toggleHeaderVisibility = () => {
+  const hideHeader = () => {
     setIsHeaderHidden(true);
+  };
+  const showHeader = () => {
+    setIsHeaderHidden(false);
   };
 
   const {
@@ -42,23 +46,50 @@ const CreateAccountScreen = ({ navigation }) => {
       {/*This evaluates state and decides generation of header content */}
       {!isHeaderHidden && (
         <View style={pageHeader}>
-            <Text style={welcomeText}>Welcome to</Text>
-            <Text style={mainTitle}>SecuroChat</Text>
+          <Text style={welcomeText}>Welcome to</Text>
+          <Text style={mainTitle}>SecuroChat</Text>
         </View>
       )}
-      
+
       <View style={inputContainer}>
-        <GeneralInput content="Username" color="#1E1E1E" onFocus={toggleHeaderVisibility}></GeneralInput>
-        <GeneralInput content="Phone Number" color="#1E1E1E" onFocus={toggleHeaderVisibility}></GeneralInput>
-        <GeneralInput content="Password" color="#1E1E1E" onFocus={toggleHeaderVisibility}></GeneralInput>
-        <GeneralInput content="Re-enter Password" color="#1E1E1E" onFocus={toggleHeaderVisibility}></GeneralInput>
+        <GeneralInput
+          content="Username"
+          color="#1E1E1E"
+          onFocus={hideHeader}
+          onBlur={showHeader}
+          returnKeyType={"next"}
+        ></GeneralInput>
+        <GeneralInput
+          content="Phone Number"
+          color="#1E1E1E"
+          onFocus={hideHeader}
+          onBlur={showHeader}
+          returnKeyType={"next"}
+        ></GeneralInput>
+        <GeneralInput
+          content="Password"
+          color="#1E1E1E"
+          onFocus={hideHeader}
+          onBlur={showHeader}
+          secureTextEntry={true}
+          returnKeyType={"next"}
+        ></GeneralInput>
+        <GeneralInput
+          content="Re-enter Password"
+          color="#1E1E1E"
+          onFocus={hideHeader}
+          onBlur={showHeader}
+          secureTextEntry={true}
+          returnKeyType={"go"}
+        ></GeneralInput>
         <View style={actionContainer}>
-            <GeneralButton content="Get Started"></GeneralButton>
-            <Text style={infoStyle}>
-              By signing up, you agree to our{" "}
-              <Text style={inlineLink}>Terms of Service</Text> and{" "}
-              <Text style={inlineLink}>Privacy Policy</Text>, including Cookie Use.
-            </Text>
+          <GeneralButton content="Get Started"></GeneralButton>
+          <Text style={infoStyle}>
+            By signing up, you agree to our{" "}
+            <Text style={inlineLink}>Terms of Service</Text> and{" "}
+            <Text style={inlineLink}>Privacy Policy</Text>, including Cookie
+            Use.
+          </Text>
         </View>
       </View>
 
