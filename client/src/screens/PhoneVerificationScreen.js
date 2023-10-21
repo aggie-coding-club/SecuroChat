@@ -1,13 +1,29 @@
-// PhoneVerficiationScreen.js
-// This is a custome React Native component that generates the Phone Verification Screen
-//
-import React from "react";
-import { View, Text, StyleSheet, SafeAreaView, KeyboardAvoidingView } from "react-native";
+/* PhoneVerficiationScreen.js
+ * This is a custome React Native component that generates the Phone Verification Screen
+ * Other external custom components used:
+ * {
+ *    NumberInput,
+ *    BackButton,
+ * }
+ */
 
+import React from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  SafeAreaView,
+  KeyboardAvoidingView,
+  StatusBar,
+} from "react-native";
 import NumberInput from "../components/NumberInput";
 import BackButton from "../components/BackButton";
 
-const PhoneVerificationScreen = ( {navigation} ) => {
+/**
+ * PhoneVerificationScreen is a custom component that generates the phone verification screen of SecuroChat
+ * @param {object} navigation - Prop passed in from React Navigation to screen component
+ */
+const PhoneVerificationScreen = ({ navigation }) => {
   const {
     veriPhone,
     enterCodeText,
@@ -19,22 +35,21 @@ const PhoneVerificationScreen = ( {navigation} ) => {
   } = styles;
   return (
     <SafeAreaView style={rootContainer}>
-      <BackButton onPress={() => navigation.navigate("SignUp")}></BackButton>
+      <StatusBar></StatusBar>
+      <BackButton onPress={() => navigation.goBack()}></BackButton>
       <View style={pageHeader}>
         <Text style={veriPhone}>Verify your Number</Text>
         <Text style={enterCodeText}>
-          Enter the 6-digit code we sent to your phone
+          Enter the 6-digit code sent to your phone
         </Text>
       </View>
 
       <View style={containers}>
         <NumberInput content="" color="#1E1E1E"></NumberInput>
-      </View>
-      <KeyboardAvoidingView behavior="position">
         <Text style={loginInfo}>
           Didn't get a code? <Text style={inlineLink}>Resend the code</Text>
         </Text>
-      </KeyboardAvoidingView>
+      </View>
     </SafeAreaView>
   );
 };
@@ -70,8 +85,9 @@ const styles = StyleSheet.create({
   },
   loginInfo: {
     fontSize: 16,
-    marginBottom: 30,
     fontFamily: "RobotoCondensed_700Bold",
+    alignSelf: "center",
+    marginTop: 20,
   },
   inlineLink: {
     color: "#0078D4",

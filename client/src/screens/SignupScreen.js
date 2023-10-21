@@ -10,6 +10,7 @@ import {
   SafeAreaView,
   Image,
   TouchableOpacity,
+  StatusBar
 } from "react-native";
 import GeneralButton from "../components/GeneralButton";
 
@@ -36,6 +37,7 @@ const SignupScreen = ({ navigation }) => {
   } = styles;
   return (
     <SafeAreaView style={rootContainer}>
+      <StatusBar></StatusBar>
       <View style={pageHeader}>
         <Image source={require("../../assets/blue-securochat-icon.png")} />
         <Text style={mainTitle}>SecuroChat</Text>
