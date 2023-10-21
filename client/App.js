@@ -1,3 +1,7 @@
+// App.js
+// Main React Native  component resonsible for rendering all other components 
+// controls Screen navigation through React Navigation screen stack 
+
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, ScrollView } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
@@ -6,7 +10,6 @@ import {useFonts, RobotoCondensed_400Regular, RobotoCondensed_700Bold } from '@e
 import SignupScreen from './src/screens/SignupScreen';
 import CreateAccountScreen from './src/screens/CreateAccountScreen';
 import PhoneVerificationScreen from './src/screens/PhoneVerificationScreen';
-import DUMMYSCREEN from './src/screens/DUMMYSCREEN';
 
 
 const Stack = createNativeStackNavigator();

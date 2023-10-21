@@ -1,15 +1,15 @@
 /* CreateAccountScreen.js
  * This is a custom React component generating the createAccountScreen
- * Renders the entire screen and uses the following external custom components
+ * Other external custom componentes used:
  *  {
  *   GeneralInput.js,
  *   GeneralButton.js,
- *   BackButton.js
+ *   BackButton.js,
  *  }
  */
 
 import React, { useState } from "react";
-import { View, Text, StyleSheet, SafeAreaView, } from "react-native";
+import { View, Text, StyleSheet, SafeAreaView, StatusBar } from "react-native";
 import GeneralInput from "../components/GeneralInput";
 import GeneralButton from "../components/GeneralButton";
 import BackButton from "../components/BackButton";
@@ -41,6 +41,7 @@ const CreateAccountScreen = ({ navigation }) => {
   } = styles;
   return (
     <SafeAreaView style={rootContainer}>
+      <StatusBar></StatusBar>
       <BackButton onPress={() => navigation.goBack()}></BackButton>
 
       {/*This evaluates state and decides generation of header content */}
@@ -65,6 +66,7 @@ const CreateAccountScreen = ({ navigation }) => {
           onFocus={hideHeader}
           onBlur={showHeader}
           returnKeyType={"next"}
+          keyboardType={"phone-pad"}
         ></GeneralInput>
         <GeneralInput
           content="Password"
@@ -83,7 +85,10 @@ const CreateAccountScreen = ({ navigation }) => {
           returnKeyType={"go"}
         ></GeneralInput>
         <View style={actionContainer}>
-          <GeneralButton content="Get Started" onPress={() => navigation.navigate("PhoneVerification")}></GeneralButton>
+          <GeneralButton
+            content="Get Started"
+            onPress={() => navigation.navigate("PhoneVerification")}
+          ></GeneralButton>
           <Text style={infoStyle}>
             By signing up, you agree to our{" "}
             <Text style={inlineLink}>Terms of Service</Text> and{" "}
