@@ -69,7 +69,7 @@ const SignupScreen = ({ navigation }) => {
 
       <View>
         <Text style={loginInfo}>
-          Already have an account? <Text style={inlineLink}>Log in</Text>
+          Already have an account? <Text style={inlineLink} onPress={() => navigation.navigate("LogIn")}>Log in</Text>
         </Text>
       </View>
     </SafeAreaView>
