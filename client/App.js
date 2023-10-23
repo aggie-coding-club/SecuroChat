@@ -10,6 +10,7 @@ import {useFonts, RobotoCondensed_400Regular, RobotoCondensed_700Bold } from '@e
 import SignupScreen from './src/screens/SignupScreen';
 import CreateAccountScreen from './src/screens/CreateAccountScreen';
 import PhoneVerificationScreen from './src/screens/PhoneVerificationScreen';
+import LoginInScreen from './src/screens/LoginScreen';
 
 
 const Stack = createNativeStackNavigator();
@@ -30,6 +31,7 @@ const App = () => {
         <Stack.Screen name="Home" component={SignupScreen}/>
         <Stack.Screen name="SignUp" component={CreateAccountScreen}/>
         <Stack.Screen name="PhoneVerification" component={PhoneVerificationScreen}/>
+        <Stack.Screen name="LogIn" component={LoginInScreen}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
