@@ -92,8 +92,7 @@ const CreateAccountScreen = ({ navigation }) => {
           <Text style={infoStyle}>
             By signing up, you agree to our{" "}
             <Text style={inlineLink}>Terms of Service</Text> and{" "}
-            <Text style={inlineLink}>Privacy Policy</Text>, including Cookie
-            Use.
+            <Text style={inlineLink}>Privacy Policy</Text>
           </Text>
         </View>
       </View>
