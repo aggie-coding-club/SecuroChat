@@ -13,7 +13,6 @@ import {
   Text,
   StyleSheet,
   SafeAreaView,
-  KeyboardAvoidingView,
   StatusBar,
 } from "react-native";
 import NumberInput from "../components/NumberInput";

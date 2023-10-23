@@ -63,13 +63,13 @@ const SignupScreen = ({ navigation }) => {
         <Text style={infoStyle}>
           By signing up, you agree to our{" "}
           <Text style={inlineLink}>Terms of Service</Text> and{" "}
-          <Text style={inlineLink}>Privacy Policy</Text>, including Cookie Use.
+          <Text style={inlineLink}>Privacy Policy</Text>
         </Text>
       </View>
 
       <View>
         <Text style={loginInfo}>
-          Already have an account? <Text style={inlineLink}>Log in</Text>
+          Already have an account? <Text style={inlineLink} onPress={() => navigation.navigate("LogIn")}>Log in</Text>
         </Text>
       </View>
     </SafeAreaView>
