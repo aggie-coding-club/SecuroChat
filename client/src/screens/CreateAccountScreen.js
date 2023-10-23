@@ -86,21 +86,20 @@ const CreateAccountScreen = ({ navigation }) => {
         ></GeneralInput>
         <View style={actionContainer}>
           <GeneralButton
-            content="Get Started"
+            content="Register"
             onPress={() => navigation.navigate("PhoneVerification")}
           ></GeneralButton>
           <Text style={infoStyle}>
             By signing up, you agree to our{" "}
             <Text style={inlineLink}>Terms of Service</Text> and{" "}
-            <Text style={inlineLink}>Privacy Policy</Text>, including Cookie
-            Use.
+            <Text style={inlineLink}>Privacy Policy</Text>
           </Text>
         </View>
       </View>
 
       <View>
         <Text style={loginInfo}>
-          Already have an account? <Text style={inlineLink}>Log in</Text>
+          Already have an account? <Text style={inlineLink} onPress={() => navigation.navigate("LogIn")}>Log in</Text>
         </Text>
       </View>
     </SafeAreaView>
@@ -120,7 +119,7 @@ const styles = StyleSheet.create({
   },
   welcomeText: {
     color: "#1E1E1E",
-    fontSize: 25,
+    fontSize: 30,
     fontFamily: "RobotoCondensed_700Bold",
   },
   mainTitle: {
