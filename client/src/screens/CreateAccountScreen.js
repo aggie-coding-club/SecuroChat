@@ -86,7 +86,7 @@ const CreateAccountScreen = ({ navigation }) => {
         ></GeneralInput>
         <View style={actionContainer}>
           <GeneralButton
-            content="Get Started"
+            content="Register"
             onPress={() => navigation.navigate("PhoneVerification")}
           ></GeneralButton>
           <Text style={infoStyle}>
@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
   },
   welcomeText: {
     color: "#1E1E1E",
-    fontSize: 25,
+    fontSize: 30,
     fontFamily: "RobotoCondensed_700Bold",
   },
   mainTitle: {
