@@ -79,3 +79,9 @@ const userModel = {
 };
 
 module.exports = userModel;
+
+
+
+// **************************************************************************************
+// environment variables for database connection MUST BE SET UP before this can be used
+// **************************************************************************************
