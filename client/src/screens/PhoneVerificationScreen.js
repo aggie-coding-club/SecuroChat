@@ -17,7 +17,6 @@ import {
 } from "react-native";
 import NumberInput from "../components/NumberInput";
 import BackButton from "../components/BackButton";
-import ProfilePicture from "../components/ProfilePicture";
 
 /**
  * PhoneVerificationScreen is a custom component that generates the phone verification screen of SecuroChat
