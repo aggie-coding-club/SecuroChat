@@ -36,3 +36,12 @@ CREATE TABLE participants (
 );
 
 -- TODO: Finish implementing table from schema on lucidchart
+-- Creates notifications table
+CREATE TABLE notifications(
+    notification_id INT PRIMARY KEY,
+    user_id UUID REFERENCES user(user_id),
+    message_id INT REFERENCES conversations(conversation_id),
+    notification_type VARCHAR(32),
+    notification_text VARCHAR (255),
+    notification_time TIMESTAMP
+)
