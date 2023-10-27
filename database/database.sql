@@ -36,3 +36,9 @@ CREATE TABLE participants (
 );
 
 -- TODO: Finish implementing table from schema on lucidchart
+CREATE TABLE attachments(
+    attachments_id INT PRIMARY KEY,
+    message_id INT REFERENCES conversations(conversation_id),
+    media_link TEXT REFERENCES messages(message_text),
+    attachment_type VARCHAR(16)
+)
