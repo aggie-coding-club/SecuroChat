@@ -36,3 +36,9 @@ CREATE TABLE participants (
 );
 
 -- TODO: Finish implementing table from schema on lucidchart
+CREATE TABLE read_reciepts(
+    read_reciepts_id INT PRIMARY KEY,
+    user_id UUID REFERENCES user_id(user_id),
+    message_id INT REFERENCES conversations(conversation_id),
+    read_at TIMESTAMP
+)
