@@ -40,7 +40,7 @@ CREATE TABLE participants (
 CREATE TABLE notifications(
     notification_id INT PRIMARY KEY,
     user_id UUID REFERENCES user(user_id),
-    message_id INT REFERENCES conversations(conversation_id),
+    message_id INT REFERENCES messages(message_id),
     notification_type VARCHAR(32),
     notification_text VARCHAR (255),
     notification_time TIMESTAMP
