@@ -2,39 +2,59 @@ const express = require('express')
 const app = express()
 const PORT = 3001
 
-//middleware
+// Middleware
 app.use(express.json())
 app.use(require('cors')())
 
-
 // DATABASE
 const db = require('./db.js');
-db.query('SELECT NOW()', (err, res) => {
-    if (err) {
-        console.error('Error connecting to the database', err);
-        process.exit(-1); // Exit the process with an error code
-    } else {
-        console.log('Database connection successful:', res.rows[0].now);
-    }
-});
-app.get('/', async(req, res) => {
-    console.log("howdy")
-})
+db.connect();
 
+// Validation functions for username, phone number, and email
+const checkUsername = async(username) =>{
+    const result = await db.query('SELECT username FROM users WHERE username = $1', [username]);
+    return result.rows.length > 0;
+}
 
+const checkPhone = async(phone) =>{
+    const result = await db.query('SELECT username FROM users WHERE phone = $1', [phone]);
+    return result.rows.length > 0;
+}
+
+const checkEmail = async(email) =>{
+    const result = await db.query('SELECT username FROM users WHERE email = $1', [email]);
+    return result.rows.length > 0;
+}
+
+// Store registered users
+// TODO: change the path when you need
 app.post('/register', async(req, res) => {
     const {username, phone, email, online_status, last_online} = req.body;
 
-    // TODO: validation
-
-    // Store registered users
     try {
+        // validation
+        const userNameExists = await checkUsername(username);
+        if (userNameExists) {
+            return res.status(400).send('Username already registered!' );
+        }
+
+        const phoneExists = await checkPhone(phone);
+        if (phoneExists) {
+            return res.status(400).send('Phone number already registered!' );
+        }
+
+        const emailExists = await checkEmail(email);
+        if (emailExists) {
+            return res.status(400).send('Email already registered!' );
+        }
+
+        // If pass the validation checks, save the user information to database
         const result = await db.query(`
             INSERT INTO users(username, phone, email, online_status, last_online) 
-            VALUES ($1, $2, $3, $4, $5) 
-            RETURNING user_id;
+            VALUES ($1, $2, $3, $4, $5)RETURNING user_id;
         `, [username, phone, email, online_status, last_online]);
 
+        // check if the user information are saved 
         if(result.rows[0] && result.rows[0].user_id){
             res.status(201).json({id: result.rows[0].user_id});
         } else {
@@ -42,7 +62,6 @@ app.post('/register', async(req, res) => {
         }
 
     } catch (err) {
-        console.error(err);
         res.status(500).send('Server error');
     }
 });
