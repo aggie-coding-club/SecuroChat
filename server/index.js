@@ -28,7 +28,7 @@ const server = http.createServer(app);
 const io = socketIo(server, {
     cors: {
         // Restrict the origins allowed to connect for security.
-        origin: ["http://yourfrontenddomain.com", "https://anotherallowedorigin.com"],
+        origin: ["frontenddomain.com", "otherapproveddomain.com"], // Change this to your frontend domain
         methods: ["GET", "POST"]
     }
 });
