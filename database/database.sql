@@ -35,8 +35,7 @@ CREATE TABLE participants (
     conversation_id INT REFERENCES conversations(conversation_id)
 );
 
--- TODO: Finish implementing table from schema on lucidchart
--- Creates notifications table
+-- Create notifications table
 CREATE TABLE notifications(
     notification_id INT PRIMARY KEY,
     user_id UUID REFERENCES user(user_id),
@@ -44,4 +43,12 @@ CREATE TABLE notifications(
     notification_type VARCHAR(32),
     notification_text VARCHAR (255),
     notification_time TIMESTAMP
-)
+  );
+
+-- Create read_receipts table
+CREATE TABLE read_reciepts(
+    read_reciepts_id INT PRIMARY KEY,
+    user_id UUID REFERENCES user_id(user_id),
+    message_id INT REFERENCES conversations(conversation_id),
+    read_at TIMESTAMP
+);
