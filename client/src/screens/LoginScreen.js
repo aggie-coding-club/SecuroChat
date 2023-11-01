@@ -35,7 +35,7 @@ const LoginScreen = ({ navigation }) => {
     <SafeAreaView style={fullPage}>
       <StatusBar></StatusBar>
       <BackButton onPress={() => navigation.goBack()}></BackButton>
-
+      
       <View style={header}>
         <Text style={introTop}>Welcome back to</Text>
         <Text style={introBottom}>SecuroChat</Text>
