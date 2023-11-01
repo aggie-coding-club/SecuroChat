@@ -4,7 +4,8 @@
   "description": "![rectangle-darkblue-white-logo](https://github.com/aggie-coding-club/SecuroChat/assets/113648300/f40acd68-1073-4604-ba87-9d5425d50487)",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "dev": "nodemon storeUsers.js"
   },
   "repository": {
     "type": "git",
@@ -23,6 +24,10 @@
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "helmet": "^7.0.0",
+    "pg": "^8.11.3",
     "socket.io": "^4.7.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
   }
 }
