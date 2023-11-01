@@ -10,22 +10,27 @@ CREATE TABLE users (
 
 
 -- Create the friends table
+-- NOTES: 
+-- 1. changes the databtype of user_id and friend_id from int to uuid due to the incompatible error
+-- 2. Add the constaint to make sure the only unique tuples can be added to database
 CREATE TABLE friends (
     friendship_id INT PRIMARY KEY,
-    user_id INT REFERENCES users(user_id),
-    friend_id INT REFERENCES users(user_id),
-    status VARCHAR(16) NOT NULL
+    user_id UUID REFERENCES users(user_id),
+    friend_id UUID REFERENCES users(user_id),
+    status VARCHAR(16) NOT NULL,
+    UNIQUE(user_id, friend_id)
 );
 
 
 -- Create the conversations table
+-- NOTES: changes the databtype of creator_id from int to uuid due to the incompatible error
 CREATE TABLE conversations (
     conversation_id INT PRIMARY KEY,
     conversation_type VARCHAR(16) NOT NULL,
     conversation_title VARCHAR(32),
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP,
-    creator_id INT REFERENCES users(user_id)
+    creator_id UUID REFERENCES users(user_id)
 );
 
 -- Create the participants table
@@ -35,6 +40,7 @@ CREATE TABLE participants (
     conversation_id INT REFERENCES conversations(conversation_id)
 );
 
+
 -- TODO: Finish implementing table from schema on lucidchart
 CREATE TABLE attachments(
     attachments_id INT PRIMARY KEY,
@@ -42,3 +48,30 @@ CREATE TABLE attachments(
     media_link TEXT REFERENCES messages(message_text),
     attachment_type VARCHAR(16)
 )
+
+-- Create the messages table 
+CREATE TABLE messages (
+    message_id INT PRIMARY KEY,
+    user_id UUID REFERENCES users(user_id),
+    messages_text VARCHAR(255),
+    timestamp TIMESTAMP,
+    conversation_id INT REFERENCES conversations(conversation_id)
+)
+
+-- Create notifications table
+CREATE TABLE notifications(
+    notification_id INT PRIMARY KEY,
+    user_id UUID REFERENCES user(user_id),
+    message_id INT REFERENCES messages(message_id),
+    notification_type VARCHAR(32),
+    notification_text VARCHAR (255),
+    notification_time TIMESTAMP
+  );
+
+-- Create read_receipts table
+CREATE TABLE read_reciepts(
+    read_reciepts_id INT PRIMARY KEY,
+    user_id UUID REFERENCES user_id(user_id),
+    message_id INT REFERENCES conversations(conversation_id),
+    read_at TIMESTAMP
+);
