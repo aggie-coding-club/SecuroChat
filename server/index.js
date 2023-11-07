@@ -1,4 +1,5 @@
 // server/index.js
+
 const express = require('express');
 const dotenv = require('dotenv');
 const http = require('http');
@@ -21,15 +22,16 @@ const io = socketIo(server, {
 });
 
 io.on('connection', (socket) => {
-    console.log('New client connected');
+    console.log(`client ${socket.id} connected`);
 
     // Handle custom events or messages here
     socket.on('message', (data) => {
         console.log(data);
+        io.emit('message', `${socket.id.substring(0,5)}: ${data}`)
     });
 
     socket.on('disconnect', () => {
-        console.log('Client disconnected');
+        console.log(`client ${socket.id} disconnected`);
     });
 });
 
