@@ -51,7 +51,6 @@ const CreateAccountScreen = ({ navigation }) => {
           <Text style={mainTitle}>SecuroChat</Text>
         </View>
       )}
-
       <View style={inputContainer}>
         <GeneralInput
           content="Username"
