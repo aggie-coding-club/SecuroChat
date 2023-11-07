@@ -8,8 +8,8 @@ import { Text, StyleSheet, View } from "react-native";
 /**
  * ProfilePicture is a component that generates a general profile picture given specified props
  * @param {object} props - The components props
- * @param {string} props.initials - The text content within the profile picture
- * @param {string} props.color - the base color of the profile picture
+ * @property {string} props.initials - The text content within the profile picture
+ * @property {string} props.color - the base color of the profile picture
  */
 const ProfilePicture = (props) => {
   const { container, initials } = styles;

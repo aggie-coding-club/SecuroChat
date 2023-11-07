@@ -6,7 +6,7 @@ import React, { useRef } from "react";
 import { StyleSheet, TextInput, View } from "react-native";
 
 /**
- * GeneralInput is a custom component that generates unique TextInputs.
+ * NumberInput is a custom component that generates unique TextInputs.
  */
 const NumberInput = () => {
   const inputRefs = Array(6)

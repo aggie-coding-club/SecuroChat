@@ -10,7 +10,7 @@ import { Ionicons } from '@expo/vector-icons';
 /**
  * BackButton is a component that when pressed, takes user back to previous screen
  * @param {object} props - The components props
- * @param {function} props.onPress - The function to be executed when componenet is pressed
+ * @property {function} props.onPress - The function to be executed when componenet is pressed
  */
 const BackButton = (props) => {
     const {buttonStyle} = styles;
