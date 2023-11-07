@@ -3,5 +3,5 @@
 # dependencies
 node_modules/
 
-# environment variables
+#environment variables
 .env
