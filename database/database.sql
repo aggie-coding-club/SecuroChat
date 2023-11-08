@@ -16,6 +16,7 @@ CREATE TABLE authentication (
 );
 
 
+
 -- Create the friends table
 CREATE TABLE friends (
     friendship_id SERIAL PRIMARY KEY, --made SERIAL to increase by default
@@ -45,9 +46,9 @@ CREATE TABLE conversations (
 
 -- Create the participants table
 CREATE TABLE participants (
-    participant_id INT PRIMARY KEY,
-    user_id INT REFERENCES users(user_id),
-    conversation_id INT REFERENCES conversations(conversation_id)
+    participant_id UUID PRIMARY KEY,
+    user_id UUID REFERENCES users(user_id),
+    conversation_id UUID REFERENCES conversations(conversation_id)
 );
 
 
