@@ -7,8 +7,10 @@ import { StyleSheet, TextInput, View } from "react-native";
 
 /**
  * GeneralInput is a custom component that generates unique TextInputs.
+ * @param {object} props - object containing props to numberinput component
+ * @property {function} props.onConditionMet - function checking if condition is met
  */
-const NumberInput = () => {
+const NumberInput = (props) => {
   const inputRefs = Array(6)
     .fill(0)
     .map(() => useRef(null));
@@ -16,6 +18,9 @@ const NumberInput = () => {
   const handleTextInput = (text, index) => {
     if (index < 5 && text.length === 1) {
       inputRefs[index + 1].current.focus();
+    }
+    else {
+      props.onConditionMet();
     }
   };
 
