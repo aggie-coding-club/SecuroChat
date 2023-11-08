@@ -10,8 +10,8 @@
  *  }
  */
 
-import React from "react";
-import { View, Text, StyleSheet, SafeAreaView, StatusBar, ScrollView, KeyboardAvoidingView } from "react-native";
+import React, { useState } from "react";
+import { View, Text, StyleSheet, SafeAreaView, StatusBar, ScrollView, KeyboardAvoidingView, TouchableOpacity, Touchable } from "react-native";
 import BackButton from "../components/BackButton";
 import ProfilePicture from "../components/ProfilePicture";
 import ActivityIndicator from "../components/ActivityIndicator";
@@ -21,6 +21,23 @@ import { AntDesign } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const ChatScreen = ({ navigation }) => {
+  const [messages, setMessages] = useState([]);
+  const [messageText, setMessageText] = useState('');
+
+  const handleTextChange = (text) => {
+    setMessageText(text);
+  };
+
+  const handleMessageSubmit = () => {
+    if (messageText.trim() !== '') {
+        const newMessage = { text: messageText, sender: 'user' };
+        setMessages([...messages, newMessage]);
+        setMessageText('');
+    }
+  };
+
+
+
   const { rootContainer, header, headerSection, messageSection, sendSection, sendContent } = styles;
   return (
     <SafeAreaView style={rootContainer}>
@@ -38,34 +55,21 @@ const ChatScreen = ({ navigation }) => {
       </View>
 
       <ScrollView style={messageSection}>
-        <ChatMessage 
-          content="Hello I am carlos. Whats you're name"
-          sentByCurrUser={false}
-        />
-        <ChatMessage 
-          content="Hello I am carlos. Whats you're name Hello I am carlos. Whats you're nameHello I am carlos. Whats you're nameHello I am carlos. Whats you're nameHello I am carlos. Whats you're name"
-          sentByCurrUser={true}
-        />
-        <ChatMessage 
-          content="Hello I am carlos. Whats you're name Hello I am carlos. Whats you're nameHello I am carlos. Whats you're nameHello I am carlos. Whats you're nameHello I am carlos. Whats you're name"
-          sentByCurrUser={false}
-        />
-        <ChatMessage 
-          content="Hello I am carlos. Whats you're name Hello I am carlos. Whats you're nameHello I am carlos. Whats you're nameHello I am carlos. Whats you're nameHello I am carlos. Whats you're name"
-          sentByCurrUser={false}
-        />
-        <ChatMessage 
-          content="Hello I am carlos. Whats you're name Hello I am carlos. Whats you're nameHello I am carlos. Whats you're nameHello I am carlos. Whats you're nameHello I am carlos. Whats you're name"
-          sentByCurrUser={true}
-        />
+          {messages.map((message, index) => (
+                  <ChatMessage key={index} content={message.text} sentByCurrUser={true} />
+          ))}
       </ScrollView>
 
 
       <KeyboardAvoidingView style={sendSection} behavior="padding">
         <View style={sendContent}>
-            <AntDesign name="plus" size={30} color="#0078D4" />
-            <ExpandableTextBox></ExpandableTextBox>
-            <MaterialCommunityIcons name="send-circle" size={35} color="#0078D4" />
+            <TouchableOpacity>
+              <AntDesign name="plus" size={30} color="#0078D4" />
+            </TouchableOpacity>
+            <ExpandableTextBox callbackText={handleTextChange} currentValue={messageText}></ExpandableTextBox>
+            <TouchableOpacity onPress={handleMessageSubmit}>
+              <MaterialCommunityIcons name="send-circle" size={35} color="#0078D4" />
+            </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
 
