@@ -21,6 +21,7 @@ import BackButton from "../components/BackButton";
 const LoginScreen = ({ navigation }) => {
   const {
     fullPage,
+    backButton,
     introTop,
     introBottom,
     header,
@@ -34,7 +35,7 @@ const LoginScreen = ({ navigation }) => {
   return (
     <SafeAreaView style={fullPage}>
       <StatusBar></StatusBar>
-      <BackButton onPress={() => navigation.goBack()}></BackButton>
+      <BackButton style={backButton} onPress={() => navigation.goBack()}></BackButton>
       
       <View style={header}>
         <Text style={introTop}>Welcome back to</Text>
@@ -78,6 +79,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     alignItems: "center",
     justifyContent: "center",
+  },
+  backButton: {
+    alignSelf: "flex-start",
+    marginTop: 10,
+    marginLeft: 30,
   },
   header: {
     marginTop: 30,
