@@ -10,7 +10,7 @@
  */
 
 import React from "react";
-import { View, Text, StyleSheet, SafeAreaView, StatusBar, FlatList, KeyboardAvoidingView } from "react-native";
+import { View, Text, StyleSheet, SafeAreaView, StatusBar, ScrollView, KeyboardAvoidingView } from "react-native";
 import BackButton from "../components/BackButton";
 import ProfilePicture from "../components/ProfilePicture";
 import ActivityIndicator from "../components/ActivityIndicator";
@@ -35,9 +35,9 @@ const ChatScreen = ({ navigation }) => {
         </View>
       </View>
 
-      <View style={messageSection}>
+      <ScrollView style={messageSection}>
         <Text>HI</Text>
-      </View>
+      </ScrollView>
 
       <KeyboardAvoidingView style={sendSection} behavior="padding">
         <View style={sendContent}>
@@ -73,8 +73,6 @@ const styles = StyleSheet.create({
   },
   messageSection: {
     flex: 12,
-    justifyContent: "center",
-    alignItems: "center",
     backgroundColor: "#FFFFFF",
   },
   sendSection: {
