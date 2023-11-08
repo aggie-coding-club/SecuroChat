@@ -6,6 +6,7 @@
  *    ProfilePicture.js
  *    ActivityIndicator.js
  *    MessageInput.js
+ *    ChatMessage.js
  *  }
  */
 
@@ -15,6 +16,7 @@ import BackButton from "../components/BackButton";
 import ProfilePicture from "../components/ProfilePicture";
 import ActivityIndicator from "../components/ActivityIndicator";
 import ExpandableTextBox from "../components/ExpandableTextBox";
+import ChatMessage from "../components/ChatMessage";
 import { AntDesign } from '@expo/vector-icons'; 
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
@@ -36,8 +38,28 @@ const ChatScreen = ({ navigation }) => {
       </View>
 
       <ScrollView style={messageSection}>
-        <Text>HI</Text>
+        <ChatMessage 
+          content="Hello I am carlos. Whats you're name"
+          sentByCurrUser={false}
+        />
+        <ChatMessage 
+          content="Hello I am carlos. Whats you're name Hello I am carlos. Whats you're nameHello I am carlos. Whats you're nameHello I am carlos. Whats you're nameHello I am carlos. Whats you're name"
+          sentByCurrUser={true}
+        />
+        <ChatMessage 
+          content="Hello I am carlos. Whats you're name Hello I am carlos. Whats you're nameHello I am carlos. Whats you're nameHello I am carlos. Whats you're nameHello I am carlos. Whats you're name"
+          sentByCurrUser={false}
+        />
+        <ChatMessage 
+          content="Hello I am carlos. Whats you're name Hello I am carlos. Whats you're nameHello I am carlos. Whats you're nameHello I am carlos. Whats you're nameHello I am carlos. Whats you're name"
+          sentByCurrUser={false}
+        />
+        <ChatMessage 
+          content="Hello I am carlos. Whats you're name Hello I am carlos. Whats you're nameHello I am carlos. Whats you're nameHello I am carlos. Whats you're nameHello I am carlos. Whats you're name"
+          sentByCurrUser={true}
+        />
       </ScrollView>
+
 
       <KeyboardAvoidingView style={sendSection} behavior="padding">
         <View style={sendContent}>
