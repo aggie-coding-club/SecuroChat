@@ -10,10 +10,7 @@ import { Text, StyleSheet, View } from "react-native";
  * @param {object} props - The components props
  * @property {string} props.initials - The text content within the profile picture
  * @property {string} props.color - the base color of the profile picture
-<<<<<<< HEAD
-=======
  * @property {number} props.bubbleSize - Sets the size of the profile picture bubble
->>>>>>> 56bb7a5aca9a6da90ba0f8eb6df5fe2feebc1275
  */
 const ProfilePicture = (props) => {
   //globals defining size of textBubble and text itself
