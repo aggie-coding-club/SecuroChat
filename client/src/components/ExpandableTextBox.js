@@ -7,9 +7,12 @@ import { TextInput, StyleSheet } from 'react-native';
 
 /**
  * Custom React Native component rendering the chat message text box
+ * @param {object} props - Object containing props for component
+ * @property {function} props.callbackText - function returning current text in textinput to parent component
+ * @property {string} props.currentValue - string represneting current value of text input
  */
-const ExpandableTextBox = () => {
-    const [currentMessage,setMessage] = useState('');
+const ExpandableTextBox = (props) => {
+    const [textData, setTextData ] = useState('');
 
     const { inputStyle } = styles;
     return(
@@ -18,7 +21,8 @@ const ExpandableTextBox = () => {
             multiline={true}
             style={[inputStyle, {maxHeight: 85}]}
             backgroundColor="#FFFFFF"
-            onChangeText={(text) => setMessage(text)}
+            onChangeText={props.callbackText}
+            value={props.currentValue}
         />
     );
 };
