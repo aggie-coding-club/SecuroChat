@@ -87,7 +87,7 @@ const CreateAccountScreen = ({ navigation }) => {
         <View style={actionContainer}>
           <GeneralButton
             content="Register"
-            onPress={() => navigation.navigate("ChatScreen")}
+            onPress={() => navigation.navigate("PhoneVerification")}
           ></GeneralButton>
           <Text style={infoStyle}>
             By signing up, you agree to our{" "}
