@@ -12,10 +12,10 @@ const http = require('http');
 const socketIo = require('socket.io');
 const cors = require('cors');
 const { Pool } = require('pg');
-const authRoutes = require('./routes/authRoutes');
-const messageRoutes = require('./routes/messageRoutes');
-const userRoutes = require('./routes/userRoutes');
-const chatSocket = require('./sockets/chatSocket');
+const authRoutes = require('./src/routes/authRoutes');
+const messageRoutes = require('./src/routes/messageRoutes');
+const userRoutes = require('./src/routes/userRoutes');
+const chatSocket = require('./src/sockets/chatSocket');
 
 require('dotenv').config();
 
