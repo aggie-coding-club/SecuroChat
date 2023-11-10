@@ -11,7 +11,7 @@ const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
 const cors = require('cors');
-const { Pool } = require('pg');
+const database = require('./database');
 const authRoutes = require('./src/routes/authRoutes');
 const messageRoutes = require('./src/routes/messageRoutes');
 const userRoutes = require('./src/routes/userRoutes');
@@ -30,17 +30,10 @@ const io = socketIo(server, {
 
 const PORT = process.env.PORT || 3001;
 
-// Database pool connection
-const pool = new Pool({
-  host: process.env.DB_HOST,
-  port: process.env.DB_PORT,
-  database: process.env.DB_NAME,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASS,
-  ssl: {
-    rejectUnauthorized: false,
-  },
-});
+// Database connection
+database.connect();
+
+/*
 
 // Middleware
 app.use(express.json());
@@ -48,8 +41,8 @@ app.use(cors());
 
 // Routes
 app.use('/auth', authRoutes);
-// app.use('/message', messageRoutes);
-// app.use('/user', userRoutes);
+app.use('/message', messageRoutes);
+app.use('/user', userRoutes);
 
 // Socket.IO
 io.on('connection', (socket) => {
@@ -67,3 +60,5 @@ io.on('connection', (socket) => {
   server.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
   });
+
+*/
