@@ -1,64 +1,69 @@
+/* Index.js
+ * Serves as entry point to the backend
+ * Responsible for settting up the express server
+ * Intializes websocket server through Socket.io
+ * Establishes connection to postgresql database
+ * Responsible for configuring/setting up middleware
+ * Defines API routes and websocket event handling
+*/
+
 const express = require('express');
-const dotenv = require('dotenv');
 const http = require('http');
 const socketIo = require('socket.io');
+const cors = require('cors');
 const { Pool } = require('pg');
+const authRoutes = require('./routes/authRoutes');
+const messageRoutes = require('./routes/messageRoutes');
+const userRoutes = require('./routes/userRoutes');
+const chatSocket = require('./sockets/chatSocket');
 
-dotenv.config(); // Load environment variables
+require('dotenv').config();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const server = http.createServer(app);
+const io = socketIo(server, {
+  cors: {
+    origin: 'http://localhost:3000', // Adjust this based on your frontend's URL
+    methods: ['GET', 'POST'],
+  },
+});
+
+const PORT = process.env.PORT || 3001;
 
 // Database pool connection
 const pool = new Pool({
-    host: process.env.DB_HOST, // Get from environment variables
-    port: 5432,
-    database: process.env.DB_NAME,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASS,
-    ssl: {
-        rejectUnauthorized: false
-    }
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
+  database: process.env.DB_NAME,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASS,
+  ssl: {
+    rejectUnauthorized: false,
+  },
 });
 
-// Create an HTTP server instance for the express app
-const server = http.createServer(app);
+// Middleware
+app.use(express.json());
+app.use(cors());
 
-// Initialize socket.io with the HTTP server instance
-const io = socketIo(server, {
-    cors: {
-        // Restrict the origins allowed to connect for security.
-        origin: ["frontenddomain.com", "otherapproveddomain.com"], // Change this to your frontend domain
-        methods: ["GET", "POST"]
-    }
-});
+// Routes
+app.use('/auth', authRoutes);
+// app.use('/message', messageRoutes);
+// app.use('/user', userRoutes);
 
+// Socket.IO
 io.on('connection', (socket) => {
-    console.log(`client ${socket.id} connected`);
-
-    socket.on('message', async (data) => {
-        console.log(data);
-
-        // Save the message to the database.
-        try {
-            await pool.query(
-                'INSERT INTO messages (user_id, sender_id, message_text, timestamp, conversation_id) VALUES ($1, $2, $3, $4, $5)',
-                [data.userId, data.senderId, data.messageText, new Date(), data.conversationId]
-            );
-
-            // Broadcasting the message to all connected clients after successful insertion.
-            io.emit('message', data);
-        } catch (error) {
-            console.error('Error saving message to database:', error);
-        }
-    });
-
+    console.log(`Socket connected: ${socket.id}`);
+  
+    // Pass the socket and pool to the socket handler
+    chatSocket(socket, pool);
+  
     socket.on('disconnect', () => {
-        console.log(`client ${socket.id} disconnected`);
+      console.log(`Socket disconnected: ${socket.id}`);
     });
-});
-
-// Start the WebSocket server
-server.listen(PORT, () => {
-    console.log(`WebSocket Server is running on port ${PORT}`);
-});
+  });
+  
+  // Start the server
+  server.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
