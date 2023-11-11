@@ -3,7 +3,7 @@ const messageController = require('../controllers/messageController');
 const router = express.Router();
 
 // Send a new message
-router.post('/sned', messageController.sendMessage);
+router.post('/send', messageController.sendMessage);
 
 // Fetch messages in a conversation
 router.get('/conversation/:conversationId', messageController.getMessages);
