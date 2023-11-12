@@ -10,10 +10,10 @@ const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
 const cors = require('cors');
-const database = require('./database');  // Ensure this is the correct path to your database module
-const authRoutes = require('./src/routes/authRoutes');
+const database = require('./database.js');  // Ensure this is the correct path to your database module
+// const authRoutes = require('./src/routes/authRoutes');
 const messageRoutes = require('./src/routes/messageRoutes');
-const userRoutes = require('./src/routes/userRoutes');
+// const userRoutes = require('./src/routes/userRoutes');
 const chatSocketHandler = require('./src/sockets/chatSocket');  // Adjust the path as necessary
 
 require('dotenv').config();
@@ -37,9 +37,9 @@ app.use(express.json());
 app.use(cors());
 
 // Routes
-app.use('/auth', authRoutes);
+// app.use('/auth', authRoutes);
 app.use('/messages', messageRoutes);  // Adjusted to match your route path
-app.use('/user', userRoutes);
+// app.use('/user', userRoutes);
 
 // Socket.IO
 io.on('connection', (socket) => {

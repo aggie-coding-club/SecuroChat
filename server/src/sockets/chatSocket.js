@@ -3,7 +3,7 @@
  * Emits messages to respective recipients based on events
  * Responsible for updating online status and handling connections/disconnections
 */
-const db = require('./database');
+const db = require('../../database');
 
 module.exports = function (socket, io) {
     // Handle user connection
