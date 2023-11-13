@@ -30,6 +30,7 @@ const CreateAccountScreen = ({ navigation }) => {
 
   const {
     rootContainer,
+    backButton,
     pageHeader,
     welcomeText,
     mainTitle,
@@ -42,7 +43,7 @@ const CreateAccountScreen = ({ navigation }) => {
   return (
     <SafeAreaView style={rootContainer}>
       <StatusBar></StatusBar>
-      <BackButton onPress={() => navigation.goBack()}></BackButton>
+      <BackButton style={backButton} onPress={() => navigation.goBack()}></BackButton>
 
       {/*This evaluates state and decides generation of header content */}
       {!isHeaderHidden && (
@@ -51,7 +52,6 @@ const CreateAccountScreen = ({ navigation }) => {
           <Text style={mainTitle}>SecuroChat</Text>
         </View>
       )}
-
       <View style={inputContainer}>
         <GeneralInput
           content="Username"
@@ -112,6 +112,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     alignItems: "center",
     justifyContent: "center",
+  },
+  backButton: {
+    alignSelf: "flex-start",
+    marginTop: 10,
+    marginLeft: 30,
   },
   pageHeader: {
     marginTop: 30,

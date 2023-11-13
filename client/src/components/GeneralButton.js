@@ -7,8 +7,8 @@ import { Text, StyleSheet, TouchableOpacity } from "react-native";
 /**
  * GeneralButton is a component that generates a unique button given specified props
  * @param {object} props - The components props
- * @param {string} props.content - The text content within the button
- * @param {function} props.onPress - function logic that executes when button is pressed
+ * @property {string} props.content - The text content within the button
+ * @property {function} props.onPress - function logic that executes when button is pressed
  */
 const GeneralButton = (props) => {
   const { buttonStyle, textStyle } = styles;
