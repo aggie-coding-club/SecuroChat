@@ -10,7 +10,6 @@
  */
 
 import React, { useState } from "react";
-import crypto from "crypto";
 import { View, Text, StyleSheet, SafeAreaView, StatusBar } from "react-native";
 import GeneralInput from "../components/GeneralInput";
 import GeneralButton from "../components/GeneralButton";
@@ -49,28 +48,13 @@ const CreateAccountScreen = ({ navigation }) => {
     setConfirmPassword(value);
   };
 
-  const generateKeyPair = () => {
-    return crypto.generateKeyPairSync('rsa', {
-      modulusLength: 2048, // Adjust based on your security requirements
-      publicKey: {
-        type: 'spki',
-        format: 'pem',
-      },
-      privateKey: {
-        type: 'pkcs8',
-        format: 'pem',
-      },
-    });
-  }
 
   const handleRegister = async () => {
     try {
-      const { publicKey, privateKey } = generateKeyPair();
       const response = await api.post('http://localhost:3001/auth/register', {
         username, 
         phoneNumber, 
         password,
-        publicKey
       }, { withCredentials: true });
 
       console.log(response.data);

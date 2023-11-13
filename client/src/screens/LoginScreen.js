@@ -8,7 +8,7 @@
  *  }
  */
 
-import React from "react";
+import React, {useState} from "react";
 import { SafeAreaView, View, Text, StyleSheet, StatusBar, KeyboardAvoidingView } from "react-native";
 import GeneralInput from "../components/GeneralInput";
 import GeneralButton from "../components/GeneralButton";
@@ -19,6 +19,16 @@ import BackButton from "../components/BackButton";
  * @param {object} navigation - Prop passed in from React Navigation to screen component
  */
 const LoginScreen = ({ navigation }) => {
+  // getting and managing states for login text inputs
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const handleUsernameChange = (value) => {
+    setUsername(value);
+  };
+  const handlePasswordChange = (value) => {
+    setPassword(value);
+  };
+
   const {
     fullPage,
     backButton,
@@ -46,12 +56,14 @@ const LoginScreen = ({ navigation }) => {
           content="Username or Phone number"
           color="#1E1E1E"
           returnKeyType={"next"}
+          onInputChange={handleUsernameChange}
         ></GeneralInput>
         <GeneralInput
           content="Password"
           color="#1E1E1E"
           secureTextEntry={true}
           returnKeyType={"go"}
+          onInputChange={handlePasswordChange}
         ></GeneralInput>
         <View style={finishButton}>
           <GeneralButton content="Log In" />
