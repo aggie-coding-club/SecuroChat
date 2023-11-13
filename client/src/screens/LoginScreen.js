@@ -57,7 +57,7 @@ const LoginScreen = ({ navigation }) => {
           <GeneralButton content="Log In" />
         </View>
         <View style={passwordForgot}>
-          <Text style={subText}>Forgot Password?</Text>
+          <Text style={subText} onPress={() => navigation.navigate("ForgotPassword")}>Forgot Password?</Text>
         </View>
         
       </View>
