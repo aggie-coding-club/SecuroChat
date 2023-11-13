@@ -7,6 +7,7 @@ import Axios from 'axios';
 
 const api = Axios.create({
     baseURL: 'http://localhost:3001', // Replace with actual backend URL
+    withCredentials: true,
 });
 
 export default api;

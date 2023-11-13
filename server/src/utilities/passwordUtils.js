@@ -1,7 +1,5 @@
 const bcrypt = require("bcryptjs");
 
-// Ideally, extract this to an environment variable or config
-const SALT_ROUNDS = 10;
 
 /**
  * Hashes a plaintext password.
@@ -10,7 +8,8 @@ const SALT_ROUNDS = 10;
  */
 const hashPassword = async (password) => {
   try {
-    return await bcrypt.hash(password, SALT_ROUNDS);
+    const salt = await bcrypt.genSalt(10);
+    return await bcrypt.hash(password, salt);
   } catch (error) {
     console.error("Error hashing password:", error);
     throw new Error("Failed to hash password.");

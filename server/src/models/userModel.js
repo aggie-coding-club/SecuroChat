@@ -219,7 +219,7 @@ const isUniqueUser = async (candidateUsername, candidatePhone) => {
     try {
         const queryText = `
             SELECT user_id FROM users
-            WHERE user_id = $1 AND phone = $2
+            WHERE username = $1 AND phone = $2
             ;
         `;
         const values = [candidateUsername, candidatePhone];
@@ -228,7 +228,7 @@ const isUniqueUser = async (candidateUsername, candidatePhone) => {
         return isUnique;
     }
     catch (error) {
-        console.error("Error checking uniqueness of user information");
+        console.error("Failed to check if user is unique");
         throw error;
     }
 };

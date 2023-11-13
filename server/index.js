@@ -42,12 +42,16 @@ app.use('/auth', authRoutes);
 // app.use('/message', messageRoutes);
 // app.use('/user', userRoutes);
 
+app.get('/', (req, res) => {
+  res.send(`Hello! Welcome to SecuroChat Server!`);
+})
+
 // Socket.IO
 io.on('connection', (socket) => {
     console.log(`Socket connected: ${socket.id}`);
   
     // Pass the socket and pool to the socket handler
-     chatSocket(socket, pool);
+     // chatSocket(socket, pool);
   
     socket.on('disconnect', () => {
       console.log(`Socket disconnected: ${socket.id}`);

@@ -10,6 +10,7 @@
  */
 
 import React, { useState } from "react";
+import crypto from "crypto";
 import { View, Text, StyleSheet, SafeAreaView, StatusBar } from "react-native";
 import GeneralInput from "../components/GeneralInput";
 import GeneralButton from "../components/GeneralButton";
@@ -28,6 +29,66 @@ const CreateAccountScreen = ({ navigation }) => {
   };
   const showHeader = () => {
     setIsHeaderHidden(false);
+  };
+
+  // handling state for input boxes
+  const [username, setUsername] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const handleUsernameChange = (value) => {
+    setUsername(value);
+  };
+  const handlePhoneChange = (value) => {
+    setPhoneNumber(value);
+  };
+  const handlePasswordChange = (value) => {
+    setPassword(value);
+  };
+  const handleConfirmPassword = (value) => {
+    setConfirmPassword(value);
+  };
+
+  const generateKeyPair = () => {
+    return crypto.generateKeyPairSync('rsa', {
+      modulusLength: 2048, // Adjust based on your security requirements
+      publicKey: {
+        type: 'spki',
+        format: 'pem',
+      },
+      privateKey: {
+        type: 'pkcs8',
+        format: 'pem',
+      },
+    });
+  }
+
+  const handleRegister = async () => {
+    try {
+      const { publicKey, privateKey } = generateKeyPair();
+      const response = await api.post('http://localhost:3001/auth/register', {
+        username, 
+        phoneNumber, 
+        password,
+        publicKey
+      }, { withCredentials: true });
+
+      console.log(response.data);
+    }
+    catch (error) {
+      console.error('Error during registration: ', error);
+    }
+  };
+
+  const verifyPasswordMatch = () => {
+    return password === confirmPassword;
+  };
+
+  const handleRegisterPress = () => {
+    if (verifyPasswordMatch()){
+      handleRegister();
+      navigation.navigate("PhoneVerification")
+    }
   };
 
   const {
@@ -61,6 +122,7 @@ const CreateAccountScreen = ({ navigation }) => {
           onFocus={hideHeader}
           onBlur={showHeader}
           returnKeyType={"next"}
+          onInputChange={handleUsernameChange}
         ></GeneralInput>
         <GeneralInput
           content="Phone Number"
@@ -69,6 +131,7 @@ const CreateAccountScreen = ({ navigation }) => {
           onBlur={showHeader}
           returnKeyType={"next"}
           keyboardType={"phone-pad"}
+          onInputChange={handlePhoneChange}
         ></GeneralInput>
         <GeneralInput
           content="Password"
@@ -77,6 +140,7 @@ const CreateAccountScreen = ({ navigation }) => {
           onBlur={showHeader}
           secureTextEntry={true}
           returnKeyType={"next"}
+          onInputChange={handlePasswordChange}
         ></GeneralInput>
         <GeneralInput
           content="Re-enter Password"
@@ -85,11 +149,12 @@ const CreateAccountScreen = ({ navigation }) => {
           onBlur={showHeader}
           secureTextEntry={true}
           returnKeyType={"go"}
+          onInputChange={handleConfirmPassword}
         ></GeneralInput>
         <View style={actionContainer}>
           <GeneralButton
             content="Register"
-            onPress={() => navigation.navigate("PhoneVerification")}
+            onPress={handleRegisterPress}
           ></GeneralButton>
           <Text style={infoStyle}>
             By signing up, you agree to our{" "}

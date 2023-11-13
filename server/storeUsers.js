@@ -7,7 +7,7 @@ app.use(express.json())
 app.use(require('cors')())
 
 // DATABASE
-const db = require('./db.js');
+const db = require('./database');
 db.connect();
 
 // Validation functions for username, phone number, and email

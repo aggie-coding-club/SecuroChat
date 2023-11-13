@@ -1,7 +1,7 @@
 // GeneralInput.js
 // A custom React Native component that generates input boxes based on passed in props
 
-import React, {useRef} from "react";
+import React, {useState} from "react";
 import { StyleSheet, TextInput } from "react-native";
 
 /**
@@ -13,9 +13,16 @@ import { StyleSheet, TextInput } from "react-native";
  * @property {function} props.onBlur - Calls function when obBlur event is triggered
  * @property {boolean} props.secureTextEntry - Determines whether to hide entered content in text input.
  * @property {string} props.returnKeyType - Determines the type within return key of the keyboard
- * @property {string} props.keyboardType - Determins which keyboard to open on focus
+ * @property {string} props.keyboardType - Determines which keyboard to open on focus
+ * @property {string} props.onInputChange - Function handling when input text changes which passes data to parent component
  */
 const GeneralInput = (props) => {
+  const [inputValue, setInputValue] = useState('');
+  const handleChangeText = (text) => {
+    setInputValue(text);
+    props.onInputChange(text); //sends data to parent component
+  }
+
   const { inputStyle } = styles;
   return (
     <TextInput
@@ -28,6 +35,7 @@ const GeneralInput = (props) => {
       textContentType="oneTimeCode"
       returnKeyType={props.returnKeyType}
       keyboardType={props.keyboardType}
+      onChangeText={handleChangeText}
     />
   );
 };

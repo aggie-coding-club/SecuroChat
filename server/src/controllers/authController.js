@@ -22,23 +22,26 @@ const register = async (req, res) => {
         do {
             generatedUUID = uuidv4();
         } 
-        while (!userModel.isUniqueUUID(generatedUUID));
+        while (!(await userModel.isUniqueUUID(generatedUUID)));
 
         // creating new user within the database by creating new entry in users and authentication tables
-        if (userModel.isUniqueUser(username, phone)) {
-            userModel.createUserEntry(generatedUUID, username, phone);
-            authenticationModel.createAuthenticationEntry(generatedUUID, hashedPassword, publicKey);
+        if (await userModel.isUniqueUser(username, phone)) {
+            await userModel.createUserEntry(generatedUUID, username, phone);
+            await authenticationModel.createAuthenticationEntry(generatedUUID, hashedPassword, publicKey);
+        }
+        else {
+            throw new Error("Error: User with these credentials already exists");
         }
 
         // creating json web token for new user
         const token = jwt.sign({ userID: generatedUUID }, process.env.JWT_SECRET);
 
         // sending the token to client in response
-        res.json({ token });
+        res.json({ token })
     } 
     catch (error) {
         console.error('Error in user registration: ', error);
-        res.status(500).json({ error: 'Internal server error'});
+        res.status(500).json({ error: 'Internal server error.'});
     }
 };
 
@@ -49,13 +52,13 @@ const login = async (req, res) => {
         const { username, password } = req.body;
         
         // calling model methods to authenticate user
-        const userAuthenticated = authenticationModel.authenticateUser(username, password);
+        const userAuthenticated = await authenticationModel.authenticateUser(username, password);
         if (!userAuthenticated) {
             return res.status(401).json(( {error: 'Invalid username and/or password' }));
         }
 
         // generating json web token for authenticated user
-        const user_id = userModel.getUserID(username);
+        const user_id = await userModel.getUserID(username);
         const token = jwt.sign({ userID: user_id}, process.env.JWT_SECRET);
 
         // sending the toekn to client in response
