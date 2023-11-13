@@ -1,5 +1,6 @@
 /* CreateAccountScreen.js
  * This is a custom React component generating the createAccountScreen
+ * Imports API as screen deal with user registration
  * Other external custom componentes used:
  *  {
  *   GeneralInput.js,
@@ -13,6 +14,7 @@ import { View, Text, StyleSheet, SafeAreaView, StatusBar } from "react-native";
 import GeneralInput from "../components/GeneralInput";
 import GeneralButton from "../components/GeneralButton";
 import BackButton from "../components/BackButton";
+import api from '../api';
 
 /**
  * CreateAccountScreen is a custom component that generates the createAccount screen for SecuroChat

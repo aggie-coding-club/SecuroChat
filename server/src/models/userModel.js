@@ -2,11 +2,11 @@
  * Defines database schema/model for users table
 */
 
-const database = require('../../database');
+const db = require('../../database');
 
 /**
  * Creates users table responsible of managing user information and data
- * @returns {boolean} Returns true is successful. Otherwise returns false
+ * @returns {Promise<boolean>} Returns promise of true is successful. Otherwise throws error
  */
 const createUserModel = async () => {
     try {
@@ -18,13 +18,12 @@ const createUserModel = async () => {
                 last_online TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
         `;
-        await database.query(queryText);
-        console.log('Users Table Created successfully');
+        await db.query(queryText);
         return true;
     } 
     catch (error) {
         console.log('Failed to create Users table');
-        return false;
+        throw error;
     }
 };
 
@@ -33,7 +32,7 @@ const createUserModel = async () => {
  * @param {string} userID - string representing UUID for userID
  * @param {string} username - string representing unique username for each user
  * @param {string} phone  - string representation of phone number
- * @returns {boolean} Returns true if successful. Otherwise returns false
+ * @returns {Promise<boolean>} Returns promise of true if successful. Otherwise throws error.
  */
 const createUserEntry = async (userID, username, phone) => {
     try {
@@ -43,20 +42,19 @@ const createUserEntry = async (userID, username, phone) => {
             ;
         `;
         const values = [userID, username, phone];
-        await database.query(queryText, values);
-        console.log('New user entry successfully created');
+        await db.query(queryText, values);
         return true;
     } 
     catch (error) {
         console.log('Failed to create new user entry');
-        return false;
+        throw error;
     }
 };
 
 /**
  * Query responsible for deleting entity in users table specified by userID
  * @param {string} userID - string representing unique UUID of user
- * @returns {boolean} Returns true if successful. Otherwise returns false
+ * @returns {Promise<boolean>} Returns promise of true if successful. Otherwise throws error
  */
 const deleteUserEntry = async (userID) => {
     try {
@@ -66,20 +64,19 @@ const deleteUserEntry = async (userID) => {
             ;
         `;
         const values = [userID];
-        await database.query(queryText, values);
-        console.log('User successfully deleted from users table');
+        await db.query(queryText, values);
         return true;
     } 
     catch (error) {
         console.log('Failed to delete user from users table');
-        return false;
+        throw error;
     }
 };
 
 /**
  * Query responsible for retrieving specific user's username
  * @param {string} userID - String representation of user's UUID
- * @returns {string} Returns the user's username as a string if successful. Otherwise returns empty string
+ * @returns {Promise<string>} Returns the user's username as a string if successful. Otherwise throws error
  */
 const getUsername = async (userID) => {
     try {
@@ -89,20 +86,42 @@ const getUsername = async (userID) => {
             ;
         `;
         const values = [userID];
-        const result = await database.query(queryText, values);
-        console.log('username successfully retrieved');
+        const result = await db.query(queryText, values);
         return result.rows[0].username.toString();
     }
     catch (error) {
         console.log('Failed to retrieve username');
-        return "";
+        throw error;
+    }
+};
+
+/**
+ * Query responsible for returning the specified usernames userID
+ * @param {string} username - string representing users unique username
+ * @returns {Promise<string>} Returns string representing user id of user if username found. Else throws error.
+ */
+const getUserID = async (username) => {
+    try {
+        const queryText = `
+            SELECT user_id FROM users 
+            WHERE username = $1
+            ;
+        `;
+        const values = [username];
+        const result = await db.query(queryText, values);
+        const userID = result.rows.length > 0 ? result.rows[0].user_id.toString() : '';
+        return userID;
+    } 
+    catch (error) {
+        console.log('Failed to retrieve userID');
+        throw error;
     }
 };
 
 /**
  * Query responsible for retrieving the timestamp at which user was last online
  * @param {string} userID - string representation of user's UUID
- * @returns {string} Returns timestamp of last time online as a string
+ * @returns {Promise<string>} Returns timestamp of last time online as a string. Otherwise throws error
  */
 const getLastOnline = async (userID) => {
     try {
@@ -112,13 +131,12 @@ const getLastOnline = async (userID) => {
             ;
         `;
         const values = [userID];
-        const result = await database.query(queryText, values);
-        console.log('Last online information successfully retrieved');
+        const result = await db.query(queryText, values);
         return result.rows[0].last_online.toString();
     }
     catch (error) {
         console.log('Failed to retrieve last online information');
-        return "";
+        throw error;
     }
 };
 
@@ -126,7 +144,7 @@ const getLastOnline = async (userID) => {
  * Query responsible for updating the specified user's username
  * @param {string} newUsername - String which username is being set to
  * @param {string} userID - String representation of user's UUID
- * @returns {boolean} Returns true if successful. Otherwise returns false.
+ * @returns {Promise<boolean>} Returns true if successful. Otherwise throws error
  */
 const setUsername = async (newUsername, userID) => {
     try {
@@ -136,13 +154,12 @@ const setUsername = async (newUsername, userID) => {
             ;
         `;
         const values = [newUsername, userID];
-        await database.query(queryText, values);
-        console.log('New username successfully set');
+        await db.query(queryText, values);
         return true;
     }
     catch (error) {
         console.log('New username failed at setting');
-        return false;
+        throw error;
     }
 };
 
@@ -150,7 +167,7 @@ const setUsername = async (newUsername, userID) => {
  * Query responsible for updating the specified users last timestamp online
  * @param {string} newLastOnline - new timestamp string to store in database for user
  * @param {string} userID - string representation of user's UUID
- * @returns {boolean} Returns true if successful. Otherwise returns false.
+ * @returns {Promise<boolean>} Returns true if successful. Otherwise throws error
  */
 const setLastOnline = async (newLastOnline, userID) => {
     try {
@@ -160,13 +177,59 @@ const setLastOnline = async (newLastOnline, userID) => {
             ;
         `;
         const values = [newLastOnline, userID];
-        await database.query(queryText, values);
-        console.log('Setting last online successful');
+        await db.query(queryText, values);
         return true;
     } 
     catch (error) {
         console.log('Setting last online failed');
-        return false;
+        throw error;
+    }
+};
+
+/**
+ * Query responsible for checking if the generated UUID is unique
+ * @param {string} candidateUUID - Generated UUID to be verified is unique
+ * @returns {Promise<boolean>} Returns true if candidateUUID is unique. Throws error otherwise
+ */
+const isUniqueUUID = async (candidateUUID) => {
+    try {
+        const queryText = `
+            SELECT user_id FROM users
+            WHERE user_id = $1
+            ;
+        `;
+        const values = [candidateUUID];
+        const result = await db.query(queryText, values);
+        const isUnique = result.rows.length > 0 ? false: true;
+        return isUnique;
+    }
+    catch (error) {
+        console.error('Error verifying uniqueness of generated UUID');
+        throw error;
+    }
+};
+
+/**
+ * 
+ * @param {string} candidateUsername 
+ * @param {string} candidatePhone 
+ * @returns {Promise<string>} Returns true if user information is unique. Else throws error
+ */
+const isUniqueUser = async (candidateUsername, candidatePhone) => {
+    try {
+        const queryText = `
+            SELECT user_id FROM users
+            WHERE user_id = $1 AND phone = $2
+            ;
+        `;
+        const values = [candidateUsername, candidatePhone];
+        const result = await db.query(queryText, values);
+        const isUnique = result.rows.length > 0 ? false : true;
+        return isUnique;
+    }
+    catch (error) {
+        console.error("Error checking uniqueness of user information");
+        throw error;
     }
 };
 
@@ -175,6 +238,9 @@ module.exports = {
     deleteUserEntry,
     getUsername,
     getLastOnline,
+    getUserID,
     setUsername,
     setLastOnline,
+    isUniqueUUID,
+    isUniqueUser,
 }
