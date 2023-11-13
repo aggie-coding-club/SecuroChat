@@ -22,7 +22,6 @@ const GeneralInput = (props) => {
     setInputValue(text);
     props.onInputChange(text); //sends data to parent component
   }
-
   const { inputStyle } = styles;
   return (
     <TextInput

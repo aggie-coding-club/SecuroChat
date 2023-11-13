@@ -9,6 +9,7 @@ import SignupScreen from './src/screens/SignupScreen';
 import CreateAccountScreen from './src/screens/CreateAccountScreen';
 import PhoneVerificationScreen from './src/screens/PhoneVerificationScreen';
 import LoginScreen from './src/screens/LoginScreen';
+import ForgotPasswordScreen from './src/screens/ForgotPasswordScreen';
 import ChatScreen from './src/screens/ChatScreen';
 
 
@@ -29,8 +30,9 @@ const App = () => {
       <Stack.Navigator screenOptions={{headerShown: false}}>
         <Stack.Screen name="Home" component={SignupScreen}/>
         <Stack.Screen name="SignUp" component={CreateAccountScreen}/>
-        <Stack.Screen name="PhoneVerification" component={PhoneVerificationScreen}/>
+        <Stack.Screen name="PhoneVerification" component={PhoneVerificationScreen} />
         <Stack.Screen name="LogIn" component={LoginScreen}/>
+        <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen}/>
         <Stack.Screen name="ChatScreen" component={ChatScreen}/>
       </Stack.Navigator>
     </NavigationContainer>
