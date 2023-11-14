@@ -66,7 +66,7 @@ const LoginScreen = ({ navigation }) => {
           onInputChange={handlePasswordChange}
         ></GeneralInput>
         <View style={finishButton}>
-          <GeneralButton content="Log In" />
+          <GeneralButton content="Log In" onPress={() => navigation.navigate("TabScreen")} />
         </View>
         <View style={passwordForgot}>
           <Text style={subText} onPress={() => navigation.navigate("ForgotPassword")}>Forgot Password?</Text>

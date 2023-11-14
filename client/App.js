@@ -21,21 +21,7 @@ import FriendScreen from './src/screens/FriendScreen';
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
-const AuthStack = () => {
-  return (
-    <Stack.Navigator screenOptions={{headerShown: false}}>
-      <Stack.Screen name="Home" component={SignupScreen}/>
-      <Stack.Screen name="SignUp" component={CreateAccountScreen}/>
-      <Stack.Screen name="PhoneVerification" component={PhoneVerificationScreen} />
-      <Stack.Screen name="LogIn" component={LoginScreen}/>
-      <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen}/>
-      <Stack.Screen name="ChatScreen" component={ChatScreen}/>
-      <Stack.Screen name="HomeScreen" component={HomeScreen} />
-    </Stack.Navigator>
-  );
-};
-
-const MainStack = () => {
+const TabScreen = () => {
   return (
     <Tab.Navigator screenOptions={{
       headerShown: false, 
@@ -50,7 +36,7 @@ const MainStack = () => {
         tabBarIcon: ({ focused }) => (<Ionicons name="people-outline" size={35} color={focused ? '#1E1E1E' : '#A2A2A2'} />)
       }} />
     </Tab.Navigator>
-  )
+  );
 };
 
 
@@ -63,13 +49,18 @@ const App = () => {
   if (!fontsLoaded && !fontError) {
     return null;
   }
-
-  // detecting whether user is logged in and authorized
-  let isLoggedIn = true;
-
+ 
   return (
     <NavigationContainer initialRouteName="Home">
-      {isLoggedIn ? <MainStack /> : <AuthStack />}
+      <Stack.Navigator screenOptions={{headerShown: false}}>
+        <Stack.Screen name="Home" component={SignupScreen}/>
+        <Stack.Screen name="SignUp" component={CreateAccountScreen}/>
+        <Stack.Screen name="PhoneVerification" component={PhoneVerificationScreen} />
+        <Stack.Screen name="LogIn" component={LoginScreen}/>
+        <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen}/>
+        <Stack.Screen name="ChatScreen" component={ChatScreen}/>
+        <Stack.Screen name="TabScreen" component={TabScreen} />
+    </Stack.Navigator>
     </NavigationContainer>
   );
 };

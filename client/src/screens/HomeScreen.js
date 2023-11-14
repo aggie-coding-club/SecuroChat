@@ -20,6 +20,9 @@ import { Ionicons } from '@expo/vector-icons';
  * Custom React Native component reso
  */
 const HomeScreen = ({ navigation }) => {
+    const navigateToStack = () => {
+        navigation.navigate("ChatScreen");
+    };
 
     // array of objects with properties: conversationName, lastMessageData, userInfo
     const [conversations, setConversations] = useState([]);
@@ -53,6 +56,7 @@ const HomeScreen = ({ navigation }) => {
                         lastMessageTime={"6:53 PM"}
                         numMessagesNotRead={4}
                         notSeen={true}
+                        onPress={navigateToStack}
                     />
                     <ConversationTab 
                         initials={'JB'}
@@ -65,6 +69,7 @@ const HomeScreen = ({ navigation }) => {
                         lastDate={'11/10/23'}
                         notSeen={false}
                         withinTheDay={true}
+                        onPress={navigateToStack}
                     />
                 </ScrollView>
             )}
