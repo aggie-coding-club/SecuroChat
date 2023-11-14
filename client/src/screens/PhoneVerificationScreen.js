@@ -24,7 +24,7 @@ import BackButton from "../components/BackButton";
  */
 const PhoneVerificationScreen = ({ navigation }) => {
   const navigateToNextScreen = () => {
-    navigation.navigate("ChatScreen");
+    navigation.navigate("TabScreen");
   }
 
   const {
