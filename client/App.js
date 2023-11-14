@@ -16,6 +16,7 @@ import ForgotPasswordScreen from './src/screens/ForgotPasswordScreen';
 import ChatScreen from './src/screens/ChatScreen';
 import HomeScreen from './src/screens/HomeScreen';
 import FriendScreen from './src/screens/FriendScreen';
+import AddFriendScreen from './src/screens/AddFriendScreen';
 
 
 const Stack = createNativeStackNavigator();
@@ -60,6 +61,7 @@ const App = () => {
         <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen}/>
         <Stack.Screen name="ChatScreen" component={ChatScreen}/>
         <Stack.Screen name="TabScreen" component={TabScreen} />
+        <Stack.Screen name="AddFriend" component={AddFriendScreen} />
     </Stack.Navigator>
     </NavigationContainer>
   );

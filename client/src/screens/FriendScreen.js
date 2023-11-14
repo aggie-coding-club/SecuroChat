@@ -15,7 +15,11 @@ import FriendHeader from '../components/FriendHeader';
 import FriendEntry from '../components/FriendEntry';
 import { Ionicons } from '@expo/vector-icons';
 
-const FriendScreen = () => {
+/**
+ * Custom React native component responsible for rendering friend screen for each respective user
+ * @param {object} navigation - navigation object acquired through react navigation for stack navigation
+ */
+const FriendScreen = ({ navigation }) => {
     // handling state arrays for user's friends/requests
     const [onlineFriends, setOnlineFriends] = useState([]);
     const [offlineFriends, setOfflineFriends] = useState([]);
@@ -34,20 +38,20 @@ const FriendScreen = () => {
                         <TouchableOpacity>
                             <Ionicons name="create-outline" size={30} color="black" />
                         </TouchableOpacity>
-                        <TouchableOpacity>
+                        <TouchableOpacity onPress={() => navigation.navigate("AddFriend")}>
                             <Ionicons name="ios-person-add-outline" size={30} color="black" />
                         </TouchableOpacity>
                     </View>
                 </View>
 
-                {(onlineFriends.length + offlineFriends.length + friendRequests.length) != 0 && (
+                {(onlineFriends.length + offlineFriends.length + friendRequests.length) === 0 && (
                     <View style={emptyFriends}>
                         <Text style={emptyText}>Add some friends and start</Text>
                         <Text style={emptyText}>chatting!</Text>
                     </View>
                 )} 
 
-                {(onlineFriends.length + offlineFriends.length + friendRequests.length === 0) && (
+                {(onlineFriends.length + offlineFriends.length + friendRequests.length > 0) && (
                     <ScrollView style={friendSection}>
                         <View style={requestSection}>
                             <FriendHeader headerTitle={'Requests'} amount={1} />

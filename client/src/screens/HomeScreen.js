@@ -17,7 +17,8 @@ import { Ionicons } from '@expo/vector-icons';
 
 
 /**
- * Custom React Native component reso
+ * Custom React Native component responsible for rendering the home chat screen for each respective user
+ * @param navigation - react navigation object used for stack navigation
  */
 const HomeScreen = ({ navigation }) => {
     const navigateToStack = () => {
@@ -45,7 +46,7 @@ const HomeScreen = ({ navigation }) => {
                     </TouchableOpacity>
                 </View>
             </View>
-            {conversations.length === 0 && (
+            {conversations.length > 0 && (
                 <ScrollView style={scrollSection}>
                     <ConversationTab 
                         initials={'BE'}
@@ -73,7 +74,7 @@ const HomeScreen = ({ navigation }) => {
                     />
                 </ScrollView>
             )}
-            {conversations.length < 0 && (
+            {conversations.length === 0 && (
                 <View style={emptySection}>
                     <Text style={emptyText}>Watch this space light up</Text>
                     <Text style={emptyText}>with messages as you start</Text>
