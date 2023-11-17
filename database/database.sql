@@ -11,7 +11,7 @@ CREATE TABLE users (
 CREATE TABLE authentication (
     user_id UUID PRIMARY KEY REFERENCES users(user_id),
     password_hash VARCHAR(255) NOT NULL,
-    public_key TEXT NOT NULL UNIQUE --Unique to each user. Public key is used for decryption
+    public_key TEXT NOT NULL UNIQUE 
 );
 
 

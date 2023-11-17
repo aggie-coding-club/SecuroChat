@@ -1,5 +1,5 @@
 /* database.js
- * Responsible for creating sequelize instance of the postgresql database
+ * Responsible for configuring and connecting to postgresql database
  */
 
 const { Pool } = require('pg');
