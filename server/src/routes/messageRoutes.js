@@ -1,5 +1,5 @@
-/*
-routes for messages
+/* messageRoutes.js
+ * Sets up API routes for sending and receiving messages
 */
 
 const express = require('express');

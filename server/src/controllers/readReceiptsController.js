@@ -1,3 +1,7 @@
+/* readReceiptsController.js
+ * responsible for sending and receiving creating and retrieving read receipts for messages
+*/
+
 const readReceiptsModel = require('../models/readReceiptsModel');
 
 const readReceiptsController = {

@@ -1,3 +1,7 @@
+/* readReceipts.js
+ * Configures API routes for readReceipt operations
+*/
+
 const express = require('express');
 const readReceiptsController = require('../controllers/readReceiptsController');
 const router = express.Router();

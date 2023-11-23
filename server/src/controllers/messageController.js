@@ -1,5 +1,7 @@
-/*
-functions for interacting with the messages table in the database
+/* messageController.js
+ * responsible for sending and receiving direct and group messages
+ * Stores messages in the postgresql database
+ * fetches message history for conversations
 */
 
 const MessageModel = require('../models/messageModel');

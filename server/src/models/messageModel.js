@@ -1,5 +1,5 @@
-/*
-functions for interacting with the messages table in the database
+/* messageModel.js
+ * Defines database schema/model for conversations table
 */
 
 const db = require('../../database.js');
