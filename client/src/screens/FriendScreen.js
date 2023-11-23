@@ -31,7 +31,7 @@ const FriendScreen = ({ navigation }) => {
                 <StatusBar></StatusBar>
                 <View style={header}>
                     <TouchableOpacity>
-                        <ProfilePicture initials="CA" color="#DB1CD3" bubbleSize={45}></ProfilePicture>
+                        <ProfilePicture initials="CA" color="#DB1CD3" bubbleSize={30}></ProfilePicture>
                     </TouchableOpacity>
                     <Text style={sectionTitle}>Friends</Text>
                     <View style={headerIcons}>

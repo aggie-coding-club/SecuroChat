@@ -33,6 +33,7 @@ const PORT = process.env.PORT || 3001;
 // Database connection
 db.connect();
 
+
 // Middleware
 app.use(express.json());
 app.use(cors());
