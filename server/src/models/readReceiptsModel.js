@@ -4,7 +4,7 @@
 
 const db = require('../../database');
 
-const ReadReceiptsModel = {
+const readReceiptsModel = {
     // Function to create a new read receipt
     createReadReceipt: async (messageId, userId) => {
         const queryText = `
@@ -35,4 +35,4 @@ const ReadReceiptsModel = {
     }
 };
 
-module.exports = ReadReceiptsModel;
+module.exports = readReceiptsModel;
