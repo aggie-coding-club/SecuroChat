@@ -58,7 +58,7 @@ const createMessageEntry = async (messageID, userID, messagesText, timeSent, con
  * @param {*} conversationID 
  * @returns message ID
  */
-const getMessageID = async (userID, messagesText, timeSent, conversationID){
+const getMessageID = async (userID, messagesText, timeSent, conversationID) =>{
     try{
         const queryText = `
             SELECT message_id FROM messages
@@ -81,7 +81,7 @@ const getMessageID = async (userID, messagesText, timeSent, conversationID){
  * @param {*} messageID 
  * @returns message text
  */
-const getMessagesText = async (messageID){
+const getMessagesText = async (messageID) =>{
     try{
         const queryText = `
             SELECT messages_text FROM messages
@@ -96,8 +96,12 @@ const getMessagesText = async (messageID){
         throw error;
     }
 };
-
-const getTimeSent = async (messageID){
+/**
+ * finds time sent of a message given the message ID
+ * @param {*} messageID 
+ * @returns time sent of a message
+ */
+const getTimeSent = async (messageID) =>{
     try{
         const queryText = `
             SELECT time_sent FROM messages
@@ -112,4 +116,53 @@ const getTimeSent = async (messageID){
         throw error;
     }
 };
+/**
+ * finds conversation ID given messageID
+ * @param {*} messageID 
+ * @returns conversation ID
+ */
+const getConversationID = async (messageID) =>{
+    try{
+        const queryText = `
+            SELECT conversation_id FROM messages
+            WHERE message_id = $1;
+        `;
+        const values = [messageID];
+        const result = await db.query(queryText, values);
+        return result.rows[0].conversation_id.toString();
+    }
+    catch(error){
+        console.log('Failed to find conversationID');
+        throw error;
+    }
+};
+/**
+ * deletes message given the message ID
+ * @param {*} messageID 
+ * @returns true if successful
+ */
+const deleteMessageEntry = async (messageID) =>{
+    try{
+        const queryText = `
+            DELETE FROM messages
+            WHERE message_id = $1;
+        `;
+        const values = [messageID];
+        await db.query(queryText, values);
+        return true;
+    }
+    catch(error){
+        console.log('Failed to delete message');
+        throw error;
+    }
+};
 
+module.exports = {
+    createMessageModel,
+    createMessageEntry,
+    getConversationID,
+    getMessageID,
+    getMessagesText,
+    getTimeSent,
+    deleteMessageEntry,
+}
