@@ -96,10 +96,34 @@ const getConversationID =  async (participantID, userID) => {
         throw error;
     }
 };
+/**
+ * finds participant ID given user ID and conversation ID
+ * @param {*} userID 
+ * @param {*} conversationID 
+ * @returns participant ID
+ */
+const getParticipantID =  async (userID, conversationID) => {
+    try {
+        const queryText = `
+            SELECT participant_id FROM userConversations
+            WHERE user_id = $1
+            AND conversation_id = $2;
+        `;
+        const values = [userID, conversationID];
+        const result = await db.query(queryText, values);
+        const participantID = result.rows[0].participant_id.toString();
+        return participantID;
+    }
+    catch (error){
+        console.log('Failed to retrieve participantID');
+        throw error;
+    }
+};
 
 module.exports = {
     createUserConversationsModel,
     createUserConversationsEntry,
     deleteUserConversationEntry,
     getConversationID,
+    getParticipantID,
 }
