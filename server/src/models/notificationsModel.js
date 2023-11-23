@@ -141,6 +141,26 @@ const getNotificationType = async (notificationID) => {
     }
 };
 
+const getMessageID = async (notificationID) => {
+    try{
+        const queryText = `
+            SELECT message_id FROM notifications
+            WHERE notification_id = $1;
+        `;
+        const values = [notificationID];
+        const result = await db.query(queryText, values);
+        return result.rows[0].message_id.toString();
+    }
+    catch(error){
+        console.log('Failed to find notification ID');
+        throw error;
+    }
+};
+/**
+ * deletes notification entry given the notification id
+ * @param {*} notificationID 
+ * @returns true if successful
+ */
 const deleteNotificationEntry = async (notificationID) => {
     try{
         const queryText = `
@@ -155,7 +175,8 @@ const deleteNotificationEntry = async (notificationID) => {
         console.log('Failed to delte notification entry');
         throw error;
     }
-}
+};
+
 module.exports = {
     createNotificationsModel,
     createNotificationsEntry,
@@ -163,4 +184,5 @@ module.exports = {
     getNotificationID,
     getNotificationTime,
     getNotificationType,
+    deleteNotificationEntry,
 }
