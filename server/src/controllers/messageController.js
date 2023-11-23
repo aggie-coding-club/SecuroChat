@@ -1,3 +1,7 @@
+/*
+functions for interacting with the messages table in the database
+*/
+
 const MessageModel = require('../models/messageModel');
 
 const messageController = {
