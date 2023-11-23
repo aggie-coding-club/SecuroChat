@@ -152,7 +152,7 @@ const getMessageID = async (notificationID) => {
         return result.rows[0].message_id.toString();
     }
     catch(error){
-        console.log('Failed to find notification ID');
+        console.log('Failed to find message ID');
         throw error;
     }
 };
@@ -185,4 +185,5 @@ module.exports = {
     getNotificationTime,
     getNotificationType,
     deleteNotificationEntry,
+    getMessageID,
 }
