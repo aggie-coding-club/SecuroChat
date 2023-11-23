@@ -140,6 +140,22 @@ const getNotificationType = async (notificationID) => {
         throw error;
     }
 };
+
+const deleteNotificationEntry = async (notificationID) => {
+    try{
+        const queryText = `
+            DELETE FROM notifications
+            WHERE notification_id = $1;
+        `;
+        const values = [notificationID];
+        await db.query(queryText, values);
+        return true;
+    }
+    catch(error){
+        console.log('Failed to delte notification entry');
+        throw error;
+    }
+}
 module.exports = {
     createNotificationsModel,
     createNotificationsEntry,
