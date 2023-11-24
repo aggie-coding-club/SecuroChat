@@ -1,8 +1,7 @@
 /* conversationModel.js
  * Defines database schema/model for conversations table
 */
-
-const db = require('../../database.js');
+const db = require('../../database');
 
 const ConversationModel = {
     // Create a new conversation
