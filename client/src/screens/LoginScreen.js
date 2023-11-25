@@ -8,7 +8,7 @@
  *  }
  */
 
-import React from "react";
+import React, {useState} from "react";
 import { SafeAreaView, View, Text, StyleSheet, StatusBar, KeyboardAvoidingView } from "react-native";
 import GeneralInput from "../components/GeneralInput";
 import GeneralButton from "../components/GeneralButton";
@@ -19,8 +19,19 @@ import BackButton from "../components/BackButton";
  * @param {object} navigation - Prop passed in from React Navigation to screen component
  */
 const LoginScreen = ({ navigation }) => {
+  // getting and managing states for login text inputs
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const handleUsernameChange = (value) => {
+    setUsername(value);
+  };
+  const handlePasswordChange = (value) => {
+    setPassword(value);
+  };
+
   const {
     fullPage,
+    backButton,
     introTop,
     introBottom,
     header,
@@ -34,7 +45,7 @@ const LoginScreen = ({ navigation }) => {
   return (
     <SafeAreaView style={fullPage}>
       <StatusBar></StatusBar>
-      <BackButton onPress={() => navigation.goBack()}></BackButton>
+      <BackButton style={backButton} onPress={() => navigation.goBack()}></BackButton>
       
       <View style={header}>
         <Text style={introTop}>Welcome back to</Text>
@@ -45,18 +56,20 @@ const LoginScreen = ({ navigation }) => {
           content="Username or Phone number"
           color="#1E1E1E"
           returnKeyType={"next"}
+          onInputChange={handleUsernameChange}
         ></GeneralInput>
         <GeneralInput
           content="Password"
           color="#1E1E1E"
           secureTextEntry={true}
           returnKeyType={"go"}
+          onInputChange={handlePasswordChange}
         ></GeneralInput>
         <View style={finishButton}>
-          <GeneralButton content="Log In" />
+          <GeneralButton content="Log In" onPress={() => navigation.navigate("TabScreen")} />
         </View>
         <View style={passwordForgot}>
-          <Text style={subText}>Forgot Password?</Text>
+          <Text style={subText} onPress={() => navigation.navigate("ForgotPassword")}>Forgot Password?</Text>
         </View>
         
       </View>
@@ -78,6 +91,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     alignItems: "center",
     justifyContent: "center",
+  },
+  backButton: {
+    alignSelf: "flex-start",
+    marginTop: 10,
+    marginLeft: 30,
   },
   header: {
     marginTop: 30,

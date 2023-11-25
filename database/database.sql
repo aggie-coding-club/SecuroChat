@@ -3,7 +3,6 @@ CREATE TABLE users (
     user_id UUID PRIMARY KEY,
     username VARCHAR(50) NOT NULL UNIQUE,
     phone VARCHAR(15) NOT NULL UNIQUE,
-    email VARCHAR(255) UNIQUE, --can be null. User only needs username, phone, and password to have an account
     online_status BOOLEAN DEFAULT FALSE,
     last_online TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -12,7 +11,7 @@ CREATE TABLE users (
 CREATE TABLE authentication (
     user_id UUID PRIMARY KEY REFERENCES users(user_id),
     password_hash VARCHAR(255) NOT NULL,
-    public_key TEXT NOT NULL UNIQUE --Unique to each user. Public key is used for decryption
+    public_key TEXT NOT NULL UNIQUE 
 );
 
 

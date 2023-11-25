@@ -23,8 +23,13 @@ import BackButton from "../components/BackButton";
  * @param {object} navigation - Prop passed in from React Navigation to screen component
  */
 const PhoneVerificationScreen = ({ navigation }) => {
+  const navigateToNextScreen = () => {
+    navigation.navigate("TabScreen");
+  }
+
   const {
     veriPhone,
+    backButton,
     enterCodeText,
     rootContainer,
     pageHeader,
@@ -35,7 +40,7 @@ const PhoneVerificationScreen = ({ navigation }) => {
   return (
     <SafeAreaView style={rootContainer}>
       <StatusBar></StatusBar>
-      <BackButton onPress={() => navigation.goBack()}></BackButton>
+      <BackButton style={backButton} onPress={() => navigation.goBack()}></BackButton>
       <View style={pageHeader}>
         <Text style={veriPhone}>Verify your Number</Text>
         <Text style={enterCodeText}>
@@ -44,7 +49,7 @@ const PhoneVerificationScreen = ({ navigation }) => {
       </View>
 
       <View style={containers}>
-        <NumberInput content="" color="#1E1E1E"></NumberInput>
+        <NumberInput content="" color="#1E1E1E" onConditionMet={navigateToNextScreen}></NumberInput>
         <Text style={loginInfo}>
           Didn't get a code? <Text style={inlineLink}>Resend the code</Text>
         </Text>
@@ -59,6 +64,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     alignItems: "center",
     justifyContent: "center",
+  },
+  backButton: {
+    alignSelf: "flex-start",
+    marginTop: 10,
+    marginLeft: 30,
   },
   pageHeader: {
     marginTop: 50,
