@@ -33,15 +33,13 @@ const PORT = process.env.PORT || 3001;
 // Database connection
 database.connect();
 
-
-
 // Middleware
 app.use(express.json());
 app.use(cors());
 
 // Routes
 app.use('/auth', authRoutes);
-app.use('/messages', messageRoutes);  // Adjusted to match your route path
+app.use('/messages', messageRoutes);  
 // app.use('/user', userRoutes);
 
 // Socket.IO
@@ -59,4 +57,8 @@ io.on('connection', (socket) => {
 // Start the server
 server.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
+});
+
+app.get('/', (req,res) => {
+  res.send("Server succesfully running");
 });

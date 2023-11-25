@@ -31,10 +31,11 @@ const CreateAccountScreen = ({ navigation }) => {
   };
 
   // handling state for input boxes
-  const [username, setUsername] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [usernameData, setUsername] = useState('');
+  const [phoneNumberData, setPhoneNumber] = useState('');
+  const [passwordData, setPassword] = useState('');
+  const [confirmPasswordData, setConfirmPassword] = useState('');
+  
   const handleUsernameChange = (value) => {
     setUsername(value);
   };
@@ -48,16 +49,18 @@ const CreateAccountScreen = ({ navigation }) => {
     setConfirmPassword(value);
   };
 
-
   const handleRegister = async () => {
     try {
-      const response = await api.post('http://localhost:3001/auth/register', {
-        username, 
-        phoneNumber, 
-        password,
-      }, { withCredentials: true });
+      const apiURL = 'http://192.168.0.25:3001/auth/register';
+      console.log("Before request is made");
+      const response = await api.post(apiURL, {
+        username: usernameData, 
+        phone: phoneNumberData, 
+        password: passwordData,
+        publicKey: 1,
+      });
 
-      console.log(response.data);
+      console.log(`This is the response of the request: ${response.data}`);
     }
     catch (error) {
       console.error('Error during registration: ', error);
@@ -65,7 +68,7 @@ const CreateAccountScreen = ({ navigation }) => {
   };
 
   const verifyPasswordMatch = () => {
-    return password === confirmPassword;
+    return passwordData === confirmPasswordData;
   };
 
   const handleRegisterPress = () => {

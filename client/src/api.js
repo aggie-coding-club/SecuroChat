@@ -1,13 +1,13 @@
 /* api.js
- * Initializes axios configuration to point to running backend server
+ * Initializes axios instance to reuse base configuration for multiple requests
  * Imported to necessary screens to create API calls
 */
 
 import Axios from 'axios';
 
 const api = Axios.create({
-    baseURL: 'http://localhost:3001', // Replace with actual backend URL
-    withCredentials: true,
+    // baseURL: 'http://localhost:3001', // Replace with actual backend URL
+    baseURL: 'http://192.168.0.25:3001',
 });
 
 export default api;
