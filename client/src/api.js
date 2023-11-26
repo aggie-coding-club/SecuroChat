@@ -5,9 +5,15 @@
 
 import Axios from 'axios';
 
+/*
+ * During development, am using local tunnel to host API
+ * local tunnel domain set to https://securochat-server.loca.lt/ with the following commands:
+ * lt --subdomain securochat-server --port 3001
+ * ensure local tunnel is installed globally before attempting to connect
+*/
+
 const api = Axios.create({
-    // baseURL: 'http://localhost:3001', // Replace with actual backend URL
-    baseURL: 'http://192.168.0.25:3001',
+    baseURL: 'http://localhost:3001', // Replace with actual backend URL
 });
 
 export default api;

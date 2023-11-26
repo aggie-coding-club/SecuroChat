@@ -51,7 +51,7 @@ const CreateAccountScreen = ({ navigation }) => {
 
   const handleRegister = async () => {
     try {
-      const apiURL = 'http://192.168.0.25:3001/auth/register';
+      const apiURL = 'http://localhost:3001/auth/register';
       console.log("Before request is made");
       const response = await api.post(apiURL, {
         username: usernameData, 
