@@ -156,6 +156,23 @@ const deleteMessageEntry = async (messageID) =>{
         throw error;
     }
 };
+/**
+ * gets most recent message
+ * @returns the text of most recent message
+ */
+const getRecentMessage = async () => {
+    try{
+        const queryText = `
+            SELECT * FROM messages ORDER BY message_id DESC LIMIT 1;
+        `;
+        const result = await db.query(queryText);
+        return result.rows[0].messages_text.toString();
+    }
+    catch(error){
+        console.log('Failed to get most recent message');
+        return false;
+    }
+}
 
 module.exports = {
     createMessageModel,
@@ -165,4 +182,5 @@ module.exports = {
     getMessagesText,
     getTimeSent,
     deleteMessageEntry,
+    getRecentMessage,
 }
