@@ -20,12 +20,17 @@ import GeneralInput from "../components/GeneralInput";
 import GeneralButton from "../components/GeneralButton";
 import BackButton from "../components/BackButton";
 import api from "../api";
+import { useAuth } from '../AuthContext';
+
 
 /**
  * LoginScreen is a custom component that generates the login screen for SecuroChat
  * @param {object} navigation - Prop passed in from React Navigation to screen component
  */
 const LoginScreen = ({ navigation }) => {
+  // setting useAuth hook for userAuthentication 
+  const { setJSONWebToken } = useAuth();
+
   // getting and managing states for login text inputs
   const [usernameData, setUsername] = useState("");
   const [passwordData, setPassword] = useState("");
@@ -45,7 +50,7 @@ const LoginScreen = ({ navigation }) => {
         password: passwordData,
       });
 
-      console.log(`This is the response of the request: ${response.data.token}`);
+      setJSONWebToken(response.data.token);
       return true;
     } 
     catch (error) {

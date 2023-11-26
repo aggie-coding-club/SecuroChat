@@ -15,12 +15,16 @@ import GeneralInput from "../components/GeneralInput";
 import GeneralButton from "../components/GeneralButton";
 import BackButton from "../components/BackButton";
 import api from '../api';
+import { useAuth } from '../AuthContext';
 
 /**
  * CreateAccountScreen is a custom component that generates the createAccount screen for SecuroChat
  * @param {object} navigation - Prop passed in from React Navigation to screen component
  */
 const CreateAccountScreen = ({ navigation }) => {
+  // setting useAuth hook for userAuthentication 
+  const { setJSONWebToken } = useAuth();
+
   //handling state deciding whether to show or hide pageHeader
   const [isHeaderHidden, setIsHeaderHidden] = useState(false);
   const hideHeader = () => {
@@ -60,7 +64,7 @@ const CreateAccountScreen = ({ navigation }) => {
         publicKey: publicKeyData,
       });
 
-      console.log(`This is the response of the request: ${response.data.token}`);
+      setJSONWebToken(response.data.token);
       return true;
     }
     catch (error) {
@@ -75,7 +79,7 @@ const CreateAccountScreen = ({ navigation }) => {
 
   const handleRegisterPress = async () => {
     if (verifyPasswordMatch() && (await handleRegister())){
-      navigation.navigate("PhoneVerification")
+      navigation.navigate("PhoneVerification");
     }
   };
 

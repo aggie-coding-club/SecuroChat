@@ -14,12 +14,16 @@ import ProfilePicture from '../components/ProfilePicture';
 import FriendHeader from '../components/FriendHeader';
 import FriendEntry from '../components/FriendEntry';
 import { Ionicons } from '@expo/vector-icons';
+import { useAuth } from '../AuthContext';
 
 /**
  * Custom React native component responsible for rendering friend screen for each respective user
  * @param {object} navigation - navigation object acquired through react navigation for stack navigation
  */
 const FriendScreen = ({ navigation }) => {
+    // retrieving userToken with useAuth
+    const { token } = useAuth(); 
+
     // handling state arrays for user's friends/requests
     const [onlineFriends, setOnlineFriends] = useState([]);
     const [offlineFriends, setOfflineFriends] = useState([]);
@@ -48,6 +52,7 @@ const FriendScreen = ({ navigation }) => {
                     <View style={emptyFriends}>
                         <Text style={emptyText}>Add some friends and start</Text>
                         <Text style={emptyText}>chatting!</Text>
+                        <Text>{token}</Text>
                     </View>
                 )} 
 
