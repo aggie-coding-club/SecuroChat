@@ -175,7 +175,7 @@ const setUserPublicKey = async (newPublicKey, userID) => {
 const authenticateUser = async (candidateUsername, candidatePassword) => {
     try {
         const queryText = `
-            SELECT users.user_id, users.username, authentication.hashed_password 
+            SELECT users.user_id, users.username, authentication.password_hash
             FROM users 
             JOIN authentication ON users.user_id = authentication.user_id 
             WHERE users.username = $1 
@@ -190,7 +190,7 @@ const authenticateUser = async (candidateUsername, candidatePassword) => {
         }
 
         //verifying that correct password inputted
-        const hashedPassword = result.rows[0].hashedPassword;
+        const hashedPassword = result.rows[0].password_hash;
         const passwordMatch = await passwordUtils.verifyPassword(candidatePassword, hashedPassword);
         return passwordMatch;
     }

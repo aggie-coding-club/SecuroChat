@@ -6,14 +6,13 @@
 import Axios from 'axios';
 
 /*
- * During development, am using local tunnel to host API
- * local tunnel domain set to https://securochat-server.loca.lt/ with the following commands:
- * lt --subdomain securochat-server --port 3001
- * ensure local tunnel is installed globally before attempting to connect
+ * During development, am using ngrok local tunneling to expose local host backend server
+ * ngrok http 3001
+ * ensure ngrok is installed globally before attempting to connect
 */
 
 const api = Axios.create({
-    baseURL: 'http://localhost:3001', // Replace with actual backend URL
+    baseURL: 'https://daa5-2601-2c2-600-d2c0-c0fb-11bd-5bb2-17ac.ngrok-free.app', // Replace with actual backend URL. If in development, replace with ngrok url
 });
 
 export default api;

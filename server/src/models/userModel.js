@@ -210,16 +210,16 @@ const isUniqueUUID = async (candidateUUID) => {
 };
 
 /**
- * 
- * @param {string} candidateUsername 
- * @param {string} candidatePhone 
+ * Query responsible for verifying if inputted username information already exists within database or not
+ * @param {string} candidateUsername - inputted candidate username as a string
+ * @param {string} candidatePhone - inputted candidate phone number as a string
  * @returns {Promise<string>} Returns true if user information is unique. Else throws error
  */
 const isUniqueUser = async (candidateUsername, candidatePhone) => {
     try {
         const queryText = `
             SELECT user_id FROM users
-            WHERE username = $1 AND phone = $2
+            WHERE username = $1 OR phone = $2
             ;
         `;
         const values = [candidateUsername, candidatePhone];

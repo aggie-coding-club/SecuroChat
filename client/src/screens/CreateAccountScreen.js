@@ -51,19 +51,21 @@ const CreateAccountScreen = ({ navigation }) => {
 
   const handleRegister = async () => {
     try {
-      const apiURL = 'http://localhost:3001/auth/register';
-      console.log("Before request is made");
+      const publicKeyData = Math.floor(Math.random() * 100000); // temp data to fill publicKey in database
+      const apiURL = '/auth/register';
       const response = await api.post(apiURL, {
         username: usernameData, 
         phone: phoneNumberData, 
         password: passwordData,
-        publicKey: 1,
+        publicKey: publicKeyData,
       });
 
-      console.log(`This is the response of the request: ${response.data}`);
+      console.log(`This is the response of the request: ${response.data.token}`);
+      return true;
     }
     catch (error) {
       console.error('Error during registration: ', error);
+      return false;
     }
   };
 
@@ -71,9 +73,8 @@ const CreateAccountScreen = ({ navigation }) => {
     return passwordData === confirmPasswordData;
   };
 
-  const handleRegisterPress = () => {
-    if (verifyPasswordMatch()){
-      handleRegister();
+  const handleRegisterPress = async () => {
+    if (verifyPasswordMatch() && (await handleRegister())){
       navigation.navigate("PhoneVerification")
     }
   };

@@ -8,11 +8,18 @@
  *  }
  */
 
-import React, {useState} from "react";
-import { SafeAreaView, View, Text, StyleSheet, StatusBar, KeyboardAvoidingView } from "react-native";
+import React, { useState } from "react";
+import {
+  SafeAreaView,
+  View,
+  Text,
+  StyleSheet,
+  StatusBar,
+} from "react-native";
 import GeneralInput from "../components/GeneralInput";
 import GeneralButton from "../components/GeneralButton";
 import BackButton from "../components/BackButton";
+import api from "../api";
 
 /**
  * LoginScreen is a custom component that generates the login screen for SecuroChat
@@ -20,13 +27,37 @@ import BackButton from "../components/BackButton";
  */
 const LoginScreen = ({ navigation }) => {
   // getting and managing states for login text inputs
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [usernameData, setUsername] = useState("");
+  const [passwordData, setPassword] = useState("");
+
   const handleUsernameChange = (value) => {
     setUsername(value);
   };
   const handlePasswordChange = (value) => {
     setPassword(value);
+  };
+
+  const handleLogin = async () => {
+    try {
+      const apiURL = 'auth/login';
+      const response = await api.post(apiURL, {
+        username: usernameData,
+        password: passwordData,
+      });
+
+      console.log(`This is the response of the request: ${response.data.token}`);
+      return true;
+    } 
+    catch (error) {
+      console.error('Error during login: ', error);
+      return false;
+    }
+  };
+
+  const handleLoginPress = async () => {
+    if (await handleLogin()) {
+      navigation.navigate("TabScreen");
+    }
   };
 
   const {
@@ -45,15 +76,18 @@ const LoginScreen = ({ navigation }) => {
   return (
     <SafeAreaView style={fullPage}>
       <StatusBar></StatusBar>
-      <BackButton style={backButton} onPress={() => navigation.goBack()}></BackButton>
-      
+      <BackButton
+        style={backButton}
+        onPress={() => navigation.goBack()}
+      ></BackButton>
+
       <View style={header}>
         <Text style={introTop}>Welcome back to</Text>
         <Text style={introBottom}>SecuroChat</Text>
       </View>
       <View style={infoSet}>
         <GeneralInput
-          content="Username or Phone number"
+          content="Username"
           color="#1E1E1E"
           returnKeyType={"next"}
           onInputChange={handleUsernameChange}
@@ -66,12 +100,19 @@ const LoginScreen = ({ navigation }) => {
           onInputChange={handlePasswordChange}
         ></GeneralInput>
         <View style={finishButton}>
-          <GeneralButton content="Log In" onPress={() => navigation.navigate("TabScreen")} />
+          <GeneralButton
+            content="Log In"
+            onPress={handleLoginPress}
+          />
         </View>
         <View style={passwordForgot}>
-          <Text style={subText} onPress={() => navigation.navigate("ForgotPassword")}>Forgot Password?</Text>
+          <Text
+            style={subText}
+            onPress={() => navigation.navigate("ForgotPassword")}
+          >
+            Forgot Password?
+          </Text>
         </View>
-        
       </View>
       <View>
         <Text style={bottomText}>
