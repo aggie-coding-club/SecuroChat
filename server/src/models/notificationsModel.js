@@ -172,10 +172,28 @@ const deleteNotificationEntry = async (notificationID) => {
         return true;
     }
     catch(error){
-        console.log('Failed to delte notification entry');
+        console.log('Failed to delete notification entry');
         throw error;
     }
 };
+/**
+ * gets most recent notifications
+ * @returns most recent notifications
+ */
+const getRecentNotifications = async () => {
+    try{
+        const queryText = `
+            SELECT * FROM notifications ORDER BY notification_id DESC LIMIT 1;
+        `;
+        const result = await db.query(queryText);
+        return result.rows[0].notification_text.toString();
+    }
+    catch(error){
+        console.log('Failed to get most recent notification');
+        return false;
+    }
+}
+
 
 module.exports = {
     createNotificationsModel,
@@ -186,4 +204,5 @@ module.exports = {
     getNotificationType,
     deleteNotificationEntry,
     getMessageID,
+    getRecentNotifications,
 }
