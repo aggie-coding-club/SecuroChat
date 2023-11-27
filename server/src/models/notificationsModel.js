@@ -177,8 +177,9 @@ const deleteNotificationEntry = async (notificationID) => {
     }
 };
 /**
- * gets most recent notifications
- * @returns most recent notifications
+ * gets recent notification that the given user got
+ * @param {*} userID represents user ID
+ * @returns the most recent notification text that the user got
  */
 const getRecentNotifications = async (userID) => {
     try{
