@@ -22,8 +22,8 @@ import { useAuth } from '../AuthContext';
  * @param {object} navigation - navigation object acquired through react navigation for stack navigation
  */
 const FriendScreen = ({ navigation }) => {
-    // retrieving userToken with useAuth
-    const { token } = useAuth(); 
+    // retrieving userToken and globalClientUsername with useAuth
+    const { token, globalClientUsername } = useAuth(); 
 
     // handling state arrays for user's friends/requests
     const [onlineFriends, setOnlineFriends] = useState([]);
@@ -71,7 +71,7 @@ const FriendScreen = ({ navigation }) => {
                 <StatusBar></StatusBar>
                 <View style={header}>
                     <TouchableOpacity>
-                        <ProfilePicture initials="CA" color="#DB1CD3" bubbleSize={30}></ProfilePicture>
+                        <ProfilePicture initials={globalClientUsername.substring(0,2).toUpperCase()} color={"#DB1CD3"} bubbleSize={30}></ProfilePicture>
                     </TouchableOpacity>
                     <Text style={sectionTitle}>Friends</Text>
                     <View style={headerIcons}>

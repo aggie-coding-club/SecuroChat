@@ -23,7 +23,7 @@ import { useAuth } from '../AuthContext';
  */
 const CreateAccountScreen = ({ navigation }) => {
   // setting useAuth hook for userAuthentication 
-  const { setJSONWebToken } = useAuth();
+  const { setJSONWebToken, setGlobalClientUsername } = useAuth();
 
   //handling state deciding whether to show or hide pageHeader
   const [isHeaderHidden, setIsHeaderHidden] = useState(false);
@@ -65,6 +65,7 @@ const CreateAccountScreen = ({ navigation }) => {
       });
 
       setJSONWebToken(response.data.token);
+      setGlobalClientUsername(usernameData);
       return true;
     }
     catch (error) {

@@ -10,13 +10,23 @@ const friendModel = require('../models/friendModel');
 // controller for sending friend request
 const sendFriendRequest = async (req, res) => {
     try {
-        const { recipientUsername, token } = req.body;
+        const tokenHeader = req.header('Authorization');
+        const token = tokenHeader.split(' ')[1]; // obtaining the actual token
+        if (!token) {
+            // handles the case where the token is not present
+            return res.status(401).json({ error: 'Unauthorized: JSON Web Token missing' });
+        }
 
         // verifying json web token and obtaining sender userID
         const decodedJWT = jwt.verify(token, process.env.JWT_SECRET);
 
+        const { recipientUsername} = req.body;
+
         // retrieving the userID from recipientUsername 
         const recipientID = await userModel.getUserID(recipientUsername);
+        if (!recipientID) {
+            return res.status(404).json({error: 'inputted username does not exist'});
+        }
 
         // creating friend request
         await friendModel.sendFriendRequest(recipientID, decodedJWT.userID);

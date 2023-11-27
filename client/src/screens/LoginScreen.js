@@ -29,7 +29,7 @@ import { useAuth } from '../AuthContext';
  */
 const LoginScreen = ({ navigation }) => {
   // setting useAuth hook for userAuthentication 
-  const { setJSONWebToken } = useAuth();
+  const { setJSONWebToken, setGlobalClientUsername } = useAuth();
 
   // getting and managing states for login text inputs
   const [usernameData, setUsername] = useState("");
@@ -51,6 +51,7 @@ const LoginScreen = ({ navigation }) => {
       });
 
       setJSONWebToken(response.data.token);
+      setGlobalClientUsername(usernameData);
       return true;
     } 
     catch (error) {
