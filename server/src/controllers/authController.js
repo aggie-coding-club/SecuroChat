@@ -59,7 +59,7 @@ const login = async (req, res) => {
 
         // generating json web token for authenticated user
         const user_id = await userModel.getUserID(username);
-        const token = jwt.sign({ userID: user_id}, process.env.JWT_SECRET);
+        const token = jwt.sign({ userID: user_id }, process.env.JWT_SECRET);
 
         // sending the toekn to client in response
         res.json({ token })

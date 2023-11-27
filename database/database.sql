@@ -21,7 +21,7 @@ CREATE TABLE friends (
     friendship_id SERIAL PRIMARY KEY, --made SERIAL to increase by default
     user_id UUID NOT NULL REFERENCES users(user_id),
     friend_id UUID NOT NULL REFERENCES users(user_id),
-    status VARCHAR(16) NOT NULL,
+    status BOOLEAN NOT NULL,
     UNIQUE(user_id, friend_id) --ensures that only unique tuples of (user_id, friend_id) can be added
 );
 
