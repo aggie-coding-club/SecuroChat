@@ -207,4 +207,5 @@ module.exports = {
     getTimeSent,
     deleteMessageEntry,
     getRecentMessage,
+    clearAllMessages,
 }
