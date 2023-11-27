@@ -157,15 +157,19 @@ const deleteMessageEntry = async (messageID) =>{
     }
 };
 /**
- * gets most recent message
- * @returns the text of most recent message
+ * gets most recent message that the given user got
+ * @param {*} userID represents user ID
+ * @returns the text of most recent message that the user got
  */
-const getRecentMessage = async () => {
+const getRecentMessage = async (userID) => {
     try{
         const queryText = `
-            SELECT * FROM messages ORDER BY message_id DESC LIMIT 1;
+            SELECT * FROM messages 
+            WHERE user_id = $1
+            ORDER BY message_id DESC LIMIT 1;
         `;
-        const result = await db.query(queryText);
+        const values = [userID];
+        const result = await db.query(queryText, values);
         return result.rows[0].messages_text.toString();
     }
     catch(error){
