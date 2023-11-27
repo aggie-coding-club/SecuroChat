@@ -180,12 +180,15 @@ const deleteNotificationEntry = async (notificationID) => {
  * gets most recent notifications
  * @returns most recent notifications
  */
-const getRecentNotifications = async () => {
+const getRecentNotifications = async (userID) => {
     try{
         const queryText = `
-            SELECT * FROM notifications ORDER BY notification_id DESC LIMIT 1;
+            SELECT * FROM notifications
+            WHERE user_id = $1
+            ORDER BY notification_id DESC LIMIT 1;
         `;
-        const result = await db.query(queryText);
+        const values = [userID];
+        const result = await db.query(queryText, values);
         return result.rows[0].notification_text.toString();
     }
     catch(error){
