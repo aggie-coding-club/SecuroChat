@@ -48,11 +48,10 @@ const FriendScreen = ({ navigation }) => {
                     </View>
                 </View>
 
-                {(onlineFriends.length + offlineFriends.length + friendRequests.length) === 0 && (
+                {(onlineFriends.length + offlineFriends.length + friendRequests.length) ===  0 && (
                     <View style={emptyFriends}>
                         <Text style={emptyText}>Add some friends and start</Text>
                         <Text style={emptyText}>chatting!</Text>
-                        <Text>{token}</Text>
                     </View>
                 )} 
 
