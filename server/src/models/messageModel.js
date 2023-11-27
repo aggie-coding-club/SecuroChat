@@ -177,6 +177,26 @@ const getRecentMessage = async (userID) => {
         return false;
     }
 }
+/**
+ * deletes all of the users messages
+ * @param {*} userID represents userID
+ * @returns true if successful
+ */
+const clearAllMessages = async (userID) => {
+    try{
+        const queryText = `
+            DELETE FROM messages 
+            WHERE user_id = $1;
+        `;
+        const values = [userID];
+        await db.query(queryText, values);
+        return true;
+    }
+    catch(error){
+        console.log('Failed to clear all messages');
+        return false;
+    }
+}
 
 module.exports = {
     createMessageModel,
