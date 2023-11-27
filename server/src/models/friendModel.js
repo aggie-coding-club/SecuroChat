@@ -125,7 +125,7 @@ const rejectFriendRequest = async (recipientUserID, senderUserID) => {
         // deletes outstanding request on recipient side of database as request is not present on sender side
         const queryText = `
             DELETE FROM friends
-            WHERE user_id = $1 AND friend_id = senderUserId
+            WHERE user_id = $1 AND friend_id = $2
             ;
         `;
         const values = [recipientUserID, senderUserID];
@@ -148,27 +148,37 @@ const acceptFriendRequest = async (recipientUserID, senderUserID) => {
     try {
         // adds sender and recipient as friends on both the recipient side and the sender side of the friends table within the database
         // uses transaction group to group multiple sql statements as we need one for the update of the already existing recipient entry status and one for the insertion for the sender
-        const queryText = `
-            BEGIN;
 
-            -- updating the entry in friends table corresponding to the recipient
+        // beginning the query transaction
+        await db.query(`BEGIN`);
+
+        // writing query messages and values
+        const updateQueryText = `
             UPDATE friends
             SET status = true
             WHERE user_id = $1 AND friend_id = $2
             ;
-
-            -- inserting new entry into friends table corresponding to the sender
-            INSERT INTO friends (user_id, friends_id, status)
+        `;
+        const postQueryText = `
+            INSERT INTO friends (user_id, friend_id, status)
             VALUES ($2, $1, true)
             ;
-
-            COMMIT;
         `;
         const values = [recipientUserID, senderUserID];
-        await db.query(queryText, values);
+
+        // updating existing entry in the friends table belongign to the recipient
+        await db.query(updateQueryText, values);
+
+        // inserting a new entry in the friends table belonging to the sender
+        await db.query(postQueryText, values);
+
+        // committing the transaction
+        await db.query(`COMMIT`);
         return true;
     } 
     catch (error) {
+        // rolling query back if an error occurs
+        await db.query(`ROLLBACK`);
         console.log(`Failed to accept friend request`);
         throw error;
     }

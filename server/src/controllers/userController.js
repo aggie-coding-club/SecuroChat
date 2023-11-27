@@ -64,16 +64,30 @@ const fetchFriendData = async (req, res) => {
 // controller for rejecting a received friend request
 const rejectFriendRequest = async (req, res) => {
     try {
-        const { recipientID, token } = req.body;
+        const tokenHeader = req.header('Authorization');
+        const token = tokenHeader.split(' ')[1];
+
+        if (!token) {
+            // handles the case where the token is not present
+            return res.status(401).json({ error: 'Unauthorized: JSON Web Token missing' });
+        }
+
+        const { senderUsername } = req.body;
+
+        // retrieving ID from senderUsername
+        const senderUserID = await userModel.getUserID(senderUsername);
+        if (!senderUserID) {
+            return res.status(404).json({error: 'sender does not exist'});
+        }
 
         // verifying json web token and obtaining sender userID
         const decodedJWT = jwt.verify(token, process.env.JWT_SECRET);
-    
-        await friendModel.rejectFriendRequest(recipientID, decodedJWT.userID);
+        await friendModel.rejectFriendRequest(decodedJWT.userID, senderUserID);
+
         res.status(200).json({success: true, message: 'successfully rejected friend request'});
     } 
     catch (error) {
-        console.log(`Error occured rejecting friend request`);
+        console.log(`Error occured while rejecting friend request`);
         res.status(500).json({ error: `Internal server error.`});
     }
 };
@@ -81,12 +95,25 @@ const rejectFriendRequest = async (req, res) => {
 // controller for accepting a received friend request
 const acceptFriendRequest = async (req, res) => {
     try {
-        const { recipientID, token } = req.body;
+        const tokenHeader = req.header('Authorization');
+        const token = tokenHeader.split(' ')[1];
+        if (!token) {
+            // handles the case where the token is not present
+            return res.status(401).json({ error: 'Unauthorized: JSON Web Token missing' });
+        }
+        
+        const { senderUsername } = req.body;
+        // retrieving ID from senderUsername
+        const senderUserID = await userModel.getUserID(senderUsername);
+        if (!senderUserID) {
+            return res.status(404).json({error: 'sender does not exist'});
+        }
 
         // verifying json web token and obtaining sender userID
         const decodedJWT = jwt.verify(token, process.env.JWT_SECRET);
-
-        await friendModel.acceptFriendRequest(recipientID, decodedJWT.userID);
+        console.log(decodedJWT.userID);
+        console.log(senderUserID);
+        await friendModel.acceptFriendRequest(decodedJWT.userID, senderUserID);
         res.status(200).json({success: true, message: 'successfully accepted friend request'});
     } 
     catch (error) {
