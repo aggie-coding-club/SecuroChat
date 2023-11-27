@@ -19,23 +19,101 @@ import ExpandableTextBox from "../components/ExpandableTextBox";
 import ChatMessage from "../components/ChatMessage";
 import { AntDesign } from '@expo/vector-icons'; 
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useEffect, useRef } from "react";
+import api from "../api";
 
 const ChatScreen = ({ navigation }) => {
   const [messages, setMessages] = useState([]);
   const [messageText, setMessageText] = useState('');
+  const ws = useRef(null);
+
+  useEffect(() => {
+    // Initialize WebSocket connection
+    ws.current = new WebSocket('ws://your-websocket-server-url'); // Replace with your WebSocket server URL
+    ws.current.onopen = () => {
+      console.log('WebSocket Connected');
+    };
+    ws.current.onmessage = (e) => {
+      const message = JSON.parse(e.data);
+      if (message.type === 'newMessage') {
+        setMessages((prevMessages) => [...prevMessages, message.payload]);
+      }
+    };
+    ws.current.onerror = (e) => {
+      console.error(e.message);
+    };
+    ws.current.onclose = (e) => {
+      console.log('WebSocket Disconnected', e.reason);
+    };
+
+    const fetchChatHIstory = async () => {
+      try {
+        const res = await api.get('/messages/conversation/:conversationId');
+        setMessages(res.data);
+      }
+      catch (error) {
+        console.error('Error fetching chat history:', error);
+      }
+    };
+  
+    fetchChatHIstory();
+
+    // Clean up WebSocket connection
+    return () => {
+      if (ws.current) {
+        ws.current.close();
+      }
+    };
+  }, []);
 
   const handleTextChange = (text) => {
     setMessageText(text);
   };
 
-  const handleMessageSubmit = () => {
-    if (messageText.trim() !== '') {
-        const newMessage = { text: messageText, sender: 'user' };
-        setMessages([...messages, newMessage]);
-        setMessageText('');
+  ws.current.onmessage = (e) => {
+    const event = JSON.parse(e.data);
+    switch (event.type) {
+      case 'newMessage':
+        // handle new message
+        break;
+      case 'userTyping':
+        // handle user typing
+        break;
+      // ... other event types
+      case 'messageRead':
+        // handle message read
+        break;
+      default:
+        break;
     }
   };
 
+  const handleMessageSubmit = () => {
+    if (messageText.trim() !== '') {
+      // Construct a message object 
+      const newMessage = { text: messageText, sender: 'user' };
+      
+      // Send the message object to the server
+      ws.current.send(JSON.stringify({
+        type: 'sendMessage',
+        payload: newMessage
+      }));
+
+      // Add the message to local state to display it in the UI
+      setMessages([...messages, newMessage]);
+      setMessageText('');
+    }
+  };
+
+  const handleMessageRead = (messageId) => {
+    // emit receipt event to server
+    ws.current.send(JSON.stringify({
+      type: 'messageRead',
+      payload: { messageId: messageId, userId: 'user' } // replace with actual userId
+    }));
+  };
+
+  
 
 
   const { rootContainer, header, headerSection, messageSection, sendSection, sendContent } = styles;
