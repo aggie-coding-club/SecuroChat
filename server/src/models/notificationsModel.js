@@ -197,6 +197,26 @@ const getRecentNotifications = async (userID) => {
         return false;
     }
 }
+/**
+ * clears all notifications that the userID has
+ * @param {*} userID represents user ID
+ * @returns true if successful
+ */
+const clearAllNotifications = async (userID) => {
+    try{
+        const queryText = `
+            DELETE FROM notifications 
+            WHERE user_id = $1;
+        `;
+        const values = [userID];
+        await db.query(queryText, values);
+        return true;
+    }
+    catch(error){
+        console.log('Failed to clear all notifications');
+        return false;
+    }
+}
 
 
 module.exports = {
@@ -209,4 +229,5 @@ module.exports = {
     deleteNotificationEntry,
     getMessageID,
     getRecentNotifications,
+    clearAllNotifications,
 }
