@@ -53,6 +53,17 @@ const FriendScreen = ({ navigation }) => {
     // initializing friend data for client upon component mount with useEffect
     useEffect(() => {
         getUserFriendData();
+
+        // setting up periodic updates with set Interval
+        const intervalID = setInterval(() => {
+            getUserFriendData();
+        }, 10000); // fetches updates every 30 seconds
+
+        // cleanup function preventing memory leaks
+        return () => {
+            clearInterval(intervalID);
+        };
+
     }, []);
 
     // function responsible for choosing random color

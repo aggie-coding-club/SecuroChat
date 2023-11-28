@@ -111,8 +111,6 @@ const acceptFriendRequest = async (req, res) => {
 
         // verifying json web token and obtaining sender userID
         const decodedJWT = jwt.verify(token, process.env.JWT_SECRET);
-        console.log(decodedJWT.userID);
-        console.log(senderUserID);
         await friendModel.acceptFriendRequest(decodedJWT.userID, senderUserID);
         res.status(200).json({success: true, message: 'successfully accepted friend request'});
     } 
