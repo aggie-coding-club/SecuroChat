@@ -6,12 +6,12 @@ const db = require('../../database');
 const ConversationModel = {
     // Create a new conversation
     createConversation: async (conversationType, conversationTitle, creatorId) => {
-        const queryText = `
-            INSERT INTO conversations(conversation_type, conversation_title, creator_id)
-            VALUES($1, $2, $3)
-            RETURNING *;
-        `;
         try {
+            const queryText = `
+                INSERT INTO conversations(conversation_type, conversation_title, creator_id)
+                VALUES($1, $2, $3)
+                RETURNING *;
+            `;
             const res = await db.query(queryText, [conversationType, conversationTitle, creatorId]);
             return res.rows[0];
         } catch (error) {

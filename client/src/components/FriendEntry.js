@@ -71,7 +71,7 @@ const FriendEntry = (props) => {
             <ProfilePicture 
                 initials={props.initials}
                 color={props.color}
-                bubbleSize={props.bubbleSize}
+                bubbleSize={45}
             />
             <Text style={containerText}>{props.username}</Text>
 

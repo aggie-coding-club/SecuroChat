@@ -37,7 +37,6 @@ const ChatScreen = ({ navigation }) => {
   };
 
 
-
   const { rootContainer, header, headerSection, messageSection, sendSection, sendContent } = styles;
   return (
     <SafeAreaView style={rootContainer}>
@@ -45,8 +44,8 @@ const ChatScreen = ({ navigation }) => {
       <View style={header}>
         <BackButton onPress={() => navigation.goBack()}></BackButton>
         <View style={headerSection}>
-          <ProfilePicture initials="CA" color="#DB1CD3" bubbleSize={30}></ProfilePicture>
-          <Text>carlosra0345</Text>
+          <ProfilePicture initials="OL" color="#DB1CD3" bubbleSize={30}></ProfilePicture>
+          <Text>oliverstalker</Text>
         </View>
         <View style={headerSection}>
           <ActivityIndicator isOnline={true}></ActivityIndicator>

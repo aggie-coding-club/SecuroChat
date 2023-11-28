@@ -35,12 +35,12 @@ CREATE TABLE users_conversations (
 -- Create the conversations table
 CREATE TABLE conversations (
     conversation_id SERIAL PRIMARY KEY,
-    conversation_type VARCHAR(16) NOT NULL,
     conversation_title VARCHAR(32) NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     creator_id UUID NOT NULL REFERENCES users(user_id),
-    last_message_id INT NOT NULL REFERENCES messages(message_id)
+    last_message_id INT NOT NULL REFERENCES messages(message_id),
+    is_direct_message BOOLEAN NOT NULL
 );
 
 -- Create the participants table

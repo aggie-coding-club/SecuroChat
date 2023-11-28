@@ -12,7 +12,7 @@ import Axios from 'axios';
 */
 
 const api = Axios.create({
-    baseURL: 'https://0f16-165-91-13-253.ngrok-free.app', // Replace with actual backend URL. If in development, replace with ngrok url
+    baseURL: 'https://9189-2605-ad80-31-e055-7449-bd3e-9116-2dfc.ngrok-free.app', // Replace with actual backend URL. If in development, replace with ngrok url
 });
 
 export default api;

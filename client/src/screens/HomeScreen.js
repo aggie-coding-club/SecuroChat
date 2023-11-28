@@ -14,6 +14,8 @@ import ProfilePicture from '../components/ProfilePicture';
 import ConversationTab from '../components/ConversationTab';
 import { Feather } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
+import api from '../api';
+import { useAuth } from '../AuthContext';
 
 
 /**
@@ -21,6 +23,9 @@ import { Ionicons } from '@expo/vector-icons';
  * @param navigation - react navigation object used for stack navigation
  */
 const HomeScreen = ({ navigation }) => {
+    // retrieving userToken and globalClientUsername with useAuth
+    const { token, globalClientUsername } = useAuth(); 
+
     const navigateToStack = () => {
         navigation.navigate("ChatScreen");
     };
@@ -34,25 +39,25 @@ const HomeScreen = ({ navigation }) => {
             <StatusBar></StatusBar>
             <View style={header}>
                 <TouchableOpacity>
-                    <ProfilePicture initials="CA" color="#DB1CD3" bubbleSize={30}></ProfilePicture>
+                    <ProfilePicture initials={globalClientUsername.substring(0,2).toUpperCase()} color="#DB1CD3" bubbleSize={30}></ProfilePicture>
                 </TouchableOpacity>
                 <Text style={sectionTitle}>Chats</Text>
                 <View style={headerIcons}>
                     <TouchableOpacity>
                         <Feather name="camera" size={28} color="black" />
                     </TouchableOpacity>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={() => navigation.navigate("AddConversation")}>
                         <Ionicons name="create-outline" size={30} color="black" />
                     </TouchableOpacity>
                 </View>
             </View>
-            {conversations.length > 0 && (
+            {conversations.length === 0 && (
                 <ScrollView style={scrollSection}>
                     <ConversationTab 
-                        initials={'BE'}
+                        initials={'OL'}
                         color={'#42DB1C'} 
                         bubbleSize={45}  
-                        title={"BobEast12"}
+                        title={"oliverstalker"}
                         prevMessage={"I wanted to say that SecuroChat is so cool! I really want to use it..."}
                         lastMessageTime={"6:53 PM"}
                         numMessagesNotRead={4}
@@ -60,10 +65,10 @@ const HomeScreen = ({ navigation }) => {
                         onPress={navigateToStack}
                     />
                     <ConversationTab 
-                        initials={'JB'}
+                        initials={'EM'}
                         color={'#DB1C3F'} 
                         bubbleSize={45}  
-                        title={"JohnnyBravo"}
+                        title={"emilionagel"}
                         prevMessage={"Yo How you doing. What you doing later..."}
                         lastMessageTime={"6:30 PM"}
                         numMessagesNotRead={2}
@@ -74,7 +79,7 @@ const HomeScreen = ({ navigation }) => {
                     />
                 </ScrollView>
             )}
-            {conversations.length === 0 && (
+            {conversations.length > 0 && (
                 <View style={emptySection}>
                     <Text style={emptyText}>Watch this space light up</Text>
                     <Text style={emptyText}>with messages as you start</Text>
