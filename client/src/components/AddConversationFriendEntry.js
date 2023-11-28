@@ -6,10 +6,11 @@
  * }
 */
 
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import React from 'react';
+import { View, Text, StyleSheet } from "react-native";
 import ProfilePicture from '../components/ProfilePicture';
 import { Entypo } from '@expo/vector-icons';
+import { AntDesign } from '@expo/vector-icons';
 
 /**
  * componenet responsible for rendering item in list within the AddConversationScreen
@@ -21,7 +22,7 @@ import { Entypo } from '@expo/vector-icons';
  * @property {boolean} props.isSelected - boolean representing whether the user is selected in AddConversationScreen
  */
 const AddConversationFriendEntry = (props) => {
-    const { container, mainSection, circleStyling, entryText } = styles;
+    const { container, mainSection, entryText, selectionContainer } = styles;
     return (
         <View style={container}>
             <View style={mainSection}>
@@ -32,9 +33,10 @@ const AddConversationFriendEntry = (props) => {
                 />
                 <Text style={entryText}>{props.username}</Text>
             </View>
-            <TouchableOpacity>
-                <Entypo name="circle" size={28} style={circleStyling} />
-            </TouchableOpacity>
+            <View style={selectionContainer}>
+                {props.isSelected === false && (<Entypo name="circle" size={24} color={'#E6E6E6'} />)}
+                {props.isSelected === true && (<AntDesign name="checkcircle" size={24} color={'#0078D4'} />)}
+            </View>
         </View>
     );
 };
@@ -45,20 +47,21 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: 35,
+        padding: 12,
     },
     mainSection: {
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 10,
-    },
-    circleStyling: {
-        color: '#E6E6E6',
+        gap: 12,
+        marginLeft: 15,
     },
     entryText: {
         color: '#1E1E1E',
         fontFamily: 'RobotoCondensed_400Regular',
         fontSize: 22,
+    },
+    selectionContainer: {
+        marginRight: 15,
     }
 });
 
