@@ -2,8 +2,8 @@
  * This is a custom React component generating the SelectedUser in the addConversationScreen
 */
 
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, StatusBar, TouchableOpacity, ScrollView } from "react-native";
+import React from 'react';
+import { View, Text, StyleSheet } from "react-native";
 
 /**
  * React native component responsible for rendering selected user within addConversation screen
@@ -25,6 +25,8 @@ const styles = StyleSheet.create({
         width: 120,
         padding: 4,
         borderRadius: 12,
+        marginLeft: 8,
+        marginRight: 8,
     },
     textStyle: {
         fontFamily: 'RobotoCondensed_400Regular',
