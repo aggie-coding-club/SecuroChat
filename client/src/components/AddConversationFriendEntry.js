@@ -6,7 +6,7 @@
  * }
 */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import ProfilePicture from '../components/ProfilePicture';
 import { Entypo } from '@expo/vector-icons';
@@ -26,21 +26,22 @@ const AddConversationFriendEntry = (props) => {
     const [isSelected, setIsSelected] = useState(false);
 
     // function responsible for sending altered
-    const transferData = (newIsSelected) => {
+    const transferData = () => {
         const data = {
             entryUsername: props.username,
-            isSelected: newIsSelected,
+            isSelected: isSelected,
         };
         props.sendToParent(data);
     };
 
+    // useEffect used to ensure that transferData is not executed until async change with setIsSelected is completed
+    useEffect(() => {
+        transferData();
+    }, [isSelected]);
+
     // function responsible for handling ConversationFriendEntry
     const handleFriendEntryPress = () => {
-        setIsSelected((prevIsSelected) => {
-            const newIsSelected = !prevIsSelected;
-            transferData(newIsSelected);
-            return newIsSelected;
-        });
+        setIsSelected(!isSelected);
     };
 
     const { container, mainSection, entryText, selectionContainer } = styles;

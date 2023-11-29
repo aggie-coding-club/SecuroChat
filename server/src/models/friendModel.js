@@ -78,6 +78,11 @@ const getUserFriendData = async (userID) => {
             }
         }
 
+        // sorting arrays in increasing order
+        friendRequests.sort((a, b) => a.friendUsername.localeCompare(b.friendUsername));
+        onlineFriends.sort((a, b) => a.friendUsername.localeCompare(b.friendUsername));
+        offlineFriends.sort((a, b) => a.friendUsername.localeCompare(b.friendUsername));
+
         return {
             friendRequests,
             onlineFriends,
@@ -87,6 +92,40 @@ const getUserFriendData = async (userID) => {
     catch (error) {
         console.log(`Failed to retrieve users friend data`);
         throw error;
+    }
+};
+
+/**
+ * Query responsible for fetching all of the specified users current friend's usernames
+ * @param {string} userID - string depicting users ID
+ * @returns {Promise<Array>} - returns promise of an array 
+ */
+const getAllCurrentUserFriends = async (userID) => {
+    try {
+        const queryText = `
+            SELECT users.username AS friend_username
+            FROM friends
+            JOIN users ON friends.friend_id = users.user_id
+            WHERE friends.user_id = $1 AND friends.status = true
+            ;
+        `;
+        const values = [userID];
+        const result = await db.query(queryText, values);
+
+        const allCurrentFriends = [];
+        for (let item of result.rows) {
+            allCurrentFriends.push(item.friend_username);
+        }
+
+        // sorting the array alphabetically in increasing order
+        allCurrentFriends.sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+
+        // returning array of user's friends' usernames
+        return {allCurrentFriends: allCurrentFriends};
+    } 
+    catch (error) {
+        console.log(`Failed to retrieve all of user's current friends`);
+        throw error;       
     }
 };
 
@@ -186,6 +225,7 @@ const acceptFriendRequest = async (recipientUserID, senderUserID) => {
 
 module.exports = {
     getUserFriendData,
+    getAllCurrentUserFriends,
     sendFriendRequest,
     rejectFriendRequest,
     acceptFriendRequest,

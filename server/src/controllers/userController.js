@@ -61,6 +61,29 @@ const fetchFriendData = async (req, res) => {
     }
 };
 
+// controller for fetching all of users current friend's usernames
+const fetchAllFriendUsernames = async (req, res) => {
+    try {
+        const tokenHeader = req.header('Authorization');
+        const token = tokenHeader.split(' ')[1];
+
+        if (!token) {
+            // handles the case where the token is not present
+            return res.status(401).json({ error: 'Unauthorized: JSON Web Token missing' });
+        }
+
+        // verifying json web token and obtaining sender userID
+        const decodedJWT = jwt.verify(token, process.env.JWT_SECRET);
+
+        const friendUsernames = await friendModel.getAllCurrentUserFriends(decodedJWT.userID);
+        res.status(200).json(friendUsernames);
+    } 
+    catch (error) {
+        console.log(`Error occured fetching user's fetching all of user's friend's usernames`);
+        res.status(500).json({ error: `Internal server error.`});
+    }
+}
+
 // controller for rejecting a received friend request
 const rejectFriendRequest = async (req, res) => {
     try {
@@ -122,6 +145,7 @@ const acceptFriendRequest = async (req, res) => {
 
 module.exports = {
     sendFriendRequest,
+    fetchAllFriendUsernames,
     fetchFriendData,
     rejectFriendRequest,
     acceptFriendRequest,

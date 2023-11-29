@@ -12,6 +12,9 @@ router.post('/sendFriendRequest', userController.sendFriendRequest);
 // Route for fetching friend data
 router.get('/fetchFriendData', userController.fetchFriendData);
 
+// Route for fetching all of user's current friend's usernames
+router.get('/fetchAllFriendUsernames', userController.fetchAllFriendUsernames);
+
 // Route for rejecting friend request
 router.delete('/rejectFriendRequest', userController.rejectFriendRequest);
 

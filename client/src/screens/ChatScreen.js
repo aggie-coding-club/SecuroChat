@@ -20,7 +20,11 @@ import ChatMessage from "../components/ChatMessage";
 import { AntDesign } from '@expo/vector-icons'; 
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-const ChatScreen = ({ navigation }) => {
+/**
+ * 
+ * @param {navigation} navigation - object containing navigation from react navigation
+ */
+const ChatScreen = ( { navigation }) => {
   const [messages, setMessages] = useState([]);
   const [messageText, setMessageText] = useState('');
 
