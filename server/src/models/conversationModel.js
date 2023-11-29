@@ -3,130 +3,147 @@
 */
 const db = require('../../database');
 
-const ConversationModel = {
-    // Create a new conversation
-    createConversation: async (conversationType, conversationTitle, creatorId) => {
-        try {
-            const queryText = `
-                INSERT INTO conversations(conversation_type, conversation_title, creator_id)
-                VALUES($1, $2, $3)
-                RETURNING *;
-            `;
-            const res = await db.query(queryText, [conversationType, conversationTitle, creatorId]);
-            return res.rows[0];
-        } catch (error) {
-            throw error;
-        }
-    },
 
-    // Retrieve a specific conversation by ID
-    getConversationById: async (conversationId) => {
+// Create a new conversation
+const createConversation = async (conversationTitle, creatorID, lastMessageID, is_direct_message ) => {
+    try {
         const queryText = `
-            SELECT * FROM conversations
-            WHERE conversation_id = $1;
+            INSERT INTO conversations(conversation_title, creator_id, last_message_id,  is_direct_message)
+            VALUES($1, $2, $3, $4)
+            RETURNING *
+            ;
         `;
-        try {
-            const res = await db.query(queryText, [conversationId]);
-            return res.rows[0];
-        } catch (error) {
-            throw error;
-        }
-    },
-
-    // Add a user to a conversation
-    addUserToConversation: async (userId, conversationId) => {
-        const queryText = `
-            INSERT INTO users_conversations(user_id, conversation_id)
-            VALUES($1, $2)
-            RETURNING *;
-        `;
-        try {
-            const res = await db.query(queryText, [userId, conversationId]);
-            return res.rows[0];
-        } catch (error) {
-            throw error;
-        }
-    },
-
-    // Remove a user from a conversation
-    removeUserFromConversation: async (userId, conversationId) => {
-        const queryText = `
-            DELETE FROM users_conversations
-            WHERE user_id = $1 AND conversation_id = $2
-            RETURNING *;
-        `;
-        try {
-            const res = await db.query(queryText, [userId, conversationId]);
-            return res.rows[0];
-        } catch (error) {
-            throw error;
-        }
-    },
-
-    // Retrieve all conversations a user is part of
-    getConversationsForUser: async (userId) => {
-        const queryText = `
-            SELECT c.* FROM conversations c
-            JOIN users_conversations uc ON c.conversation_id = uc.conversation_id
-            WHERE uc.user_id = $1;
-        `;
-        try {
-            const res = await db.query(queryText, [userId]);
-            return res.rows;
-        } catch (error) {
-            throw error;
-        }
-    },
-
-    // Update the details of a conversation
-    updateConversation: async (conversationId, newDetails) => {
-        const queryText = `
-            UPDATE conversations
-            SET conversation_type = $2, conversation_title = $3
-            WHERE conversation_id = $1
-            RETURNING *;
-        `;
-        try {
-            const res = await db.query(queryText, [conversationId, newDetails.conversationType, newDetails.conversationTitle]);
-            return res.rows[0];
-        } catch (error) {
-            throw error;
-        }
-    },
-
-    // Delete a conversation
-    deleteConversation: async (conversationId) => {
-        const queryText = `
-            DELETE FROM conversations
-            WHERE conversation_id = $1
-            RETURNING *;
-        `;
-        try {
-            const res = await db.query(queryText, [conversationId]);
-            return res.rows[0];
-        } catch (error) {
-            throw error;
-        }
-    },
-
-    // Get the last message of a conversation
-    getLastMessageOfConversation: async (conversationId) => {
-        const queryText = `
-            SELECT * FROM messages
-            WHERE conversation_id = $1
-            ORDER BY time_sent DESC
-            LIMIT 1;
-        `;
-        try {
-            const res = await db.query(queryText, [conversationId]);
-            return res.rows[0];
-        } catch (error) {
-            throw error;
-        }
-    },
+        const values = [conversationTitle, creatorID, lastMessageID, is_direct_message];
+        const result = await db.query(queryText, values);
+        return result.rows[0];
+    } 
+    catch (error) {
+        console.error('Error creating new conversation:', error);
+        throw error;
+    }
 };
 
-module.exports = ConversationModel;
+// Retrieve a specific conversation by ID
+const getConversationByID = async (conversationId) => {
+    const queryText = `
+        SELECT * FROM conversations
+        WHERE conversation_id = $1;
+    `;
+    try {
+        const res = await db.query(queryText, [conversationId]);
+        return res.rows[0];
+    } catch (error) {
+        throw error;
+    }
+};
+
+// Add a user to a conversation
+const addUserToConversation = async (userId, conversationId) => {
+    const queryText = `
+        INSERT INTO users_conversations(user_id, conversation_id)
+        VALUES($1, $2)
+        RETURNING *;
+    `;
+    try {
+        const res = await db.query(queryText, [userId, conversationId]);
+        return res.rows[0];
+    } catch (error) {
+        throw error;
+    }
+};
+
+// Remove a user from a conversation
+const removeUserFromConversation = async (userId, conversationId) => {
+    const queryText = `
+        DELETE FROM users_conversations
+        WHERE user_id = $1 AND conversation_id = $2
+        RETURNING *;
+    `;
+    try {
+        const res = await db.query(queryText, [userId, conversationId]);
+        return res.rows[0];
+    } 
+    catch (error) {
+        throw error;
+    }
+};
+
+// Retrieve all conversations a user is part of
+const getUserConversations = async (userId) => {
+    const queryText = `
+        SELECT c.* FROM conversations c
+        JOIN users_conversations uc ON c.conversation_id = uc.conversation_id
+        WHERE uc.user_id = $1;
+    `;
+    try {
+        const res = await db.query(queryText, [userId]);
+        return res.rows;
+    } 
+    catch (error) {
+        throw error;
+    }
+};
+
+// Update the details of a conversation
+const updateConversation = async (conversationId, newDetails) => {
+    const queryText = `
+        UPDATE conversations
+        SET conversation_type = $2, conversation_title = $3
+        WHERE conversation_id = $1
+        RETURNING *;
+    `;
+    try {
+        const res = await db.query(queryText, [conversationId, newDetails.conversationType, newDetails.conversationTitle]);
+        return res.rows[0];
+    } 
+    catch (error) {
+        throw error;
+    }
+};
+
+// Delete a conversation
+const deleteConversation = async (conversationId) => {
+    const queryText = `
+        DELETE FROM conversations
+        WHERE conversation_id = $1
+        RETURNING *;
+    `;
+    try {
+        const res = await db.query(queryText, [conversationId]);
+        return res.rows[0];
+    } 
+    catch (error) {
+        throw error;
+    }
+};
+
+// Get the last message of a conversation
+const getLastMessageOfConversation = async (conversationId) => {
+    const queryText = `
+        SELECT * FROM messages
+        WHERE conversation_id = $1
+        ORDER BY time_sent DESC
+        LIMIT 1;
+    `;
+    try {
+        const res = await db.query(queryText, [conversationId]);
+        return res.rows[0];
+    } 
+    catch (error) {
+        throw error;
+    }
+};
+
+module.exports = {
+    createConversation,
+    getConversationByID,
+    addUserToConversation,
+    removeUserFromConversation,
+    getUserConversations,
+    updateConversation,
+    deleteConversation,
+    getLastMessageOfConversation,
+};
 
 
 /*

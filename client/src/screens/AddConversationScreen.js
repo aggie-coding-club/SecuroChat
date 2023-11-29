@@ -46,7 +46,11 @@ const AddConversationScreen = ({ navigation }) => {
   // function responsible for handling buttonPress
   const onButtonPress = () => {
     if (selectedParticipants.length) {
-      navigation.navigate("ChatScreen");
+      const parameters = {
+        isChatCreated: false,
+        chatParticipants: friendUsernames,
+      };
+      navigation.navigate("ChatScreen", parameters);
     }
   };
 
