@@ -39,8 +39,8 @@ CREATE TABLE conversations (
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     creator_id UUID NOT NULL REFERENCES users(user_id),
-    last_message_id INT NOT NULL REFERENCES messages(message_id),
-    is_direct_message BOOLEAN NOT NULL
+    is_direct_message BOOLEAN NOT NULL,
+    last_message_id INT REFERENCES messages(message_id),
 );
 
 -- Create the participants table

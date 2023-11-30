@@ -53,7 +53,7 @@ const AddConversationFriendEntry = (props) => {
                     color={props.color}
                     bubbleSize={props.bubbleSize}
                 />
-                <Text style={entryText}>{props.username}</Text>
+                <Text style={entryText} numberOfLines={1} ellipsizeMode='tail' >{props.username}</Text>
             </View>
             <View style={selectionContainer}>
                 {isSelected === false && (<Entypo name="circle" size={24} color={'#E6E6E6'} />)}
@@ -72,12 +72,14 @@ const styles = StyleSheet.create({
         padding: 12,
     },
     mainSection: {
+        flex: 1,
         flexDirection: 'row',
         alignItems: 'center',
         gap: 12,
         marginLeft: 15,
     },
     entryText: {
+        flex: 1,
         color: '#1E1E1E',
         fontFamily: 'RobotoCondensed_400Regular',
         fontSize: 22,

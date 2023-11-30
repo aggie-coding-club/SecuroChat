@@ -73,7 +73,7 @@ const FriendEntry = (props) => {
                 color={props.color}
                 bubbleSize={45}
             />
-            <Text style={containerText}>{props.username}</Text>
+            <Text style={containerText} numberOfLines={1} >{props.username}</Text>
 
             {props.isRequest && (
                 <View style={iconContainer}>
@@ -102,6 +102,7 @@ const FriendEntry = (props) => {
 
 const styles = StyleSheet.create({
     container: {
+        flex: 1,
         padding: 20,
         flexDirection: 'row',
         alignItems: 'center',
@@ -113,6 +114,7 @@ const styles = StyleSheet.create({
         marginLeft: 'auto',
     },
     containerText: {
+        flex: 1,
         color: '#1E1E1E',
         fontFamily: 'RobotoCondensed_400Regular',
         fontSize: 22,

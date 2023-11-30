@@ -43,8 +43,10 @@ const AddConversationScreen = ({ navigation }) => {
   // initializing useRef for scrollView for added participants
   const participantScrollViewRef = useRef();
 
-  // function responsible for handling buttonPress
-  const onButtonPress = () => {
+  // function responsible for creating default conversation
+
+  // function responsible for navigation to the created default chat screen upon button press
+  const toChatScreen = () => {
     if (selectedParticipants.length) {
       const parameters = {
         isChatCreated: false,
@@ -52,6 +54,11 @@ const AddConversationScreen = ({ navigation }) => {
       };
       navigation.navigate("ChatScreen", parameters);
     }
+  }
+  
+  // function responsible for handling buttonPress
+  const onButtonPress = () => {
+    toChatScreen();
   };
 
   // function handling action when a user is SelectedUser component is pressed

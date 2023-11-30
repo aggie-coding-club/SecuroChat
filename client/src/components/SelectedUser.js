@@ -22,8 +22,7 @@ const SelectedUser = (props) => {
 const styles = StyleSheet.create({
     container: {
         backgroundColor: '#EEEDED',
-        width: 120,
-        padding: 4,
+        padding: 6,
         borderRadius: 12,
         marginLeft: 8,
         marginRight: 8,
