@@ -3,19 +3,52 @@
 */
 const db = require('../../database');
 
+/**
+ * Query responsible for creating conversations table
+ * @returns {Promise<boolean>} returns true is successful, otherwise throws error
+ */
+const createConversationsTable = async () => {
+    try {
+        const queryText = ` 
+            CREATE TABLE conversations (
+                conversation_id SERIAL PRIMARY KEY,
+                conversation_title VARCHAR(32) NOT NULL,
+                created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                creator_id UUID NOT NULL REFERENCES users(user_id),
+                is_direct_message BOOLEAN NOT NULL,
+                last_message_id INT REFERENCES messages(message_id),
+                num_participants INT NOT NULL
+            );
+        `;
+        await db.query(queryText);
+        return true;
+    }
+    catch {
+        console.error('Error creating conversations table', error);
+        throw error;
+    }
+};
 
-// Create a new conversation
-const createConversation = async (conversationTitle, creatorID, lastMessageID, is_direct_message ) => {
+/**
+ * Query responsible for creating a new conversation
+ * @param {string} conversationTitle - string to be displayed as the conversation title
+ * @param {string} creatorID - UUID of the creator of the conversation
+ * @param {boolean} isDirectMessage - boolean representing whether the converation is a DM or not
+ * @param {string} lastMessageID - string represening messageID of last delivered message of conversation
+ * @param {string} numParticipants - string representing number of participants within a conversation
+ * @returns {Promise<boolean>} Returns promise of true if successful. Otherwise throws error.
+ */
+const createConversation = async (conversationTitle, creatorID, isDirectMessage, lastMessageID, numParticipants ) => {
     try {
         const queryText = `
-            INSERT INTO conversations(conversation_title, creator_id, last_message_id,  is_direct_message)
-            VALUES($1, $2, $3, $4)
-            RETURNING *
+            INSERT INTO conversations(conversation_title, creator_id, is_direct_message, last_message_id, num_participants)
+            VALUES($1, $2, $3, $4, $5)
             ;
         `;
-        const values = [conversationTitle, creatorID, lastMessageID, is_direct_message];
-        const result = await db.query(queryText, values);
-        return result.rows[0];
+        const values = [conversationTitle, creatorID, isDirectMessage, lastMessageID, numParticipants];
+        await db.query(queryText, values);
+        return true;
     } 
     catch (error) {
         console.error('Error creating new conversation:', error);
@@ -23,133 +56,83 @@ const createConversation = async (conversationTitle, creatorID, lastMessageID, i
     }
 };
 
-// Retrieve a specific conversation by ID
-const getConversationByID = async (conversationId) => {
-    const queryText = `
-        SELECT * FROM conversations
-        WHERE conversation_id = $1;
-    `;
+/**
+ * Query responsible for altering the title of a conversation 
+ * @param {string} conversationTitle - new title of the conversation
+ * @param {string} conversationID - string representing ID of conversation
+ * @returns {Promise<boolean>} - Returns a promise of true if successful. Otherwise throws an error.
+ */
+const alterConversationTitle = async (conversationTitle, conversationID) => {
     try {
-        const res = await db.query(queryText, [conversationId]);
-        return res.rows[0];
-    } catch (error) {
-        throw error;
-    }
-};
-
-// Add a user to a conversation
-const addUserToConversation = async (userId, conversationId) => {
-    const queryText = `
-        INSERT INTO users_conversations(user_id, conversation_id)
-        VALUES($1, $2)
-        RETURNING *;
-    `;
-    try {
-        const res = await db.query(queryText, [userId, conversationId]);
-        return res.rows[0];
-    } catch (error) {
-        throw error;
-    }
-};
-
-// Remove a user from a conversation
-const removeUserFromConversation = async (userId, conversationId) => {
-    const queryText = `
-        DELETE FROM users_conversations
-        WHERE user_id = $1 AND conversation_id = $2
-        RETURNING *;
-    `;
-    try {
-        const res = await db.query(queryText, [userId, conversationId]);
-        return res.rows[0];
+        const queryText = `
+            UPDATE conversations
+            SET conversation_title = $1
+            WHERE conversation_id = $2
+            ;
+        `;
+        const values = [conversationTitle, conversationID];
+        await db.query(queryText, values);
+        return true;
     } 
     catch (error) {
+        console.error('Error altering the conversation title:', error);
         throw error;
     }
 };
 
-// Retrieve all conversations a user is part of
-const getUserConversations = async (userId) => {
-    const queryText = `
-        SELECT c.* FROM conversations c
-        JOIN users_conversations uc ON c.conversation_id = uc.conversation_id
-        WHERE uc.user_id = $1;
-    `;
+
+/**
+ * Query responsible for deleting conversation from specified conversationID. Ensures to delete entries in dependent tables like users_conversations and messages as well
+ * @param {string} conversationID - string representing conversation ID
+ * @returns {Promise<boolean>} - Returns promise of true if successful. Otherwise throws an error.
+ */
+const deleteConversation = async (conversationID) => {
     try {
-        const res = await db.query(queryText, [userId]);
-        return res.rows;
+        // makes use of ON DELETE CASCADE to delete conversations table entry ensuring dependent entries in other tables are also altered
+        // conversations dependent tables are: users_conversations, messages
+        // causes changes in message dependent tables such as: attachments, read_receipts, and notifications
+
+        const queryText = `
+            DELETE FROM conversations
+            WHERE conversation_id = $1
+            ;
+        `;
+        const values = [conversationID];
+        await db.query(queryText, values);
+        return true;
     } 
     catch (error) {
+        console.error('Error deleting the specified conversation', error);
         throw error;
     }
 };
 
-// Update the details of a conversation
-const updateConversation = async (conversationId, newDetails) => {
-    const queryText = `
-        UPDATE conversations
-        SET conversation_type = $2, conversation_title = $3
-        WHERE conversation_id = $1
-        RETURNING *;
-    `;
+/**
+ * Query responsible for retrieving last message of conversation
+ * @param {string} conversationID - string representing ID of conversation
+ * @returns {Promise<string>} - Returns a promise of a string if successful. Otherwise throws an error.
+ */
+const getLastMessageOfConversation = async (conversationID) => {
     try {
-        const res = await db.query(queryText, [conversationId, newDetails.conversationType, newDetails.conversationTitle]);
-        return res.rows[0];
+        const queryText = `
+            SELECT messages_text FROM messages
+            JOIN conversations ON conversations.last_message_id = messages.message_id
+            WHERE conversations.conversation_id = $1
+            ;
+        `;
+        const values = [conversationID];
+        const result = await db.query(queryText, values);
+        return result.rows[0];
     } 
     catch (error) {
-        throw error;
-    }
-};
-
-// Delete a conversation
-const deleteConversation = async (conversationId) => {
-    const queryText = `
-        DELETE FROM conversations
-        WHERE conversation_id = $1
-        RETURNING *;
-    `;
-    try {
-        const res = await db.query(queryText, [conversationId]);
-        return res.rows[0];
-    } 
-    catch (error) {
-        throw error;
-    }
-};
-
-// Get the last message of a conversation
-const getLastMessageOfConversation = async (conversationId) => {
-    const queryText = `
-        SELECT * FROM messages
-        WHERE conversation_id = $1
-        ORDER BY time_sent DESC
-        LIMIT 1;
-    `;
-    try {
-        const res = await db.query(queryText, [conversationId]);
-        return res.rows[0];
-    } 
-    catch (error) {
+        console.error('Error fetching last message of conversation:', error);
         throw error;
     }
 };
 
 module.exports = {
     createConversation,
-    getConversationByID,
-    addUserToConversation,
-    removeUserFromConversation,
-    getUserConversations,
-    updateConversation,
+    alterConversationTitle,
     deleteConversation,
     getLastMessageOfConversation,
 };
-
-
-/*
-Notes:
-- Error Handling: Basic error handling is included. 
-- Add/Remove User: Functions for adding and removing users handle the users_conversations table to maintain the relationship between users and conversations.
-- Conversation Updates: The updateConversation function assumes passing an object with new details. Adjust the query as needed based on what details you allow to be updated.
-- Deleting Conversations: Deleting a conversation should be done with care, especially if it affects related data in other tables.
-*/

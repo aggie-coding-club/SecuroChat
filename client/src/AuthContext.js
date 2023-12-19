@@ -6,8 +6,9 @@ import React, { createContext, useContext, useState } from 'react';
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [token, setToken] = useState(null);
+  const [ token, setToken] = useState(null);
   const [ globalClientUsername, setUsername ] = useState(null);
+  const [ defaultProfileColor, setColor ] = useState(null);
 
   const setJSONWebToken = (newToken) => {
     setToken(newToken);
@@ -17,8 +18,12 @@ export const AuthProvider = ({ children }) => {
     setUsername(newUsername);
   }
 
+  const setDefaultProfileColor = (newColor) => {
+    setColor(newColor);
+  }
+
   return (
-    <AuthContext.Provider value={{ token, setJSONWebToken, globalClientUsername, setGlobalClientUsername }}>
+    <AuthContext.Provider value={{ token, setJSONWebToken, globalClientUsername, setGlobalClientUsername, defaultProfileColor, setDefaultProfileColor }}>
       {children}
     </AuthContext.Provider>
   );

@@ -37,24 +37,22 @@ const AddConversationScreen = ({ navigation }) => {
   // creating state handler for selected chat participants
   const [selectedParticipants, setSelectedParticipants] = useState([]);
 
-  // state handler for user's friend's usernames
-  const [friendUsernames, setFriendUsernames] = useState([]);
+  // state handler for user's friend's data
+  const [currentFriendData, setCurrentFriendData] = useState([]);
 
   // initializing useRef for scrollView for added participants
   const participantScrollViewRef = useRef();
-
-  // function responsible for creating default conversation
 
   // function responsible for navigation to the created default chat screen upon button press
   const toChatScreen = () => {
     if (selectedParticipants.length) {
       const parameters = {
         isChatCreated: false,
-        chatParticipants: friendUsernames,
+        potentialChatParticipants: selectedParticipants,
       };
       navigation.navigate("ChatScreen", parameters);
     }
-  }
+  };
   
   // function responsible for handling buttonPress
   const onButtonPress = () => {
@@ -65,9 +63,9 @@ const AddConversationScreen = ({ navigation }) => {
   const handleAlteredDataFromChild = (data) => {
     const newSelectedParticipants = [...selectedParticipants];
     if (data.isSelected) {
-      newSelectedParticipants.push(data.entryUsername);
+      newSelectedParticipants.push(data.userData);
     } else {
-      const indexToRemove = newSelectedParticipants.indexOf(data.entryUsername);
+      const indexToRemove = newSelectedParticipants.findIndex((item) => item.username === data.userData.username);
       newSelectedParticipants.splice(indexToRemove, 1);
     }
     setSelectedParticipants(newSelectedParticipants);
@@ -79,15 +77,15 @@ const AddConversationScreen = ({ navigation }) => {
   };
 
   // function responsible for fetching all of user's friend's usernames
-  const fetchAllFriendUsernames = async () => {
+  const fetchAllCurrentFriendData = async () => {
     try {
-      const apiURL = "/user/fetchAllFriendUsernames";
+      const apiURL = "/user/fetchAllCurrentFriendData";
       const response = await api.get(apiURL, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      setFriendUsernames(response.data.allCurrentFriends);
+      setCurrentFriendData(response.data.allCurrentFriends);
       return true;
     } catch (error) {
       console.error(
@@ -98,25 +96,9 @@ const AddConversationScreen = ({ navigation }) => {
     }
   };
 
-  // function responsible for choosing random color
-  const randomColor = () => {
-    const colorOptions = [
-      `#0078D4`,
-      `#DB1CD3`,
-      `#1CDB24`,
-      `#DB1C3F`,
-      `#DBD31C`,
-    ];
-
-    // generating random index
-    const randomIndex = Math.floor(Math.random() * colorOptions.length);
-
-    return colorOptions[randomIndex];
-  };
-
   // useEffect used to initially query server and obtain friends usernames upon mount of component
   useEffect(() => {
-    fetchAllFriendUsernames();
+    fetchAllCurrentFriendData();
   }, []);
 
   const {
@@ -129,6 +111,7 @@ const AddConversationScreen = ({ navigation }) => {
     selectedUserContainer,
     buttonContainer,
   } = styles;
+
   return (
     <SafeAreaView style={rootContainer}>
       <StatusBar></StatusBar>
@@ -140,7 +123,7 @@ const AddConversationScreen = ({ navigation }) => {
         <Text style={headerTitle}>Select Participants</Text>
       </View>
       <View style={participantSection}>
-        <Text style={participantSectionText}>To</Text>
+        {selectedParticipants.length > 0 && (<Text style={participantSectionText}>To</Text>)}
         <ScrollView
           ref={participantScrollViewRef}
           style={selectedUserContainer}
@@ -149,19 +132,20 @@ const AddConversationScreen = ({ navigation }) => {
           onContentSizeChange={scrollToRight}
         >
           {selectedParticipants.map((item, index) => (
-            <SelectedUser key={index} username={item} />
+            <SelectedUser key={index} username={item.username} />
           ))}
         </ScrollView>
       </View>
 
       <ScrollView>
-        {friendUsernames.map((item, index) => (
+        {currentFriendData.map((item, index) => (
           <AddConversationFriendEntry
             key={index}
-            initials={item.substring(0, 2).toUpperCase()}
-            color={randomColor()}
+            initials={item.friendUsername.substring(0, 2).toUpperCase()}
+            color={item.friendIconColor}
             bubbleSize={45}
-            username={item}
+            username={item.friendUsername}
+            userID={item.friendID}
             sendToParent={handleAlteredDataFromChild}
           />
         ))}

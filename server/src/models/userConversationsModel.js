@@ -2,19 +2,20 @@
  * Defines database schema/model for userConversationsModel which is the join between users table and conversations table
 */
 
+const { query } = require('express');
 const db = require('../../database');
 
 /**
  * Query responsible for creating user_conversations table
  * @returns {Promise<boolean>} returns true is successful, otherwise throws error
  */
-const createUserConversations = async () => {
+const createUserConversationsTable = async () => {
     try {
         const queryText = `
             CREATE TABLE users_conversations (
                 participant_id SERIAL PRIMARY KEY,
                 user_id UUID NOT NULL REFERENCES users(user_id),
-                conversation_id INT NOT NULL REFERENCES conversations(conversation_id)
+                conversation_id INT NOT NULL REFERENCES conversations(conversation_id) ON DELETE CASCADE
             );        
         `;
         await db.query(queryText);
@@ -31,7 +32,7 @@ const createUserConversations = async () => {
  * @param {string} conversationID - number representing ID of conversation
  * @returns {Promise<Array>} - promise of an array containing participant data. Otherwise results in an error
  */
-const getAllConversationParticipants = async (conversationID) => {
+const getConversationParticipants = async (conversationID) => {
     try {
         const queryText = `
             SELECT users.user_id, users.username
@@ -68,7 +69,7 @@ const getAllConversationParticipants = async (conversationID) => {
  * @param {number} conversationID - number representing the ID of the conversation
  * @returns {Promise<boolean>} - returns promise of boolean true if successful, else throws an error
  */
-const addAllConversationParticipants = async (conversationParticipantsUserID, conversationID) => {
+const addConversationParticipants = async (conversationParticipantsUserID, conversationID) => {
     try {
         const values = conversationParticipantsUserID.map((item) => `(${item}, ${conversationID})`).join(', ');
         const queryText = `
@@ -81,28 +82,6 @@ const addAllConversationParticipants = async (conversationParticipantsUserID, co
     } 
     catch (error) {
         console.error('Error adding participants to new conversation', error);
-        throw error;
-    }
-};
-
-/**
- * Query responsible for removing all entries belonging to a conversation within users_conversations table 
- * @param {number} conversationID - number representing ID of the conversation
- * @returns {Promise<boolean>} - returns promise of boolean true if successful, else throws an error
- */
-const deleteAllConversationParticipants = async (conversationID) => {
-    try {
-        const queryText = `
-            DELETE FROM users_conversations
-            WHERE conversation_id = $1
-            ;
-        `;
-        const values = [conversationID];
-        await db.query(queryText, values);
-        return true;
-    } 
-    catch (error) {
-        console.error('Error when removing all participants from users conversations', error);
         throw error;
     }
 };
@@ -131,34 +110,68 @@ const removeParticipantFromConversation = async (participantUserID, conversation
 };
 
 /**
- * Query responsible for adding specified user to conversation
- * @param {string} participantUserID - string representing UUID of conversation participant being removed from conversation
- * @param {number} conversationID - number representing the ID of the conversation
- * @returns {Promise<boolean>} - returns promise of boolean true if successful, else throws an error
+ * Query responsible for fetching user conversation data
+ * @param {string} userID - user's UUID to fetch user conversation data for
+ * @returns {Promise<Array>} - Returns promise of an object array containing user's conversation data
  */
-const addParticipantToConversation = async (participantUserID, conversationID) => {
+const getUserConversations = async (userID) => {
+    // I need the following to generate user conversations
+    // - conversation title
+    // - last message text
+    // - updated at
+    // - conversation icon
+    // - read status ***FIX ME: ADD IN THE FUTURE***
     try {
         const queryText = `
-            INSERT INTO users_conversations (user_id, conversation_id)
-            VALUES ($1, $2)
+            SELECT 
+                c.conversation_title,
+                c.updated_at,
+                m.messages_text AS last_message,
+                u.icon_color AS creator_icon_color,
+                u.username AS creator_username
+            FROM
+                conversations c
+            JOIN
+                users_conversations uc ON uc.conversation_id = c.conversation_id
+            JOIN
+                messages m ON c.last_message_id = m.message_id
+            JOIN
+                users u ON c.creator_id = u.user_id
+            WHERE 
+                uc.user_id = $1
             ;
         `;
-        const values = [participantUserID, conversationID];
-        await db.query(queryText, values);
-        return true;
+        const values = [userID];
+        const result = await db.query(queryText, values);
+
+        const userConversations = [];
+        for (let row in result.rows) {
+            const conversationObject = {
+                conversation_title: row.conversation_title, 
+                updated_at: row.updated_at,
+                messages_text: row.last_message,
+                creator_icon_color: row.creator_icon_color,
+                creator_username: row.creator_username,
+            };
+            userConversations.push(conversationObject);
+        }
+
+        // sorting user conversations in terms of time updated
+        userConversations.sort((a, b) => a.updated_at.localeCompare(b.updated_at));
+
+        return { userConversations };
     } 
     catch (error) {
-        console.error('Error when adding specific user to conversation', error);
-        throw error;     
+        console.error('Error when fetching user conversations', error);
+        throw error;    
     }
 };
 
 
 
 module.exports = {
-    addAllConversationParticipants,
-    deleteAllConversationParticipants,
+    addConversationParticipants,
     removeParticipantFromConversation,
-    addParticipantToConversation,
-    getAllConversationParticipants,
+    getConversationParticipants,
+    getUserConversations,
 };

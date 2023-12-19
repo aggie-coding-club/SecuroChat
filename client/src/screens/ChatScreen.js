@@ -20,7 +20,6 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   TouchableOpacity,
-  Touchable,
 } from "react-native";
 import BackButton from "../components/BackButton";
 import ProfilePicture from "../components/ProfilePicture";
@@ -29,12 +28,28 @@ import ExpandableTextBox from "../components/ExpandableTextBox";
 import ChatMessage from "../components/ChatMessage";
 import { AntDesign } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useAuth } from "../AuthContext";
+import { useRoute } from '@react-navigation/native';
 
 /**
- *
+ * React component rendering chat screen for a specific conversation
  * @param {navigation} navigation - object containing navigation from react navigation
  */
 const ChatScreen = ({ navigation }) => {
+  // retrieving userToken and globalClientUsername with useAuth
+  const { token, globalClientUsername, defaultProfileColor } = useAuth();
+
+  // receiving paramaters from previous screen
+  const route = useRoute();
+  const isDirectMessage = true;
+
+  //   chatParicipantElement: {
+  //     userID: props.userID,
+  //     username: props.username,
+  //     iconColor: props.color,
+  //     userInitials: props.initials,
+  // },
+  const [chatParticipants, setChatParticipants] = useState(!route.params.isChatCreated ? route.params.potentialChatParticipants : []);
   const [messages, setMessages] = useState([]);
   const [messageText, setMessageText] = useState("");
 
@@ -58,9 +73,42 @@ const ChatScreen = ({ navigation }) => {
     messageScrollViewRef.current.scrollToEnd({ animated: true });
   };
 
+  // function responsible for generating header content
+  const generateInitialHeaderContent = () => {
+    let title = "";
+    for (let i = 0; i < chatParticipants.length; ++i) {
+      if (i === chatParticipants.length - 1) {
+        title += chatParticipants[i].username;
+      }
+      else if (i === chatParticipants.length - 2) {
+        title += chatParticipants[i].username + " & ";
+      }
+      else {
+        title += chatParticipants[i].username + ", ";
+      }
+    }
+
+    return (
+      <View style={header}>
+        <BackButton
+          onPress={() => navigation.navigate("HomeScreen")}
+        ></BackButton>
+        <View style={titleContainer}>
+          <Text style={headerTitle} numberOfLines={1} ellipsizeMode="tail">{title}</Text>
+        </View>
+        <View style={headerSection}>
+          <ActivityIndicator isOnline={true}></ActivityIndicator>
+          <Text>Online</Text>
+        </View>
+      </View>
+    )
+  };
+
   const {
     rootContainer,
     header,
+    titleContainer,
+    headerTitle,
     headerSection,
     messageSection,
     sendSection,
@@ -68,26 +116,11 @@ const ChatScreen = ({ navigation }) => {
     emptyFriends,
     emptyText,
   } = styles;
+
   return (
     <SafeAreaView style={rootContainer}>
       <StatusBar></StatusBar>
-      <View style={header}>
-        <BackButton
-          onPress={() => navigation.navigate("HomeScreen")}
-        ></BackButton>
-        <View style={headerSection}>
-          <ProfilePicture
-            initials="OL"
-            color="#DB1CD3"
-            bubbleSize={30}
-          ></ProfilePicture>
-          <Text>oliverstalker</Text>
-        </View>
-        <View style={headerSection}>
-          <ActivityIndicator isOnline={true}></ActivityIndicator>
-          <Text>Online</Text>
-        </View>
-      </View>
+      {generateInitialHeaderContent()}
       
       {messages.length === 0 && (
         <View style={emptyFriends}>
@@ -153,6 +186,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: 5,
+  },
+  titleContainer: {
+    overflow: "hidden",
+    maxWidth: 250,
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontFamily: "RobotoCondensed_700Bold",
   },
   messageSection: {
     flex: 12,

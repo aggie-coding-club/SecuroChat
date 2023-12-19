@@ -14,6 +14,7 @@ const database = require('./database.js');  // Ensure this is the correct path t
 const authRoutes = require('./src/routes/authRoutes');
 const messageRoutes = require('./src/routes/messageRoutes');
 const userRoutes = require('./src/routes/userRoutes');
+const conversationRoutes = require('./src/routes/conversationRoutes.js');
 const chatSocketHandler = require('./src/sockets/chatSocket');  // Adjust the path as necessary
 
 
@@ -41,6 +42,7 @@ app.use(cors());
 app.use('/auth', authRoutes);
 app.use('/messages', messageRoutes);  
 app.use('/user', userRoutes);
+app.use('/conversations', conversationRoutes);
 
 // Socket.IO
 io.on('connection', (socket) => {

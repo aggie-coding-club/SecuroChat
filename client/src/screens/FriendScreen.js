@@ -31,7 +31,7 @@ import { useAuth } from "../AuthContext";
  */
 const FriendScreen = ({ navigation }) => {
   // retrieving userToken and globalClientUsername with useAuth
-  const { token, globalClientUsername } = useAuth();
+  const { token, globalClientUsername, defaultProfileColor } = useAuth();
 
   // handling state arrays for user's friends/requests
   const [onlineFriends, setOnlineFriends] = useState([]);
@@ -75,22 +75,6 @@ const FriendScreen = ({ navigation }) => {
     };
   }, []);
 
-  // function responsible for choosing random color
-  const randomColor = () => {
-    const colorOptions = [
-      `#0078D4`,
-      `#DB1CD3`,
-      `#1CDB24`,
-      `#DB1C3F`,
-      `#DBD31C`,
-    ];
-
-    // generating random index
-    const randomIndex = Math.floor(Math.random() * colorOptions.length);
-
-    return colorOptions[randomIndex];
-  };
-
   const {
     rootContainer,
     header,
@@ -110,7 +94,7 @@ const FriendScreen = ({ navigation }) => {
         <TouchableOpacity>
           <ProfilePicture
             initials={globalClientUsername.substring(0, 2).toUpperCase()}
-            color={"#DB1CD3"}
+            color={defaultProfileColor}
             bubbleSize={30}
           ></ProfilePicture>
         </TouchableOpacity>
@@ -127,7 +111,7 @@ const FriendScreen = ({ navigation }) => {
       {onlineFriends.length + offlineFriends.length + friendRequests.length >
         0 && (
         <ScrollView style={friendSection}>
-          <View style={requestSection}>
+          {friendRequests.length > 0 && (<View style={requestSection}>
             <FriendHeader
               headerTitle={"Requests"}
               amount={friendRequests.length}
@@ -137,15 +121,15 @@ const FriendScreen = ({ navigation }) => {
                 <FriendEntry
                   key={index}
                   initials={item.friendUsername.substring(0, 2).toUpperCase()}
-                  color={randomColor()}
+                  color={item.friendIconColor}
                   bubbleSize={45}
                   username={item.friendUsername}
                   isRequest={true}
                 />
               ))}
             </View>
-          </View>
-          <View style={onlineSection}>
+          </View>)}
+          {onlineFriends.length > 0 && (<View style={onlineSection}>
             <FriendHeader
               headerTitle={"Online"}
               amount={onlineFriends.length}
@@ -155,15 +139,15 @@ const FriendScreen = ({ navigation }) => {
                 <FriendEntry
                   key={index}
                   initials={item.friendUsername.substring(0, 2).toUpperCase()}
-                  color={randomColor()}
+                  color={item.friendIconColor}
                   bubbleSize={45}
                   username={item.friendUsername}
                   isRequest={false}
                 />
               ))}
             </View>
-          </View>
-          <View style={offlineSection}>
+          </View>)}
+          {offlineFriends.length > 0 && (<View style={offlineSection}>
             <FriendHeader
               headerTitle={"Offline"}
               amount={offlineFriends.length}
@@ -173,14 +157,14 @@ const FriendScreen = ({ navigation }) => {
                 <FriendEntry
                   key={index}
                   initials={item.friendUsername.substring(0, 2).toUpperCase()}
-                  color={randomColor()}
+                  color={item.friendIconColor}
                   bubbleSize={45}
                   username={item.friendUsername}
                   isRequest={false}
                 />
               ))}
             </View>
-          </View>
+          </View>)}
         </ScrollView>
       )}
 

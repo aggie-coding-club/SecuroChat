@@ -36,7 +36,7 @@ const createFriendsModel = async () => {
 const getUserFriendData = async (userID) => {
     try {
         const queryText = `
-            SELECT users.user_id AS friend_user_id, users.username AS friend_username, users.last_online, friends.status
+            SELECT users.user_id AS friend_user_id, users.username AS friend_username, users.last_online, users.icon_color, friends.status
             FROM friends
             JOIN users ON friends.friend_id = users.user_id
             WHERE friends.user_id = $1
@@ -56,6 +56,7 @@ const getUserFriendData = async (userID) => {
                 friendID: row.friend_user_id,
                 friendUsername: row.friend_username,
                 friendLastOnline: row.last_online,
+                friendIconColor: row.icon_color,
             };
             
             if (row.status) {
@@ -103,7 +104,7 @@ const getUserFriendData = async (userID) => {
 const getAllCurrentUserFriends = async (userID) => {
     try {
         const queryText = `
-            SELECT users.username AS friend_username
+            SELECT users.user_id AS friend_user_id ,users.username AS friend_username, icon_color
             FROM friends
             JOIN users ON friends.friend_id = users.user_id
             WHERE friends.user_id = $1 AND friends.status = true
@@ -113,12 +114,17 @@ const getAllCurrentUserFriends = async (userID) => {
         const result = await db.query(queryText, values);
 
         const allCurrentFriends = [];
-        for (let item of result.rows) {
-            allCurrentFriends.push(item.friend_username);
+        for (let row of result.rows) {
+            const friendObject = {
+                friendID: row.friend_user_id,
+                friendUsername: row.friend_username,
+                friendIconColor: row.icon_color,
+            };
+            allCurrentFriends.push(friendObject);
         }
 
         // sorting the array alphabetically in increasing order
-        allCurrentFriends.sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+        allCurrentFriends.sort((a, b) => a.friendUsername.localeCompare(b.friendUsername));
 
         // returning array of user's friends' usernames
         return {allCurrentFriends: allCurrentFriends};

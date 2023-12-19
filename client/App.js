@@ -56,7 +56,7 @@ const App = () => {
   return (
     <AuthProvider>
       <NavigationContainer initialRouteName="Home">
-        <Stack.Navigator screenOptions={{headerShown: false}}>
+        <Stack.Navigator screenOptions={{headerShown: false, gestureEnabled: false}}>
           <Stack.Screen name="Home" component={SignupScreen}/>
           <Stack.Screen name="SignUp" component={CreateAccountScreen}/>
           <Stack.Screen name="PhoneVerification" component={PhoneVerificationScreen} />

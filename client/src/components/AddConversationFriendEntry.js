@@ -19,6 +19,7 @@ import { AntDesign } from '@expo/vector-icons';
  * @property {string} props.color - hexadecimal string forming color of profile picture
  * @property {number} props.bubbleSize - number representing size of profilepicture bubble
  * @property {string} props.username - string containing username of user belonging to this component item
+ * @property {string} props.userID - string representing user's UUID
  * @property {function} props.sendToParent - function passed in that sends data to parent
  */
 const AddConversationFriendEntry = (props) => {
@@ -28,8 +29,13 @@ const AddConversationFriendEntry = (props) => {
     // function responsible for sending altered
     const transferData = () => {
         const data = {
-            entryUsername: props.username,
             isSelected: isSelected,
+            userData: {
+                userID: props.userID,
+                username: props.username,
+                iconColor: props.color,
+                userInitials: props.initials,
+            },
         };
         props.sendToParent(data);
     };
