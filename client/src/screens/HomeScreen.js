@@ -92,7 +92,7 @@ const HomeScreen = ({ navigation }) => {
                     {conversations.map((item, index) => (
                         <ConversationTab 
                             key={index}
-                            initials={item.creator_username.substring(0, 2).toUpperCase()}
+                            initials={item.creator_username.substring(0,2).toUpperCase()}
                             color={item.creator_icon_color}
                             bubbleSize={45}
                             title={item.conversation_title}

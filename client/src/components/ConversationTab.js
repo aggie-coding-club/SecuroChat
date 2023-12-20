@@ -31,6 +31,24 @@ const ConversationTab = (props) => {
     const seenValue = props.withinTheDay ? props.lastMessageTime : props.lastDate;
     const seenFontSize = props.withinTheDay ? 18 : 17;
 
+    // function responsible for determining time/date to display on conversation
+    const timeDateDisplay = () => {
+        const messageDate = new Date(props.lastMessageTime);
+        const currentDate = new Date();
+        if (messageDate.toLocaleDateString() !== currentDate.toLocaleDateString()) {
+            const tempDate = messageDate.toLocaleDateString();
+            const dateArray = tempDate.split('/');
+            
+            // extracting last two digits of the year
+            const lastTwoYearDigits = dateArray[2].slice(-2);
+
+            return `${dateArray[0]}/${dateArray[1]}/${lastTwoYearDigits}`;
+        }
+        const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        const localTime = messageDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true, timeZone: userTimeZone  });
+        return localTime;
+    }
+
     const {container, conversationContent, conversationTitle, conversationText, unreadConversationInfo, unreadConversationTime, readConversationInfo, readConversationTime } = styles;
     return (
         <TouchableOpacity style={container} onPress={props.onPress}>
@@ -41,7 +59,7 @@ const ConversationTab = (props) => {
             </View>
             {props.notSeen && (
                 <View style={unreadConversationInfo}>
-                    <Text style={unreadConversationTime}>{props.lastMessageTime}</Text>
+                    <Text style={unreadConversationTime}>{timeDateDisplay()}</Text>
                     <MessagesToRead numMessagesNotRead={props.numMessagesNotRead} bubbleSize={25} />
                 </View>
             )}

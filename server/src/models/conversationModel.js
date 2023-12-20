@@ -2,6 +2,8 @@
  * Defines database schema/model for conversations table
 */
 const db = require('../../database');
+const userConversationModel = require('../models/userConversationsModel');
+const messageModel = require('../models/messageModel');
 
 /**
  * Query responsible for creating conversations table
@@ -31,26 +33,51 @@ const createConversationsTable = async () => {
 };
 
 /**
- * Query responsible for creating a new conversation
+ * Query responsible for creating a new conversation. Query adds entry into conversations table and appropriate user entries within user_conversations join table
  * @param {string} conversationTitle - string to be displayed as the conversation title
  * @param {string} creatorID - UUID of the creator of the conversation
  * @param {boolean} isDirectMessage - boolean representing whether the converation is a DM or not
- * @param {string} lastMessageID - string represening messageID of last delivered message of conversation
- * @param {string} numParticipants - string representing number of participants within a conversation
+ * @param {Array<string>} allParticipantID - array of strings containing conversation participant UUIDs
  * @returns {Promise<boolean>} Returns promise of true if successful. Otherwise throws error.
  */
-const createConversation = async (conversationTitle, creatorID, isDirectMessage, lastMessageID, numParticipants ) => {
+const createConversation = async (conversationTitle, creatorID, isDirectMessage, allParticipantID, messageContent) => {
     try {
-        const queryText = `
-            INSERT INTO conversations(conversation_title, creator_id, is_direct_message, last_message_id, num_participants)
-            VALUES($1, $2, $3, $4, $5)
+        // uses transaction group to group multiple sql statements atomically
+        // beginning the query transaction
+        await db.query(`BEGIN`);
+
+        // sql statement creating conversation entry
+        const conversationsQueryText = `
+            INSERT INTO conversations(conversation_title, creator_id, is_direct_message, num_participants)
+            VALUES($1, $2, $3, $4)
+            RETURNING conversation_id
             ;
         `;
-        const values = [conversationTitle, creatorID, isDirectMessage, lastMessageID, numParticipants];
-        await db.query(queryText, values);
+        const conversationsValues = [conversationTitle, creatorID, isDirectMessage, allParticipantID.length];
+        const result = await db.query(conversationsQueryText, conversationsValues);
+        const conversationID = result.rows[0].conversation_id;
+
+        // creating first initial message in messages table
+        const messageID = await messageModel.createMessage(creatorID, messageContent, conversationID);
+        const messageQueryText = `
+            UPDATE conversations
+            SET last_message_id = $1
+            WHERE conversation_id = $2
+            ;
+        `;
+        const messageQueryValues = [messageID, conversationID];
+        await db.query(messageQueryText, messageQueryValues);
+        
+        // sql statement adding all conversation participants to the user_conversations table
+        await userConversationModel.addConversationParticipants(allParticipantID, conversationID);
+
+        // committing the transaction
+        await db.query(`COMMIT`);
         return true;
     } 
     catch (error) {
+        // rolling query back if an error occurs
+        await db.query(`ROLLBACK`);
         console.error('Error creating new conversation:', error);
         throw error;
     }

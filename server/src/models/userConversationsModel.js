@@ -66,18 +66,24 @@ const getConversationParticipants = async (conversationID) => {
 /**
  * Query responsible for adding all partipants to the users_conversations table
  * @param {Array<string>} conversationParticipantsID - array of string containing all the userID's of the participants of the new conversation
- * @param {number} conversationID - number representing the ID of the conversation
+ * @param {string} conversationID - string representing the ID of the conversation
  * @returns {Promise<boolean>} - returns promise of boolean true if successful, else throws an error
  */
 const addConversationParticipants = async (conversationParticipantsUserID, conversationID) => {
     try {
-        const values = conversationParticipantsUserID.map((item) => `(${item}, ${conversationID})`).join(', ');
+        // const values = conversationParticipantsUserID.map((item) => `(${item}, ${conversationID})`).join(', ');
+        const values = conversationParticipantsUserID.map((item, index) => `($${2 * index + 1}::uuid, $${2 * index + 2}::integer)`).join(', ');
         const queryText = `
             INSERT INTO users_conversations (user_id, conversation_id)
             VALUES ${values}
             ;
         `;
-        await db.query(queryText);
+        const queryValues = conversationParticipantsUserID.reduce((acc, item) => {
+            acc.push(item, conversationID);
+            return acc;
+        }, []);
+
+        await db.query(queryText, queryValues);
         return true;
     } 
     catch (error) {
@@ -125,7 +131,7 @@ const getUserConversations = async (userID) => {
         const queryText = `
             SELECT 
                 c.conversation_title,
-                c.updated_at,
+                c.updated_at AT TIME ZONE 'UTC' AS updated_at,
                 m.messages_text AS last_message,
                 u.icon_color AS creator_icon_color,
                 u.username AS creator_username
@@ -139,13 +145,15 @@ const getUserConversations = async (userID) => {
                 users u ON c.creator_id = u.user_id
             WHERE 
                 uc.user_id = $1
+            ORDER BY
+                updated_at DESC
             ;
         `;
         const values = [userID];
         const result = await db.query(queryText, values);
 
         const userConversations = [];
-        for (let row in result.rows) {
+        for (let row of result.rows) {
             const conversationObject = {
                 conversation_title: row.conversation_title, 
                 updated_at: row.updated_at,
@@ -155,9 +163,6 @@ const getUserConversations = async (userID) => {
             };
             userConversations.push(conversationObject);
         }
-
-        // sorting user conversations in terms of time updated
-        userConversations.sort((a, b) => a.updated_at.localeCompare(b.updated_at));
 
         return { userConversations };
     } 

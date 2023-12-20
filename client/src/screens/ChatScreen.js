@@ -10,7 +10,7 @@
  *  }
  */
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   View,
   Text,
@@ -30,6 +30,7 @@ import { AntDesign } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useAuth } from "../AuthContext";
 import { useRoute } from '@react-navigation/native';
+import api from "../api";
 
 /**
  * React component rendering chat screen for a specific conversation
@@ -37,11 +38,10 @@ import { useRoute } from '@react-navigation/native';
  */
 const ChatScreen = ({ navigation }) => {
   // retrieving userToken and globalClientUsername with useAuth
-  const { token, globalClientUsername, defaultProfileColor } = useAuth();
+  const { token, globalClientUsername } = useAuth();
 
   // receiving paramaters from previous screen
   const route = useRoute();
-  const isDirectMessage = true;
 
   //   chatParicipantElement: {
   //     userID: props.userID,
@@ -52,28 +52,18 @@ const ChatScreen = ({ navigation }) => {
   const [chatParticipants, setChatParticipants] = useState(!route.params.isChatCreated ? route.params.potentialChatParticipants : []);
   const [messages, setMessages] = useState([]);
   const [messageText, setMessageText] = useState("");
+  const [chatTitle, setChatTitle] = useState("");
+
+  // use effect running upon initial component mount
+  useEffect(() => {
+    generateInitialHeaderContent();
+  }, []);
 
   const handleTextChange = (text) => {
     setMessageText(text);
   };
 
-  const handleMessageSubmit = () => {
-    if (messageText.trim() !== "") {
-      const newMessage = { text: messageText, sender: "user" };
-      setMessages([...messages, newMessage]);
-      setMessageText("");
-    }
-  };
-
-  // initializing useRef for scrollView for messages
-  const messageScrollViewRef = useRef();
-
-  // function responsible for scrolling to the bottom when new messages are populated
-  const scrollToBottom = () => {
-    messageScrollViewRef.current.scrollToEnd({ animated: true });
-  };
-
-  // function responsible for generating header content
+  // function responsible for generating header title for chat
   const generateInitialHeaderContent = () => {
     let title = "";
     for (let i = 0; i < chatParticipants.length; ++i) {
@@ -87,21 +77,49 @@ const ChatScreen = ({ navigation }) => {
         title += chatParticipants[i].username + ", ";
       }
     }
+    setChatTitle(title);
+  };
 
-    return (
-      <View style={header}>
-        <BackButton
-          onPress={() => navigation.navigate("HomeScreen")}
-        ></BackButton>
-        <View style={titleContainer}>
-          <Text style={headerTitle} numberOfLines={1} ellipsizeMode="tail">{title}</Text>
-        </View>
-        <View style={headerSection}>
-          <ActivityIndicator isOnline={true}></ActivityIndicator>
-          <Text>Online</Text>
-        </View>
-      </View>
-    )
+  // function responsible for creating new conversation in database
+  const createNewConversation = async (newMessageText) => {
+    try {
+      const apiURL = 'conversations/createNewConversation';
+      await api.post(apiURL, {
+        conversationTitle: chatTitle,
+        allParticipantData: chatParticipants,
+        messageText: newMessageText.text,
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      return true;
+    } 
+    catch (error) {
+      console.error('Error while creating new conversation in database: ', error);
+      return false;
+    }
+  }
+
+  const handleMessageSubmit = () => {
+    if (messageText.trim() !== "") {
+      const newMessage = { text: messageText, sender: globalClientUsername };
+      setMessages([...messages, newMessage]);
+      setMessageText("");
+      
+      // action if first message of new conversation
+      if (!route.params.isChatCreated) {
+        createNewConversation(newMessage);
+      }
+    }
+  };
+
+  // initializing useRef for scrollView for messages
+  const messageScrollViewRef = useRef();
+
+  // function responsible for scrolling to the bottom when new messages are populated
+  const scrollToBottom = () => {
+    messageScrollViewRef.current.scrollToEnd({ animated: true });
   };
 
   const {
@@ -120,7 +138,18 @@ const ChatScreen = ({ navigation }) => {
   return (
     <SafeAreaView style={rootContainer}>
       <StatusBar></StatusBar>
-      {generateInitialHeaderContent()}
+      <View style={header}>
+        <BackButton
+          onPress={() => navigation.navigate("HomeScreen")}
+        ></BackButton>
+        <View style={titleContainer}>
+          <Text style={headerTitle} numberOfLines={1} ellipsizeMode="tail">{chatTitle}</Text>
+        </View>
+        <View style={headerSection}>
+          <ActivityIndicator isOnline={true}></ActivityIndicator>
+          <Text>Online</Text>
+        </View>
+      </View>
       
       {messages.length === 0 && (
         <View style={emptyFriends}>
