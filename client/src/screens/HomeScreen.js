@@ -27,7 +27,10 @@ const HomeScreen = ({ navigation }) => {
     const { token, globalClientUsername, defaultProfileColor } = useAuth(); 
 
     const navigateToStack = () => {
-        navigation.navigate("ChatScreen");
+        const parameters = {
+            isChatCreated: true,
+        };
+        navigation.navigate("ChatScreen", parameters);
     };
 
     // array of objects with properties: conversationName, lastMessageData, userInfo
@@ -51,6 +54,38 @@ const HomeScreen = ({ navigation }) => {
                 error
               );
               return false;
+        }
+    };
+
+    // function responsible for generating name of a conversation
+    const generateName = (conversationEntry) => {
+        if (conversationEntry.conversation_title) {
+            return conversationEntry.conversation_title;
+        }
+
+        // using default conversation name instead
+        const chatParticipants = conversationEntry.conversation_participants;
+        if (chatParticipants.length > 2) {
+            let title = "";
+            for (let i = 0; i < chatParticipants.length; ++i) {
+              if (i === chatParticipants.length - 1) {
+                title += chatParticipants[i].username;
+              }
+              else if (i === chatParticipants.length - 2) {
+                title += chatParticipants[i].username + " & ";
+              }
+              else {
+                title += chatParticipants[i].username + ", ";
+              }
+            }
+            return title;
+        }
+        else {
+            for (let entry of chatParticipants) {
+                if (entry.username !== globalClientUsername) {
+                    return entry.username;
+                }
+            }
         }
     };
 
@@ -92,10 +127,9 @@ const HomeScreen = ({ navigation }) => {
                     {conversations.map((item, index) => (
                         <ConversationTab 
                             key={index}
-                            initials={item.creator_username.substring(0,2).toUpperCase()}
+                            conversationObject={item}
                             color={item.creator_icon_color}
                             bubbleSize={45}
-                            title={item.conversation_title}
                             prevMessage={item.messages_text}
                             lastMessageTime={item.updated_at}
                             numMessagesNotRead={3}

@@ -2,8 +2,8 @@
  * Defines database schema/model for userConversationsModel which is the join between users table and conversations table
 */
 
-const { query } = require('express');
 const db = require('../../database');
+const generalUtils = require('../utilities/generalUtils');
 
 /**
  * Query responsible for creating user_conversations table
@@ -35,7 +35,7 @@ const createUserConversationsTable = async () => {
 const getConversationParticipants = async (conversationID) => {
     try {
         const queryText = `
-            SELECT users.user_id, users.username
+            SELECT users.user_id, users.username, users.icon_color
             FROM users_conversations
             JOIN users ON users_conversations.user_id = users.user_id
             WHERE conversation_id = $1
@@ -50,9 +50,11 @@ const getConversationParticipants = async (conversationID) => {
             const participantObject = {
                 userID: participant.user_id,
                 username: participant.username,
+                iconColor: participant.icon_color,
             };
             conversationParticipantData.push(participantObject);
         }
+
 
         // returning conversation participant data
         return conversationParticipantData;
@@ -128,13 +130,19 @@ const getUserConversations = async (userID) => {
     // - conversation icon
     // - read status ***FIX ME: ADD IN THE FUTURE***
     try {
+        // uses transaction group to group multiple sql statements atomically
+        // beginning the query transaction
+        await db.query(`BEGIN`);
+
         const queryText = `
             SELECT 
+                c.conversation_id,
                 c.conversation_title,
                 c.updated_at AT TIME ZONE 'UTC' AS updated_at,
                 m.messages_text AS last_message,
                 u.icon_color AS creator_icon_color,
-                u.username AS creator_username
+                u.username AS creator_username,
+                c.is_direct_message
             FROM
                 conversations c
             JOIN
@@ -154,19 +162,27 @@ const getUserConversations = async (userID) => {
 
         const userConversations = [];
         for (let row of result.rows) {
+            const conversationParticipants = await getConversationParticipants(row.conversation_id);
             const conversationObject = {
+                conversation_id: row.conversation_id, 
                 conversation_title: row.conversation_title, 
                 updated_at: row.updated_at,
                 messages_text: row.last_message,
                 creator_icon_color: row.creator_icon_color,
                 creator_username: row.creator_username,
+                is_direct_message: row.is_direct_message,
+                conversation_participants: conversationParticipants,
             };
             userConversations.push(conversationObject);
         }
 
+        // committing the transaction
+        await db.query(`COMMIT`);
         return { userConversations };
     } 
     catch (error) {
+        // rolling query back if an error occurs
+        await db.query(`ROLLBACK`);
         console.error('Error when fetching user conversations', error);
         throw error;    
     }

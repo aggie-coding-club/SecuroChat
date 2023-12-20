@@ -34,13 +34,12 @@ const createConversationsTable = async () => {
 
 /**
  * Query responsible for creating a new conversation. Query adds entry into conversations table and appropriate user entries within user_conversations join table
- * @param {string} conversationTitle - string to be displayed as the conversation title
  * @param {string} creatorID - UUID of the creator of the conversation
  * @param {boolean} isDirectMessage - boolean representing whether the converation is a DM or not
  * @param {Array<string>} allParticipantID - array of strings containing conversation participant UUIDs
  * @returns {Promise<boolean>} Returns promise of true if successful. Otherwise throws error.
  */
-const createConversation = async (conversationTitle, creatorID, isDirectMessage, allParticipantID, messageContent) => {
+const createConversation = async (creatorID, isDirectMessage, allParticipantID, messageContent) => {
     try {
         // uses transaction group to group multiple sql statements atomically
         // beginning the query transaction
@@ -53,7 +52,10 @@ const createConversation = async (conversationTitle, creatorID, isDirectMessage,
             RETURNING conversation_id
             ;
         `;
-        const conversationsValues = [conversationTitle, creatorID, isDirectMessage, allParticipantID.length];
+        
+        // conversation_title is initally set to empty string and participants of conversation are displayed on the client-side by default
+        // conversation_title can be changed by the user directly to make a conversation name which will be stored on the database as opposed to the default option
+        const conversationsValues = ["", creatorID, isDirectMessage, allParticipantID.length];
         const result = await db.query(conversationsQueryText, conversationsValues);
         const conversationID = result.rows[0].conversation_id;
 
