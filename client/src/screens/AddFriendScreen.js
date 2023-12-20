@@ -14,12 +14,39 @@ import { Entypo } from '@expo/vector-icons';
 import GeneralButton from '../components/GeneralButton';
 import GeneralInput from '../components/GeneralInput';
 import BackButton from '../components/BackButton';
+import api from '../api';
+import { useAuth } from '../AuthContext';
+
 
 const AddFriendScreen = ({ navigation }) => {
+    // retrieving userTokenwith useAuth
+    const { token } = useAuth(); 
+
     const [inputValue, setInputValue] = useState('');
+
     const handleInputChange = (value) => {
         setInputValue(value);
     };
+
+    // function responsible for sending friend request to specified user
+    const sendFriendRequest = async (recipientUsername) => {
+      try {
+        const apiURL = 'user/sendFriendRequest';
+        await api.post(apiURL, {
+          recipientUsername: recipientUsername,
+        }, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        return true;
+      } 
+      catch (error) {
+        console.error('Error while sending friend request: ', error);
+        return false;
+      }
+    };
+
     const {
         rootContainer,
         backButton,
@@ -58,6 +85,7 @@ const AddFriendScreen = ({ navigation }) => {
             <View style={buttonContainer}>
                 <GeneralButton 
                     content={'Send Friend Request'}
+                    onPress={() => sendFriendRequest(inputValue)}
                 />
             </View>
 

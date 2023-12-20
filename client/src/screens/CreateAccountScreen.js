@@ -15,12 +15,16 @@ import GeneralInput from "../components/GeneralInput";
 import GeneralButton from "../components/GeneralButton";
 import BackButton from "../components/BackButton";
 import api from '../api';
+import { useAuth } from '../AuthContext';
 
 /**
  * CreateAccountScreen is a custom component that generates the createAccount screen for SecuroChat
  * @param {object} navigation - Prop passed in from React Navigation to screen component
  */
 const CreateAccountScreen = ({ navigation }) => {
+  // setting useAuth hook for userAuthentication 
+  const { setJSONWebToken, setGlobalClientUsername, setDefaultProfileColor } = useAuth();
+
   //handling state deciding whether to show or hide pageHeader
   const [isHeaderHidden, setIsHeaderHidden] = useState(false);
   const hideHeader = () => {
@@ -31,10 +35,11 @@ const CreateAccountScreen = ({ navigation }) => {
   };
 
   // handling state for input boxes
-  const [username, setUsername] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [usernameData, setUsername] = useState('');
+  const [phoneNumberData, setPhoneNumber] = useState('');
+  const [passwordData, setPassword] = useState('');
+  const [confirmPasswordData, setConfirmPassword] = useState('');
+  
   const handleUsernameChange = (value) => {
     setUsername(value);
   };
@@ -48,30 +53,35 @@ const CreateAccountScreen = ({ navigation }) => {
     setConfirmPassword(value);
   };
 
-
   const handleRegister = async () => {
     try {
-      const response = await api.post('http://localhost:3001/auth/register', {
-        username, 
-        phoneNumber, 
-        password,
-      }, { withCredentials: true });
+      const publicKeyData = Math.floor(Math.random() * 100000); // temp data to fill publicKey in database
+      const apiURL = '/auth/register';
+      const response = await api.post(apiURL, {
+        username: usernameData, 
+        phone: phoneNumberData, 
+        password: passwordData,
+        publicKey: publicKeyData,
+      });
 
-      console.log(response.data);
+      setJSONWebToken(response.data.token);
+      setGlobalClientUsername(usernameData);
+      setDefaultProfileColor(response.data.iconColor);
+      return true;
     }
     catch (error) {
       console.error('Error during registration: ', error);
+      return false;
     }
   };
 
   const verifyPasswordMatch = () => {
-    return password === confirmPassword;
+    return passwordData === confirmPasswordData;
   };
 
-  const handleRegisterPress = () => {
-    if (verifyPasswordMatch()){
-      handleRegister();
-      navigation.navigate("PhoneVerification")
+  const handleRegisterPress = async () => {
+    if (verifyPasswordMatch() && (await handleRegister())){
+      navigation.navigate("PhoneVerification");
     }
   };
 

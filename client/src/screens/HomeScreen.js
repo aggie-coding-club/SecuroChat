@@ -8,12 +8,14 @@
  * }
 */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, StatusBar, TouchableOpacity, ScrollView } from "react-native";
 import ProfilePicture from '../components/ProfilePicture';
 import ConversationTab from '../components/ConversationTab';
 import { Feather } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
+import api from '../api';
+import { useAuth } from '../AuthContext';
 
 
 /**
@@ -21,6 +23,9 @@ import { Ionicons } from '@expo/vector-icons';
  * @param navigation - react navigation object used for stack navigation
  */
 const HomeScreen = ({ navigation }) => {
+    // retrieving userToken and globalClientUsername with useAuth
+    const { token, globalClientUsername, defaultProfileColor } = useAuth(); 
+
     const navigateToStack = () => {
         navigation.navigate("ChatScreen");
     };
@@ -28,50 +33,76 @@ const HomeScreen = ({ navigation }) => {
     // array of objects with properties: conversationName, lastMessageData, userInfo
     const [conversations, setConversations] = useState([]);
 
+    // function responsible for fetching user's conversation data
+    const getUserConversationData = async () => {
+        try {
+            const apiURL = "/conversations/fetchUserConversations";
+            const response = await api.get(apiURL, {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+            });
+            setConversations(response.data.userConversations);
+            return true;
+        } 
+        catch (error) {
+            console.error(
+                "Error while rendering user's conversations on home screen: ",
+                error
+              );
+              return false;
+        }
+    };
+
+  // initializing user's conversations data upon component mount with useEffect
+  useEffect(() => {
+    getUserConversationData();
+
+    // setting up periodic updates with set Interval
+    const intervalID = setInterval(() => {
+      getUserConversationData();
+    }, 10000); // fetches updates every 30 seconds
+
+    // cleanup function preventing memory leaks
+    return () => {
+      clearInterval(intervalID);
+    };
+  }, []);
+
     const { rootContainer, header, headerIcons, sectionTitle, scrollSection, emptySection, emptyText, sparkleText } = styles;
     return (
         <SafeAreaView style={rootContainer}>
             <StatusBar></StatusBar>
             <View style={header}>
                 <TouchableOpacity>
-                    <ProfilePicture initials="CA" color="#DB1CD3" bubbleSize={30}></ProfilePicture>
+                    <ProfilePicture initials={globalClientUsername.substring(0,2).toUpperCase()} color={defaultProfileColor} bubbleSize={30}></ProfilePicture>
                 </TouchableOpacity>
                 <Text style={sectionTitle}>Chats</Text>
                 <View style={headerIcons}>
                     <TouchableOpacity>
                         <Feather name="camera" size={28} color="black" />
                     </TouchableOpacity>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={() => navigation.navigate("AddConversation")}>
                         <Ionicons name="create-outline" size={30} color="black" />
                     </TouchableOpacity>
                 </View>
             </View>
             {conversations.length > 0 && (
                 <ScrollView style={scrollSection}>
-                    <ConversationTab 
-                        initials={'BE'}
-                        color={'#42DB1C'} 
-                        bubbleSize={45}  
-                        title={"BobEast12"}
-                        prevMessage={"I wanted to say that SecuroChat is so cool! I really want to use it..."}
-                        lastMessageTime={"6:53 PM"}
-                        numMessagesNotRead={4}
-                        notSeen={true}
-                        onPress={navigateToStack}
-                    />
-                    <ConversationTab 
-                        initials={'JB'}
-                        color={'#DB1C3F'} 
-                        bubbleSize={45}  
-                        title={"JohnnyBravo"}
-                        prevMessage={"Yo How you doing. What you doing later..."}
-                        lastMessageTime={"6:30 PM"}
-                        numMessagesNotRead={2}
-                        lastDate={'11/10/23'}
-                        notSeen={false}
-                        withinTheDay={true}
-                        onPress={navigateToStack}
-                    />
+                    {conversations.map((item, index) => (
+                        <ConversationTab 
+                            key={index}
+                            initials={item.creator_username.substring(0,2).toUpperCase()}
+                            color={item.creator_icon_color}
+                            bubbleSize={45}
+                            title={item.conversation_title}
+                            prevMessage={item.messages_text}
+                            lastMessageTime={item.updated_at}
+                            numMessagesNotRead={3}
+                            notSeen={true}
+                            onPress={navigateToStack}
+                        />
+                    ))}
                 </ScrollView>
             )}
             {conversations.length === 0 && (

@@ -10,6 +10,9 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import ProfilePicture from './ProfilePicture';
 import { AntDesign } from '@expo/vector-icons';
+import api from '../api';
+import { useAuth } from '../AuthContext';
+
 /**
  * Custom React Native component responsible for rendering entities of the friend screen depending on passed in props
  * @param {object} props - object containing react native props
@@ -20,22 +23,64 @@ import { AntDesign } from '@expo/vector-icons';
  * @property {boolean} props.isRequest - boolean determinining if this entity is a friend request. If so, returns true. 
  */
 const FriendEntry = (props) => {
+    // retrieving userTokenwith useAuth
+    const { token } = useAuth(); 
+
+    // function handling rejecting a friend request
+    const rejectFriendRequest = async (senderUsername) => {
+        try {
+            const apiURL = 'user/rejectFriendRequest';
+            await api.delete(apiURL, {
+                data: {
+                    senderUsername: senderUsername,
+                },
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                }
+            });
+            return true;
+        } 
+        catch (error) {
+            console.error('Error while rejecting friend request: ', error);
+            return false;
+        }
+    };
+
+    // function handling accepting a friend request
+    const acceptFriendRequest = async (senderUsername) => {
+        try {
+            const apiURL = 'user/acceptFriendRequest';
+            await api.post(apiURL, {
+                senderUsername: senderUsername,
+            }, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            return true;
+        } 
+        catch (error) {
+            console.error('Error while accepting friend request: ', error);
+            return false;
+        }
+    }
+
     const { container, iconContainer, containerText } = styles;
     return (
         <View style={container}>
             <ProfilePicture 
                 initials={props.initials}
                 color={props.color}
-                bubbleSize={props.bubbleSize}
+                bubbleSize={45}
             />
-            <Text style={containerText}>{props.username}</Text>
+            <Text style={containerText} numberOfLines={1} >{props.username}</Text>
 
             {props.isRequest && (
                 <View style={iconContainer}>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={() => rejectFriendRequest(props.username)} >
                         <AntDesign name="closecircleo" size={28} color="#FF3D00" />   
                     </TouchableOpacity>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={() => acceptFriendRequest(props.username)} >
                         <AntDesign name="checkcircleo" size={28} color="#4CAF50" />
                     </TouchableOpacity>
                 </View>
@@ -57,6 +102,7 @@ const FriendEntry = (props) => {
 
 const styles = StyleSheet.create({
     container: {
+        flex: 1,
         padding: 20,
         flexDirection: 'row',
         alignItems: 'center',
@@ -68,6 +114,7 @@ const styles = StyleSheet.create({
         marginLeft: 'auto',
     },
     containerText: {
+        flex: 1,
         color: '#1E1E1E',
         fontFamily: 'RobotoCondensed_400Regular',
         fontSize: 22,

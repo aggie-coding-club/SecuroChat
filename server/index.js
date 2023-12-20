@@ -13,7 +13,8 @@ const cors = require('cors');
 const database = require('./database.js');  // Ensure this is the correct path to your database module
 const authRoutes = require('./src/routes/authRoutes');
 const messageRoutes = require('./src/routes/messageRoutes');
-// const userRoutes = require('./src/routes/userRoutes');
+const userRoutes = require('./src/routes/userRoutes');
+const conversationRoutes = require('./src/routes/conversationRoutes.js');
 const chatSocketHandler = require('./src/sockets/chatSocket');  // Adjust the path as necessary
 
 
@@ -24,7 +25,7 @@ const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
     origin: 'http://localhost:3001', // Adjust this based on your frontend's URL
-    methods: ['GET', 'POST'],
+    methods: ['GET', 'POST', 'DELETE'],
   },
 });
 
@@ -33,20 +34,18 @@ const PORT = process.env.PORT || 3001;
 // Database connection
 database.connect();
 
-
-
 // Middleware
 app.use(express.json());
 app.use(cors());
 
 // Routes
 app.use('/auth', authRoutes);
-app.use('/messages', messageRoutes);  // Adjusted to match your route path
-// app.use('/user', userRoutes);
+app.use('/messages', messageRoutes);  
+app.use('/user', userRoutes);
+app.use('/conversations', conversationRoutes);
 
 // Socket.IO
 io.on('connection', (socket) => {
-    console.log(`Socket connected: ${socket.id}`);
     // Pass the socket and io to the chatSocket handler
     chatSocketHandler(socket, io);
 
@@ -59,4 +58,8 @@ io.on('connection', (socket) => {
 // Start the server
 server.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
+});
+
+app.get('/', (req,res) => {
+  res.send("Server succesfully running");
 });

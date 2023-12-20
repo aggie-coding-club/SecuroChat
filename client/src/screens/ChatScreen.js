@@ -10,69 +10,188 @@
  *  }
  */
 
-import React, { useState } from "react";
-import { View, Text, StyleSheet, SafeAreaView, StatusBar, ScrollView, KeyboardAvoidingView, TouchableOpacity, Touchable } from "react-native";
+import React, { useState, useRef, useEffect } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  SafeAreaView,
+  StatusBar,
+  ScrollView,
+  KeyboardAvoidingView,
+  TouchableOpacity,
+} from "react-native";
 import BackButton from "../components/BackButton";
 import ProfilePicture from "../components/ProfilePicture";
 import ActivityIndicator from "../components/ActivityIndicator";
 import ExpandableTextBox from "../components/ExpandableTextBox";
 import ChatMessage from "../components/ChatMessage";
-import { AntDesign } from '@expo/vector-icons'; 
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { AntDesign } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useAuth } from "../AuthContext";
+import { useRoute } from '@react-navigation/native';
+import api from "../api";
 
+/**
+ * React component rendering chat screen for a specific conversation
+ * @param {navigation} navigation - object containing navigation from react navigation
+ */
 const ChatScreen = ({ navigation }) => {
+  // retrieving userToken and globalClientUsername with useAuth
+  const { token, globalClientUsername } = useAuth();
+
+  // receiving paramaters from previous screen
+  const route = useRoute();
+
+  //   chatParicipantElement: {
+  //     userID: props.userID,
+  //     username: props.username,
+  //     iconColor: props.color,
+  //     userInitials: props.initials,
+  // },
+  const [chatParticipants, setChatParticipants] = useState(!route.params.isChatCreated ? route.params.potentialChatParticipants : []);
   const [messages, setMessages] = useState([]);
-  const [messageText, setMessageText] = useState('');
+  const [messageText, setMessageText] = useState("");
+  const [chatTitle, setChatTitle] = useState("");
+
+  // use effect running upon initial component mount
+  useEffect(() => {
+    generateInitialHeaderContent();
+  }, []);
 
   const handleTextChange = (text) => {
     setMessageText(text);
   };
 
+  // function responsible for generating header title for chat
+  const generateInitialHeaderContent = () => {
+    let title = "";
+    for (let i = 0; i < chatParticipants.length; ++i) {
+      if (i === chatParticipants.length - 1) {
+        title += chatParticipants[i].username;
+      }
+      else if (i === chatParticipants.length - 2) {
+        title += chatParticipants[i].username + " & ";
+      }
+      else {
+        title += chatParticipants[i].username + ", ";
+      }
+    }
+    setChatTitle(title);
+  };
+
+  // function responsible for creating new conversation in database
+  const createNewConversation = async (newMessageText) => {
+    try {
+      const apiURL = 'conversations/createNewConversation';
+      await api.post(apiURL, {
+        conversationTitle: chatTitle,
+        allParticipantData: chatParticipants,
+        messageText: newMessageText.text,
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      return true;
+    } 
+    catch (error) {
+      console.error('Error while creating new conversation in database: ', error);
+      return false;
+    }
+  }
+
   const handleMessageSubmit = () => {
-    if (messageText.trim() !== '') {
-        const newMessage = { text: messageText, sender: 'user' };
-        setMessages([...messages, newMessage]);
-        setMessageText('');
+    if (messageText.trim() !== "") {
+      const newMessage = { text: messageText, sender: globalClientUsername };
+      setMessages([...messages, newMessage]);
+      setMessageText("");
+      
+      // action if first message of new conversation
+      if (!route.params.isChatCreated) {
+        createNewConversation(newMessage);
+      }
     }
   };
 
+  // initializing useRef for scrollView for messages
+  const messageScrollViewRef = useRef();
 
+  // function responsible for scrolling to the bottom when new messages are populated
+  const scrollToBottom = () => {
+    messageScrollViewRef.current.scrollToEnd({ animated: true });
+  };
 
-  const { rootContainer, header, headerSection, messageSection, sendSection, sendContent } = styles;
+  const {
+    rootContainer,
+    header,
+    titleContainer,
+    headerTitle,
+    headerSection,
+    messageSection,
+    sendSection,
+    sendContent,
+    emptyFriends,
+    emptyText,
+  } = styles;
+
   return (
     <SafeAreaView style={rootContainer}>
       <StatusBar></StatusBar>
       <View style={header}>
-        <BackButton onPress={() => navigation.goBack()}></BackButton>
-        <View style={headerSection}>
-          <ProfilePicture initials="CA" color="#DB1CD3" bubbleSize={30}></ProfilePicture>
-          <Text>carlosra0345</Text>
+        <BackButton
+          onPress={() => navigation.navigate("HomeScreen")}
+        ></BackButton>
+        <View style={titleContainer}>
+          <Text style={headerTitle} numberOfLines={1} ellipsizeMode="tail">{chatTitle}</Text>
         </View>
         <View style={headerSection}>
           <ActivityIndicator isOnline={true}></ActivityIndicator>
           <Text>Online</Text>
         </View>
       </View>
+      
+      {messages.length === 0 && (
+        <View style={emptyFriends}>
+          <Text style={emptyText}>No messages yet,</Text>
+          <Text style={emptyText}>Start chatting!</Text>
+        </View>
+      )}
 
-      <ScrollView style={messageSection}>
+      {messages.length > 0 && (
+        <ScrollView
+          ref={messageScrollViewRef}
+          style={messageSection}
+          onContentSizeChange={scrollToBottom}
+        >
           {messages.map((message, index) => (
-                  <ChatMessage key={index} content={message.text} sentByCurrUser={true} />
+            <ChatMessage
+              key={index}
+              content={message.text}
+              sentByCurrUser={true}
+            />
           ))}
-      </ScrollView>
-
+        </ScrollView>
+      )}
 
       <KeyboardAvoidingView style={sendSection} behavior="padding">
         <View style={sendContent}>
-            <TouchableOpacity>
-              <AntDesign name="plus" size={30} color="#0078D4" />
-            </TouchableOpacity>
-            <ExpandableTextBox callbackText={handleTextChange} currentValue={messageText}></ExpandableTextBox>
-            <TouchableOpacity onPress={handleMessageSubmit}>
-              <MaterialCommunityIcons name="send-circle" size={35} color="#0078D4" />
-            </TouchableOpacity>
+          <TouchableOpacity>
+            <AntDesign name="plus" size={30} color="#0078D4" />
+          </TouchableOpacity>
+          <ExpandableTextBox
+            callbackText={handleTextChange}
+            currentValue={messageText}
+          ></ExpandableTextBox>
+          <TouchableOpacity onPress={handleMessageSubmit}>
+            <MaterialCommunityIcons
+              name="send-circle"
+              size={35}
+              color="#0078D4"
+            />
+          </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
-
     </SafeAreaView>
   );
 };
@@ -97,20 +216,42 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     gap: 5,
   },
+  titleContainer: {
+    overflow: "hidden",
+    maxWidth: 250,
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontFamily: "RobotoCondensed_700Bold",
+  },
   messageSection: {
     flex: 12,
     backgroundColor: "#FFFFFF",
+    paddingTop: 15,
+    paddingBottom: 15,
   },
   sendSection: {
     paddingTop: 10,
+    marginTop: 15,
   },
   sendContent: {
     marginBottom: 10,
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-around"
-  }
+    justifyContent: "space-around",
+  },
+  emptyFriends: {
+    flex: 12,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#FFFFFF",
+  },
+  emptyText: {
+    color: "#A2A2A2",
+    fontFamily: "RobotoCondensed_700Bold",
+    fontSize: 20,
+  },
 });
 
 export default ChatScreen;

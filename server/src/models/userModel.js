@@ -15,8 +15,9 @@ const createUserModel = async () => {
                 user_id UUID PRIMARY KEY,
                 username VARCHAR(50) NOT NULL UNIQUE,
                 phone VARCHAR(15) NOT NULL UNIQUE,
-                last_online TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        );
+                last_online TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                icon_color VARCHAR(7) NOT NULL
+            );
         `;
         await db.query(queryText);
         return true;
@@ -34,14 +35,14 @@ const createUserModel = async () => {
  * @param {string} phone  - string representation of phone number
  * @returns {Promise<boolean>} Returns promise of true if successful. Otherwise throws error.
  */
-const createUserEntry = async (userID, username, phone) => {
+const createUserEntry = async (userID, username, phone, iconColor) => {
     try {
         const queryText = `
-            INSERT INTO users(user_id, username, phone) 
-            VALUES ($1, $2, $3) 
+            INSERT INTO users(user_id, username, phone, icon_color) 
+            VALUES ($1, $2, $3, $4) 
             ;
         `;
-        const values = [userID, username, phone];
+        const values = [userID, username, phone, iconColor];
         await db.query(queryText, values);
         return true;
     } 
@@ -96,21 +97,24 @@ const getUsername = async (userID) => {
 };
 
 /**
- * Query responsible for returning the specified usernames userID
+ * Query responsible for returning the specified user's information
  * @param {string} username - string representing users unique username
- * @returns {Promise<string>} Returns string representing user id of user if username found. Else throws error.
+ * @returns {Promise<Object>} Returns object containing userID and profileColor if successful. Otherwise throws an error.
  */
-const getUserID = async (username) => {
+const getUserInfo = async (username) => {
     try {
         const queryText = `
-            SELECT user_id FROM users 
+            SELECT user_id, icon_color FROM users 
             WHERE username = $1
             ;
         `;
         const values = [username];
         const result = await db.query(queryText, values);
-        const userID = result.rows.length > 0 ? result.rows[0].user_id.toString() : '';
-        return userID;
+        const userInfo = {
+            userID: result.rows[0].user_id,
+            iconColor: result.rows[0].icon_color,
+        };
+        return userInfo;
     } 
     catch (error) {
         console.log('Failed to retrieve userID');
@@ -210,16 +214,16 @@ const isUniqueUUID = async (candidateUUID) => {
 };
 
 /**
- * 
- * @param {string} candidateUsername 
- * @param {string} candidatePhone 
+ * Query responsible for verifying if inputted username information already exists within database or not
+ * @param {string} candidateUsername - inputted candidate username as a string
+ * @param {string} candidatePhone - inputted candidate phone number as a string
  * @returns {Promise<string>} Returns true if user information is unique. Else throws error
  */
 const isUniqueUser = async (candidateUsername, candidatePhone) => {
     try {
         const queryText = `
             SELECT user_id FROM users
-            WHERE username = $1 AND phone = $2
+            WHERE username = $1 OR phone = $2
             ;
         `;
         const values = [candidateUsername, candidatePhone];
@@ -238,7 +242,7 @@ module.exports = {
     deleteUserEntry,
     getUsername,
     getLastOnline,
-    getUserID,
+    getUserInfo,
     setUsername,
     setLastOnline,
     isUniqueUUID,

@@ -17,6 +17,8 @@ import ChatScreen from './src/screens/ChatScreen';
 import HomeScreen from './src/screens/HomeScreen';
 import FriendScreen from './src/screens/FriendScreen';
 import AddFriendScreen from './src/screens/AddFriendScreen';
+import AddConversationScreen from './src/screens/AddConversationScreen';
+import { AuthProvider } from './src/AuthContext';
 
 
 const Stack = createNativeStackNavigator();
@@ -52,18 +54,21 @@ const App = () => {
   }
  
   return (
-    <NavigationContainer initialRouteName="Home">
-      <Stack.Navigator screenOptions={{headerShown: false}}>
-        <Stack.Screen name="Home" component={SignupScreen}/>
-        <Stack.Screen name="SignUp" component={CreateAccountScreen}/>
-        <Stack.Screen name="PhoneVerification" component={PhoneVerificationScreen} />
-        <Stack.Screen name="LogIn" component={LoginScreen}/>
-        <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen}/>
-        <Stack.Screen name="ChatScreen" component={ChatScreen}/>
-        <Stack.Screen name="TabScreen" component={TabScreen} />
-        <Stack.Screen name="AddFriend" component={AddFriendScreen} />
-    </Stack.Navigator>
-    </NavigationContainer>
+    <AuthProvider>
+      <NavigationContainer initialRouteName="Home">
+        <Stack.Navigator screenOptions={{headerShown: false, gestureEnabled: false}}>
+          <Stack.Screen name="Home" component={SignupScreen}/>
+          <Stack.Screen name="SignUp" component={CreateAccountScreen}/>
+          <Stack.Screen name="PhoneVerification" component={PhoneVerificationScreen} />
+          <Stack.Screen name="LogIn" component={LoginScreen}/>
+          <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen}/>
+          <Stack.Screen name="ChatScreen" component={ChatScreen}/>
+          <Stack.Screen name="TabScreen" component={TabScreen} />
+          <Stack.Screen name="AddFriend" component={AddFriendScreen} />
+          <Stack.Screen name="AddConversation" component={AddConversationScreen} />
+      </Stack.Navigator>
+      </NavigationContainer>
+    </AuthProvider>
   );
 };
 
