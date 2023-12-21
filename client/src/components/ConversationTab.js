@@ -17,12 +17,8 @@ import MessagesToRead from "../components/MessagesToRead";
  * Custom react native component responsible for rendering conversations on user's home screen
  * @param {object} props - Javascript object containing react native props
  * @param {object} props.conversationObject - object containing conversation data
- * @property {string} props.color - hexadecimal representation of color to fill in user profile
  * @property {string} props.bubbleSize - Sets the size of the profile picture bubble
- * @property {string} props.prevMessage - string filling in last message sent in conversation
  * @property {boolean} props.notSeen - boolean being true if user has chats not yet read, false otherwise
- * @property {string} props.lastMessageTime - string showing time of last sent message
- * @property {string} props.lastDate - string representing date of last message sent if user has seen all messages
  * @property {number} props.numMessagesNotRead - number representing number of messages user has not read
  * @property {function} props.onPress - function that is called onPress
  */
@@ -43,27 +39,27 @@ const ConversationTab = (props) => {
       return props.conversationObject.conversation_title;
     }
 
-    // using default conversation name instead
+    // using default conversation name instead and removing client's username from participant array
     const chatParticipants = props.conversationObject.conversation_participants;
-    if (chatParticipants.length > 2) {
+    let filteredChatParticipants = chatParticipants.filter((obj) => obj.username !== globalClientUsername);
+
+    // action if conversation is a group chat
+    if (filteredChatParticipants.length > 1) {
       let title = "";
-      for (let i = 0; i < chatParticipants.length; ++i) {
-        if (i === chatParticipants.length - 1) {
-          title += chatParticipants[i].username;
-        } else if (i === chatParticipants.length - 2) {
-          title += chatParticipants[i].username + " & ";
+      for (let i = 0; i < filteredChatParticipants.length; ++i) {
+        if (i === filteredChatParticipants.length - 1) {
+          title += filteredChatParticipants[i].username;
+        } else if (i === filteredChatParticipants.length - 2) {
+          title += filteredChatParticipants[i].username + " & ";
         } else {
-          title += chatParticipants[i].username + ", ";
+          title += filteredChatParticipants[i].username + ", ";
         }
       }
       return title;
-    } else {
-      for (let entry of chatParticipants) {
-        if (entry.username !== globalClientUsername) {
-          return entry.username;
-        }
-      }
-    }
+    } 
+    
+    // action when conversation is a direct message
+    return filteredChatParticipants[0].username;
   };
 
   // function obtaining directMessage default icon color
@@ -75,9 +71,14 @@ const ConversationTab = (props) => {
     }
   };
 
+  // function responsible for determining icon color of conversation
+  const getIconColor = () => {
+    return props.conversationObject.conversation_participants.length === 2 ? getDirectMessageIconColor() : props.conversationObject.conversation_icon_color;
+  }
+
   // function responsible for determining time/date to display on conversation
   const timeDateDisplay = () => {
-    const messageDate = new Date(props.lastMessageTime);
+    const messageDate = new Date(props.conversationObject.updated_at);
     const currentDate = new Date();
     if (messageDate.toLocaleDateString() !== currentDate.toLocaleDateString()) {
       const tempDate = messageDate.toLocaleDateString();
@@ -112,14 +113,14 @@ const ConversationTab = (props) => {
     <TouchableOpacity style={container} onPress={props.onPress}>
       <ProfilePicture
         initials={conversationName.substring(0, 2).toUpperCase()}
-        color={getDirectMessageIconColor()}
+        color={getIconColor()}
         bubbleSize={props.bubbleSize}
       ></ProfilePicture>
       <View style={conversationContent}>
         <Text numberOfLines={1} ellipsizeMode="tail" style={conversationTitle}>
           {conversationName}
         </Text>
-        <Text style={conversationText}>{props.prevMessage}</Text>
+        <Text style={conversationText}>{props.conversationObject.messages_text}</Text>
       </View>
       {props.notSeen && (
         <View style={unreadConversationInfo}>
@@ -132,8 +133,8 @@ const ConversationTab = (props) => {
       )}
       {!props.notSeen && (
         <View style={readConversationInfo}>
-          <Text style={[readConversationTime, { fontSize: seenFontSize }]}>
-            {seenValue}
+          <Text style={readConversationTime}>
+            {timeDateDisplay()}
           </Text>
         </View>
       )}
@@ -184,6 +185,7 @@ const styles = StyleSheet.create({
   readConversationTime: {
     color: "#8C8989",
     fontFamily: "RobotoCondensed_400Regular",
+    fontSize: 18,
   },
 });
 

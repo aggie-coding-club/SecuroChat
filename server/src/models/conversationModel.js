@@ -4,6 +4,7 @@
 const db = require('../../database');
 const userConversationModel = require('../models/userConversationsModel');
 const messageModel = require('../models/messageModel');
+const generalUtils = require('../utilities/generalUtils');
 
 /**
  * Query responsible for creating conversations table
@@ -20,7 +21,8 @@ const createConversationsTable = async () => {
                 creator_id UUID NOT NULL REFERENCES users(user_id),
                 is_direct_message BOOLEAN NOT NULL,
                 last_message_id INT REFERENCES messages(message_id),
-                num_participants INT NOT NULL
+                num_participants INT NOT NULL,
+                group_icon_color VARCHAR(7) NOT NULL
             );
         `;
         await db.query(queryText);
@@ -46,16 +48,17 @@ const createConversation = async (creatorID, isDirectMessage, allParticipantID, 
         await db.query(`BEGIN`);
 
         // sql statement creating conversation entry
+        const groupIconColor = generalUtils.randomColor();
         const conversationsQueryText = `
-            INSERT INTO conversations(conversation_title, creator_id, is_direct_message, num_participants)
-            VALUES($1, $2, $3, $4)
+            INSERT INTO conversations(conversation_title, creator_id, is_direct_message, num_participants, group_icon_color)
+            VALUES($1, $2, $3, $4, $5)
             RETURNING conversation_id
             ;
         `;
-        
+
         // conversation_title is initally set to empty string and participants of conversation are displayed on the client-side by default
         // conversation_title can be changed by the user directly to make a conversation name which will be stored on the database as opposed to the default option
-        const conversationsValues = ["", creatorID, isDirectMessage, allParticipantID.length];
+        const conversationsValues = ["", creatorID, isDirectMessage, allParticipantID.length, groupIconColor];
         const result = await db.query(conversationsQueryText, conversationsValues);
         const conversationID = result.rows[0].conversation_id;
 

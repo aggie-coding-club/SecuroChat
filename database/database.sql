@@ -39,7 +39,8 @@ CREATE TABLE conversations (
     creator_id UUID NOT NULL REFERENCES users(user_id),
     is_direct_message BOOLEAN NOT NULL,
     last_message_id INT REFERENCES messages(message_id),
-    num_participants INT NOT NULL
+    num_participants INT NOT NULL,
+    group_icon_color VARCHAR(7) NOT NULL
 );
 
 -- TODO: Finish implementing table from schema on lucidchart

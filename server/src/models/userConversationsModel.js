@@ -142,7 +142,8 @@ const getUserConversations = async (userID) => {
                 m.messages_text AS last_message,
                 u.icon_color AS creator_icon_color,
                 u.username AS creator_username,
-                c.is_direct_message
+                c.is_direct_message, 
+                c.group_icon_color
             FROM
                 conversations c
             JOIN
@@ -172,6 +173,7 @@ const getUserConversations = async (userID) => {
                 creator_username: row.creator_username,
                 is_direct_message: row.is_direct_message,
                 conversation_participants: conversationParticipants,
+                conversation_icon_color: row.group_icon_color,
             };
             userConversations.push(conversationObject);
         }

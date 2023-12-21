@@ -57,38 +57,6 @@ const HomeScreen = ({ navigation }) => {
         }
     };
 
-    // function responsible for generating name of a conversation
-    const generateName = (conversationEntry) => {
-        if (conversationEntry.conversation_title) {
-            return conversationEntry.conversation_title;
-        }
-
-        // using default conversation name instead
-        const chatParticipants = conversationEntry.conversation_participants;
-        if (chatParticipants.length > 2) {
-            let title = "";
-            for (let i = 0; i < chatParticipants.length; ++i) {
-              if (i === chatParticipants.length - 1) {
-                title += chatParticipants[i].username;
-              }
-              else if (i === chatParticipants.length - 2) {
-                title += chatParticipants[i].username + " & ";
-              }
-              else {
-                title += chatParticipants[i].username + ", ";
-              }
-            }
-            return title;
-        }
-        else {
-            for (let entry of chatParticipants) {
-                if (entry.username !== globalClientUsername) {
-                    return entry.username;
-                }
-            }
-        }
-    };
-
   // initializing user's conversations data upon component mount with useEffect
   useEffect(() => {
     getUserConversationData();
@@ -96,7 +64,7 @@ const HomeScreen = ({ navigation }) => {
     // setting up periodic updates with set Interval
     const intervalID = setInterval(() => {
       getUserConversationData();
-    }, 10000); // fetches updates every 30 seconds
+    }, 10000); // fetches updated every second
 
     // cleanup function preventing memory leaks
     return () => {
@@ -128,10 +96,7 @@ const HomeScreen = ({ navigation }) => {
                         <ConversationTab 
                             key={index}
                             conversationObject={item}
-                            color={item.creator_icon_color}
                             bubbleSize={45}
-                            prevMessage={item.messages_text}
-                            lastMessageTime={item.updated_at}
                             numMessagesNotRead={3}
                             notSeen={true}
                             onPress={navigateToStack}
