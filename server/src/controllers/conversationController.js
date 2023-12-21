@@ -4,7 +4,6 @@
 
 const jwt = require('jsonwebtoken');
 const conversationModel = require('../models/conversationModel');
-const userModel = require('../models/userModel');
 const userConversationModel = require('../models/userConversationsModel');
 
 // controller method creating new conversation
@@ -34,7 +33,7 @@ const createNewConversation = async (req,res) => {
         // querying conversations model creating new converstion and adding its participants
         await conversationModel.createConversation(decodedJWT.userID, isDirectMessage,allParticipantUserID, messageText );
 
-        res.status(200).json({success: true, message: 'successfully accepted friend request'});
+        res.status(200).json({success: true, message: 'successfully created conversation'});
 
     } 
     catch (error) {

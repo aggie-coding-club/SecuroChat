@@ -62,9 +62,10 @@ const createMessage = async (userID, messageText, conversationID) => {
 const getMessagesByConversation = async (conversationID) => {
   try {
     const queryText = `
-              SELECT userID, messages_text, time_sent FROM messages
+              SELECT message_id, user_id, messages_text, time_sent FROM messages
               WHERE conversation_id = $1
-              ORDER BY time_sent;
+              ORDER BY time_sent
+              ;
           `;
     const values = [conversationID];
     const result = await db.query(queryText, values);
@@ -73,8 +74,9 @@ const getMessagesByConversation = async (conversationID) => {
     const messagesData = [];
     for (let row of result.rows) {
         const rowEntry = {
-            senderID: row.userID,
-            messageContent: row.message_text,
+            messageID: row.message_id,
+            senderID: row.user_id,
+            messageContent: row.messages_text,
             timeMessageSent: row.time_sent,
         };
         messagesData.push(rowEntry);
@@ -97,6 +99,7 @@ const deleteMessage = async (messageID) => {
     const queryText = `
         DELETE FROM messages
         WHERE message_id = $1
+        ;
     `;
     const values = [messageID];
     await db.query(queryText, values);
@@ -120,45 +123,17 @@ const updateMessage = async (messageID, newMessageText) => {
         UPDATE messages
         SET messages_text = $2
         WHERE message_id = $1
+        ;
     `;
     const values = [messageID, newMessageText];
     await db.query(queryText, values);
     return true;
-  } catch (error) {
+  } 
+  catch (error) {
     console.error('Error updating specified message', error);
     throw error;
   }
 };
-
-// // Mark a message as read
-// const markMessageAsRead = async (userId, messageId) => {
-//   const queryText = `
-//             INSERT INTO read_receipts(user_id, message_id, time_read)
-//             VALUES($1, $2, NOW())
-//             RETURNING *;
-//         `;
-//   try {
-//     const res = await db.query(queryText, [userId, messageId]);
-//     return res.rows[0];
-//   } catch (error) {
-//     throw error;
-//   }
-// };
-
-// // Get unread messages for a user
-// const getUnreadMessagesForUser = async (userId) => {
-//   const queryText = `
-//             SELECT m.* FROM messages m
-//             LEFT JOIN read_receipts rr ON m.message_id = rr.message_id AND rr.user_id = $1
-//             WHERE rr.read_receipts_id IS NULL AND m.user_id != $1;
-//         `;
-//   try {
-//     const res = await db.query(queryText, [userId]);
-//     return res.rows;
-//   } catch (error) {
-//     throw error;
-//   }
-// };
 
 module.exports = {
   createMessage,

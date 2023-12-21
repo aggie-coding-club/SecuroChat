@@ -6,25 +6,16 @@ const express = require('express');
 const messageController = require('../controllers/messageController');
 const router = express.Router();
 
-// Send a new message
-router.post('/send', messageController.sendMessage);
+// route for sending a message
+router.post('/sendMessage', messageController.sendMessage);
 
-// Fetch messages in a conversation
-router.get('/conversation/:conversationId', messageController.getMessages);
+// route for fetching messages by conversation
+router.get('/fetchMessagesByConversation', messageController.fetchMessagesByConversation);
 
-// Delete a message
-router.delete('/:messageId', messageController.deleteMessage);
+// route for updating a message
+router.put('/updateMessage', messageController.updateMessage);
 
-// Update a message
-router.put('/:messageId', messageController.updateMessage);
-
-// Get recent messages for a user
-router.get('/recent/:userId', messageController.getRecentMessages);
-
-// Mark a message as read
-router.put('/read/:messageId', messageController.markMessageAsRead);
-
-// Get unread messages for a user
-router.get('/unread/:userId', messageController.getUnreadMessages);
+// route for deleting a message
+router.delete('/deleteMessage', messageController.deleteMessage);
 
 module.exports = router;
