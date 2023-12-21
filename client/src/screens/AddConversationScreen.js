@@ -151,9 +151,9 @@ const AddConversationScreen = ({ navigation }) => {
         ))}
       </ScrollView>
 
-      <View style={buttonContainer}>
+      {selectedParticipants.length > 0 && (<View style={buttonContainer}>
         <GeneralButton content={"Create New Chat"} onPress={onButtonPress} />
-      </View>
+      </View>)}
     </SafeAreaView>
   );
 };
@@ -185,7 +185,6 @@ const styles = StyleSheet.create({
     marginLeft: 15,
   },
   participantSection: {
-    marginTop: 20,
     gap: 5,
   },
   buttonContainer: {

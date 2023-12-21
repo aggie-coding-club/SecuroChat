@@ -3,7 +3,7 @@
 */
 
 const db = require('../../database');
-const generalUtils = require('../utilities/generalUtils');
+const messageModel = require('../models/messageModel');
 
 /**
  * Query responsible for creating user_conversations table
@@ -164,6 +164,7 @@ const getUserConversations = async (userID) => {
         const userConversations = [];
         for (let row of result.rows) {
             const conversationParticipants = await getConversationParticipants(row.conversation_id);
+            const messagesData = await messageModel.getMessagesByConversation(row.conversation_id);
             const conversationObject = {
                 conversation_id: row.conversation_id, 
                 conversation_title: row.conversation_title, 
@@ -174,6 +175,7 @@ const getUserConversations = async (userID) => {
                 is_direct_message: row.is_direct_message,
                 conversation_participants: conversationParticipants,
                 conversation_icon_color: row.group_icon_color,
+                messagesData: messagesData,
             };
             userConversations.push(conversationObject);
         }

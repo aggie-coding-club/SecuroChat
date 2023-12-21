@@ -50,16 +50,13 @@ const ChatScreen = ({ navigation }) => {
   //     userInitials: props.initials,
   // },
   const [chatParticipants, setChatParticipants] = useState(isChatCreated ? conversationObject.conversation_participants : potentialChatParticipants);
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState(isChatCreated ? conversationObject.messagesData : []);
   const [messageText, setMessageText] = useState(""); // message text is the current message actively being types within the textbox
   const [chatTitle, setChatTitle] = useState("");
 
   // use effect running upon initial component mount
   useEffect(() => {
     generateInitialHeaderContent();
-    if (isChatCreated) {
-      fetchConversationMessages();
-    }
   }, []);
 
   const handleTextChange = (text) => {
