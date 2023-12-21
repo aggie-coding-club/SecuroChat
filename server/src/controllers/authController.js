@@ -41,7 +41,8 @@ const register = async (req, res) => {
         const token = jwt.sign({ userID: generatedUUID }, process.env.JWT_SECRET);
 
         // sending the token to client in response
-        res.json({ token, iconColor })
+        const userID = generatedUUID;
+        res.json({ token, iconColor, userID })
     } 
     catch (error) {
         console.error('Error in user registration: ', error);
@@ -67,7 +68,8 @@ const login = async (req, res) => {
 
         // sending the token to client in response
         const iconColor = userInfo.iconColor;
-        res.json({ token, iconColor });
+        const userID = userInfo.userID;
+        res.json({ token, iconColor, userID });
     } 
     catch (error) {
         console.error('Error in user login: ', error);

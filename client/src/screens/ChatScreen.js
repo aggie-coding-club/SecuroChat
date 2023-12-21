@@ -22,7 +22,6 @@ import {
   TouchableOpacity,
 } from "react-native";
 import BackButton from "../components/BackButton";
-import ProfilePicture from "../components/ProfilePicture";
 import ActivityIndicator from "../components/ActivityIndicator";
 import ExpandableTextBox from "../components/ExpandableTextBox";
 import ChatMessage from "../components/ChatMessage";
@@ -38,10 +37,11 @@ import api from "../api";
  */
 const ChatScreen = ({ navigation }) => {
   // retrieving userToken and globalClientUsername with useAuth
-  const { token, globalClientUsername } = useAuth();
+  const { token, globalClientUsername, globalClientID } = useAuth();
 
   // receiving paramaters from previous screen
   const route = useRoute();
+  const { isChatCreated, potentialChatParticipants, conversationObject } = route.params;
 
   //   chatParicipantElement: {
   //     userID: props.userID,
@@ -49,14 +49,17 @@ const ChatScreen = ({ navigation }) => {
   //     iconColor: props.color,
   //     userInitials: props.initials,
   // },
-  const [chatParticipants, setChatParticipants] = useState(!route.params.isChatCreated ? route.params.potentialChatParticipants : []);
+  const [chatParticipants, setChatParticipants] = useState(isChatCreated ? conversationObject.conversation_participants : potentialChatParticipants);
   const [messages, setMessages] = useState([]);
-  const [messageText, setMessageText] = useState("");
+  const [messageText, setMessageText] = useState(""); // message text is the current message actively being types within the textbox
   const [chatTitle, setChatTitle] = useState("");
 
   // use effect running upon initial component mount
   useEffect(() => {
     generateInitialHeaderContent();
+    if (isChatCreated) {
+      fetchConversationMessages();
+    }
   }, []);
 
   const handleTextChange = (text) => {
@@ -65,19 +68,51 @@ const ChatScreen = ({ navigation }) => {
 
   // function responsible for generating header title for chat
   const generateInitialHeaderContent = () => {
-    let title = "";
-    for (let i = 0; i < chatParticipants.length; ++i) {
-      if (i === chatParticipants.length - 1) {
-        title += chatParticipants[i].username;
-      }
-      else if (i === chatParticipants.length - 2) {
-        title += chatParticipants[i].username + " & ";
-      }
-      else {
-        title += chatParticipants[i].username + ", ";
-      }
+    if (conversationObject && conversationObject.conversation_title) {
+      setChatTitle(conversationObject.conversation_title)
+      return conversationObject.conversation_title;
     }
-    setChatTitle(title);
+
+    // using default conversation name instead and removing client's username from participant array
+    let filteredChatParticipants = chatParticipants.filter((obj) => obj.username !== globalClientUsername);
+
+    // action if conversation is a group chat
+    if (filteredChatParticipants.length > 1) {
+      let title = "";
+      for (let i = 0; i < filteredChatParticipants.length; ++i) {
+        if (i === filteredChatParticipants.length - 1) {
+          title += filteredChatParticipants[i].username;
+        } else if (i === filteredChatParticipants.length - 2) {
+          title += filteredChatParticipants[i].username + " & ";
+        } else {
+          title += filteredChatParticipants[i].username + ", ";
+        }
+      }
+      setChatTitle(title);
+      return title;
+    } 
+    
+    // action when conversation is a direct message
+    setChatTitle(filteredChatParticipants[0].username);
+    return filteredChatParticipants[0].username;
+  };
+
+  // function responsible for fetching message data from conversation
+  const fetchConversationMessages = async () => {
+    try {
+      const apiURL = 'messages/fetchMessagesByConversation';
+      const response = await api.get(apiURL, {
+        params: { conversationID: conversationObject.conversation_id },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setMessages(response.data);
+    } 
+    catch (error) {
+      console.error('Error while fetching messages of conversation: ', error);
+      return false;
+    }
   };
 
   // function responsible for creating new conversation in database
@@ -87,7 +122,7 @@ const ChatScreen = ({ navigation }) => {
       await api.post(apiURL, {
         conversationTitle: chatTitle,
         allParticipantData: chatParticipants,
-        messageText: newMessageText.text,
+        messageText: newMessageText.messageContent,
       }, {
         headers: {
           Authorization: `Bearer ${token}`
@@ -103,12 +138,15 @@ const ChatScreen = ({ navigation }) => {
 
   const handleMessageSubmit = () => {
     if (messageText.trim() !== "") {
-      const newMessage = { text: messageText, sender: globalClientUsername };
+      const newMessage = { messageContent: messageText, senderID: globalClientID, timeMessageSent: new Date() };
       setMessages([...messages, newMessage]);
       setMessageText("");
       
-      // action if first message of new conversation
-      if (!route.params.isChatCreated) {
+      // action depending on if conversation is already existing or not
+      if (isChatCreated) {
+        console.log("Whats UPPPPPP");
+      }
+      else {
         createNewConversation(newMessage);
       }
     }
@@ -167,8 +205,8 @@ const ChatScreen = ({ navigation }) => {
           {messages.map((message, index) => (
             <ChatMessage
               key={index}
-              content={message.text}
-              sentByCurrUser={true}
+              content={message.messageContent}
+              sentByCurrUser={message.senderID === globalClientID ? true : false}
             />
           ))}
         </ScrollView>

@@ -7,6 +7,7 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [ token, setToken] = useState(null);
+  const [ globalClientID, setClientID ] = useState(null);
   const [ globalClientUsername, setUsername ] = useState(null);
   const [ defaultProfileColor, setColor ] = useState(null);
 
@@ -22,8 +23,12 @@ export const AuthProvider = ({ children }) => {
     setColor(newColor);
   }
 
+  const setGlobalClientID = (newID) => {
+    setClientID(newID);
+  }
+
   return (
-    <AuthContext.Provider value={{ token, setJSONWebToken, globalClientUsername, setGlobalClientUsername, defaultProfileColor, setDefaultProfileColor }}>
+    <AuthContext.Provider value={{ token, setJSONWebToken, globalClientUsername, setGlobalClientUsername, defaultProfileColor, setDefaultProfileColor, globalClientID, setGlobalClientID }}>
       {children}
     </AuthContext.Provider>
   );

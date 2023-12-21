@@ -23,7 +23,7 @@ import { useAuth } from '../AuthContext';
  */
 const CreateAccountScreen = ({ navigation }) => {
   // setting useAuth hook for userAuthentication 
-  const { setJSONWebToken, setGlobalClientUsername, setDefaultProfileColor } = useAuth();
+  const { setJSONWebToken, setGlobalClientUsername, setDefaultProfileColor, setGlobalClientID } = useAuth();
 
   //handling state deciding whether to show or hide pageHeader
   const [isHeaderHidden, setIsHeaderHidden] = useState(false);
@@ -67,6 +67,7 @@ const CreateAccountScreen = ({ navigation }) => {
       setJSONWebToken(response.data.token);
       setGlobalClientUsername(usernameData);
       setDefaultProfileColor(response.data.iconColor);
+      setGlobalClientID(response.data.userID);
       return true;
     }
     catch (error) {

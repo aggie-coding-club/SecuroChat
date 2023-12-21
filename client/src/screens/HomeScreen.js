@@ -26,9 +26,10 @@ const HomeScreen = ({ navigation }) => {
     // retrieving userToken and globalClientUsername with useAuth
     const { token, globalClientUsername, defaultProfileColor } = useAuth(); 
 
-    const navigateToStack = () => {
+    const navigateToStack = (conversationObject) => {
         const parameters = {
             isChatCreated: true,
+            conversationObject: conversationObject,
         };
         navigation.navigate("ChatScreen", parameters);
     };
@@ -99,7 +100,7 @@ const HomeScreen = ({ navigation }) => {
                             bubbleSize={45}
                             numMessagesNotRead={3}
                             notSeen={true}
-                            onPress={navigateToStack}
+                            onPress={() => navigateToStack(item)}
                         />
                     ))}
                 </ScrollView>
