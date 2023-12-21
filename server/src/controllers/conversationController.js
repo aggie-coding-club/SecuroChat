@@ -21,7 +21,7 @@ const createNewConversation = async (req,res) => {
         const decodedJWT = jwt.verify(token, process.env.JWT_SECRET);
 
         // obtain userData of all participants of conversation
-        const { conversationTitle, allParticipantData, messageText } = req.body;
+        const { allParticipantData, messageText } = req.body;
         const allParticipantUserID = [];
         for (let item of allParticipantData) {
             allParticipantUserID.push(item.userID);
@@ -29,10 +29,10 @@ const createNewConversation = async (req,res) => {
         allParticipantUserID.push(decodedJWT.userID);
 
         // determining if conversation is a direct message
-        const isDirectMessage = allParticipantUserID === 2 ? true : false;
+        const isDirectMessage = allParticipantUserID.length === 2 ? true : false;
 
         // querying conversations model creating new converstion and adding its participants
-        await conversationModel.createConversation(conversationTitle, decodedJWT.userID, isDirectMessage,allParticipantUserID, messageText );
+        await conversationModel.createConversation(decodedJWT.userID, isDirectMessage,allParticipantUserID, messageText );
 
         res.status(200).json({success: true, message: 'successfully accepted friend request'});
 

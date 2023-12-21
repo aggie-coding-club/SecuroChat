@@ -27,7 +27,10 @@ const HomeScreen = ({ navigation }) => {
     const { token, globalClientUsername, defaultProfileColor } = useAuth(); 
 
     const navigateToStack = () => {
-        navigation.navigate("ChatScreen");
+        const parameters = {
+            isChatCreated: true,
+        };
+        navigation.navigate("ChatScreen", parameters);
     };
 
     // array of objects with properties: conversationName, lastMessageData, userInfo
@@ -61,7 +64,7 @@ const HomeScreen = ({ navigation }) => {
     // setting up periodic updates with set Interval
     const intervalID = setInterval(() => {
       getUserConversationData();
-    }, 10000); // fetches updates every 30 seconds
+    }, 10000); // fetches updated every second
 
     // cleanup function preventing memory leaks
     return () => {
@@ -92,12 +95,8 @@ const HomeScreen = ({ navigation }) => {
                     {conversations.map((item, index) => (
                         <ConversationTab 
                             key={index}
-                            initials={item.creator_username.substring(0,2).toUpperCase()}
-                            color={item.creator_icon_color}
+                            conversationObject={item}
                             bubbleSize={45}
-                            title={item.conversation_title}
-                            prevMessage={item.messages_text}
-                            lastMessageTime={item.updated_at}
                             numMessagesNotRead={3}
                             notSeen={true}
                             onPress={navigateToStack}

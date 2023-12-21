@@ -4,6 +4,7 @@
 const db = require('../../database');
 const userConversationModel = require('../models/userConversationsModel');
 const messageModel = require('../models/messageModel');
+const generalUtils = require('../utilities/generalUtils');
 
 /**
  * Query responsible for creating conversations table
@@ -20,7 +21,8 @@ const createConversationsTable = async () => {
                 creator_id UUID NOT NULL REFERENCES users(user_id),
                 is_direct_message BOOLEAN NOT NULL,
                 last_message_id INT REFERENCES messages(message_id),
-                num_participants INT NOT NULL
+                num_participants INT NOT NULL,
+                group_icon_color VARCHAR(7) NOT NULL
             );
         `;
         await db.query(queryText);
@@ -34,26 +36,29 @@ const createConversationsTable = async () => {
 
 /**
  * Query responsible for creating a new conversation. Query adds entry into conversations table and appropriate user entries within user_conversations join table
- * @param {string} conversationTitle - string to be displayed as the conversation title
  * @param {string} creatorID - UUID of the creator of the conversation
  * @param {boolean} isDirectMessage - boolean representing whether the converation is a DM or not
  * @param {Array<string>} allParticipantID - array of strings containing conversation participant UUIDs
  * @returns {Promise<boolean>} Returns promise of true if successful. Otherwise throws error.
  */
-const createConversation = async (conversationTitle, creatorID, isDirectMessage, allParticipantID, messageContent) => {
+const createConversation = async (creatorID, isDirectMessage, allParticipantID, messageContent) => {
     try {
         // uses transaction group to group multiple sql statements atomically
         // beginning the query transaction
         await db.query(`BEGIN`);
 
         // sql statement creating conversation entry
+        const groupIconColor = generalUtils.randomColor();
         const conversationsQueryText = `
-            INSERT INTO conversations(conversation_title, creator_id, is_direct_message, num_participants)
-            VALUES($1, $2, $3, $4)
+            INSERT INTO conversations(conversation_title, creator_id, is_direct_message, num_participants, group_icon_color)
+            VALUES($1, $2, $3, $4, $5)
             RETURNING conversation_id
             ;
         `;
-        const conversationsValues = [conversationTitle, creatorID, isDirectMessage, allParticipantID.length];
+
+        // conversation_title is initally set to empty string and participants of conversation are displayed on the client-side by default
+        // conversation_title can be changed by the user directly to make a conversation name which will be stored on the database as opposed to the default option
+        const conversationsValues = ["", creatorID, isDirectMessage, allParticipantID.length, groupIconColor];
         const result = await db.query(conversationsQueryText, conversationsValues);
         const conversationID = result.rows[0].conversation_id;
 
