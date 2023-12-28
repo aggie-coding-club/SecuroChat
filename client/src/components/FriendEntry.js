@@ -88,9 +88,9 @@ const FriendEntry = (props) => {
 
             {!props.isRequest && (
                 <View style={iconContainer}>
-                    <TouchableOpacity>
+                    {/* <TouchableOpacity>
                         <AntDesign name="phone" size={27} color="black" />
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                     <TouchableOpacity>
                         <AntDesign name="message1" size={27} color="black" />
                     </TouchableOpacity>
@@ -112,6 +112,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         gap: 18,
         marginLeft: 'auto',
+        marginRight: 8,
     },
     containerText: {
         flex: 1,

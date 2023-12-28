@@ -10,7 +10,7 @@ import {
   SafeAreaView,
   Image,
   TouchableOpacity,
-  StatusBar
+  StatusBar,
 } from "react-native";
 import GeneralButton from "../components/GeneralButton";
 
@@ -59,7 +59,10 @@ const SignupScreen = ({ navigation }) => {
           <Text>Or</Text>
           <View style={lineStyle}></View>
         </View>
-        <GeneralButton content="Create an Account" onPress={() => navigation.navigate("SignUp")}></GeneralButton>
+        <GeneralButton
+          content="Create an Account"
+          onPress={() => navigation.navigate("SignUp")}
+        ></GeneralButton>
         <Text style={infoStyle}>
           By signing up, you agree to our{" "}
           <Text style={inlineLink}>Terms of Service</Text> and{" "}
@@ -69,7 +72,10 @@ const SignupScreen = ({ navigation }) => {
 
       <View>
         <Text style={loginInfo}>
-          Already have an account? <Text style={inlineLink} onPress={() => navigation.navigate("LogIn")}>Log in</Text>
+          Already have an account?{" "}
+          <Text style={inlineLink} onPress={() => navigation.navigate("LogIn")}>
+            Log in
+          </Text>
         </Text>
       </View>
     </SafeAreaView>
