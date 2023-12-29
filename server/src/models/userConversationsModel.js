@@ -192,6 +192,37 @@ const getUserConversations = async (userID) => {
     }
 };
 
+/**
+ * Query responsible for determining whether a conversation exists or not. If such a conversation does exist, its data is collected.
+ * @param {Array<string>} selectedParticipantIDS - array of all participant string UUIDs
+ * @returns {Promise<string>} - Returns a promise of a string containing conversation id of successful. Else returns an empty string
+ */
+const doesConversationExist = async (selectedParticipantIDS) => {
+    try {
+        const queryText = `
+            SELECT
+                conversation_id
+            FROM 
+                users_conversations
+            WHERE
+                user_id = ANY($1)
+            GROUP BY 
+                conversation_id
+            HAVING 
+                COUNT(DISTINCT user_id) = $2
+            ;
+        `;
+        const values = [selectedParticipantIDS, selectedParticipantIDS.length];
+        const response = await db.query(queryText, values);
+        
+        return response.rows.length > 0 ? response.rows[0].conversation_id : null;
+    } 
+    catch (error) {
+        console.error('Error when determining if conversation exists', error);
+        throw error;    
+    }
+};
+
 
 
 module.exports = {
@@ -199,4 +230,5 @@ module.exports = {
     removeParticipantFromConversation,
     getConversationParticipants,
     getUserConversations,
+    doesConversationExist,
 };

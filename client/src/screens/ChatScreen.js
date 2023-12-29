@@ -74,17 +74,6 @@ const ChatScreen = ({ navigation }) => {
     setMessageText(text);
   };
 
-  // function responsible for determining whether chat with these selected participants exists
-  const isNewChat = async () => {
-    try {
-      console.log("testing");
-    }
-    catch {
-      console.error("Error while fetching messages of conversation: ", error);
-      return false;
-    }
-  };
-
   // function responsible for generating header title for chat
   const generateInitialHeaderContent = () => {
     if (conversationObject && conversationObject.conversation_title) {

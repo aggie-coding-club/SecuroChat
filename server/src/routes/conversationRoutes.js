@@ -18,4 +18,7 @@ router.post('/createNewConversation', conversationController.createNewConversati
 // Route for fetching user's conversations
 router.get('/fetchUserConversations', conversationController.fetchUserConversations);
 
+// Route for determining whether a conversation already exists
+router.get('/conversationExists', conversationController.conversationExists);
+
 module.exports = router;

@@ -44,19 +44,15 @@ const AddConversationScreen = ({ navigation }) => {
   const participantScrollViewRef = useRef();
 
   // function responsible for navigation to the created default chat screen upon button press
-  const toChatScreen = () => {
-    if (selectedParticipants.length) {
-      const parameters = {
-        isChatCreated: false,
-        potentialChatParticipants: selectedParticipants,
-      };
-      navigation.navigate("ChatScreen", parameters);
-    }
+  const toChatScreen = (conversationObject) => {
+    let parameters = conversationObject ? {isChatCreated: true, conversationObject} : {isChatCreated: false, potentialChatParticipants: selectedParticipants}
+    navigation.navigate("ChatScreen", parameters);
   };
   
   // function responsible for handling buttonPress
-  const onButtonPress = () => {
-    toChatScreen();
+  const onButtonPress = async () => {
+    const conversationObject = await isNewChat();
+    toChatScreen(conversationObject);
   };
 
   // function handling action when a user is SelectedUser component is pressed
@@ -75,6 +71,26 @@ const AddConversationScreen = ({ navigation }) => {
   const scrollToRight = () => {
     participantScrollViewRef.current.scrollToEnd({ animated: true });
   };
+
+  // function responsible for determining whether chat with these selected participants exists
+  const isNewChat = async () => {
+    try {
+      const apiURL = "/conversations/conversationExists";
+      const response = await api.get(apiURL, {
+        params: { selectedParticipants },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      return response.data;
+    }
+    catch (error) {
+      console.error("Error while determining if isNewChat: ", error);
+      return false;
+    }
+  };
+
 
   // function responsible for fetching all of user's friend's usernames
   const fetchAllCurrentFriendData = async () => {

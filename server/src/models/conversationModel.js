@@ -162,9 +162,62 @@ const getLastMessageOfConversation = async (conversationID) => {
     }
 };
 
+const getConversationData = async (conversationID) => {
+    try {
+        const queryText = `
+            SELECT 
+                c.conversation_id,
+                c.conversation_title,
+                c.updated_at AT TIME ZONE 'UTC' AS updated_at,
+                m.messages_text AS last_message,
+                u.icon_color AS creator_icon_color,
+                u.username AS creator_username,
+                c.is_direct_message, 
+                c.group_icon_color AS conversation_icon_color
+            FROM
+                conversations c
+            JOIN
+                users_conversations uc ON uc.conversation_id = c.conversation_id
+            JOIN
+                messages m ON c.last_message_id = m.message_id
+            JOIN
+                users u ON c.creator_id = u.user_id
+            WHERE 
+                c.conversation_id = $1
+            ;
+        `;
+        const values = [conversationID];
+        const result = await db.query(queryText, values);
+        const resultRow = result.rows[0];
+
+        // creating conversation object for specified conversation
+        const conversationParticipants = await userConversationModel.getConversationParticipants(resultRow.conversation_id);
+        const messagesData = await messageModel.getMessagesByConversation(resultRow.conversation_id);
+        const conversationObject = {
+            conversation_id: resultRow.conversation_id,
+            conversation_title: resultRow.conversation_title,
+            updated_at: resultRow.updated_at,
+            messages_text: resultRow.last_message,
+            creator_icon_color: resultRow.creator_icon_color,
+            creator_username: resultRow.creator_username,
+            is_direct_message: resultRow.is_direct_message,
+            conversation_participants: conversationParticipants,
+            conversation_icon_color: resultRow.conversation_icon_color,
+            messagesData: messagesData,
+        };
+
+        return conversationObject;
+    } 
+    catch (error) {
+        console.error('Error when fetching user conversations', error);
+        throw error;    
+    }
+};
+
 module.exports = {
     createConversation,
     alterConversationTitle,
     deleteConversation,
     getLastMessageOfConversation,
+    getConversationData,
 };

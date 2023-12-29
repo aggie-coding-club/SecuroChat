@@ -66,8 +66,47 @@ const fetchUserConversations = async (req,res) => {
     }
 };
 
+// controller method for determining whether a conversation already exists or not
+const conversationExists = async (req, res) => {
+    try {
+        const tokenHeader = req.header('Authorization');
+        const token = tokenHeader.split(' ')[1];
+        if (!token) {
+            // handles the case where the token is not present
+            return res.status(401).json({ error: 'Unauthorized: JSON Web Token missing' });
+        }
+
+        // verifying json web token and obtaining client userID
+        const decodedJWT = jwt.verify(token, process.env.JWT_SECRET);
+
+        // obtain userData of all selected participants
+        const { selectedParticipants } = req.query;
+        const selectedParticipantIDS = [];
+        for (let item of selectedParticipants) {
+            selectedParticipantIDS.push(item.userID);
+        }
+        selectedParticipantIDS.push(decodedJWT.userID);
+
+        // determining if conversation already exists
+        const conversationID = await userConversationModel.doesConversationExist(selectedParticipantIDS);
+
+        // obtaining conversation data if conversation already exists
+        let conversationObject = null;
+        if (conversationID) {
+            conversationObject = await conversationModel.getConversationData(conversationID);
+        }
+        res.status(200).json(conversationObject);
+
+    }
+    catch (error) {
+        console.error('Error when determining if conversation exists ', error);
+        res.status(500).json({ error: 'Internal server error.'});
+    }
+};
+
 
 module.exports = {
     createNewConversation,
     fetchUserConversations,
+    conversationExists,
 };
