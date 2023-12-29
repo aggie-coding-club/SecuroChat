@@ -60,6 +60,7 @@ const FriendScreen = ({ navigation }) => {
     }
   };
 
+
   // initializing friend data for client upon component mount with useEffect
   useEffect(() => {
     getUserFriendData();
@@ -125,6 +126,8 @@ const FriendScreen = ({ navigation }) => {
                   bubbleSize={45}
                   username={item.friendUsername}
                   isRequest={true}
+                  userID={item.friendID}
+                  navigation={navigation}
                 />
               ))}
             </View>
@@ -143,6 +146,8 @@ const FriendScreen = ({ navigation }) => {
                   bubbleSize={45}
                   username={item.friendUsername}
                   isRequest={false}
+                  userID={item.friendID}
+                  navigation={navigation}
                 />
               ))}
             </View>
@@ -161,6 +166,8 @@ const FriendScreen = ({ navigation }) => {
                   bubbleSize={45}
                   username={item.friendUsername}
                   isRequest={false}
+                  userID={item.friendID}
+                  navigation={navigation}
                 />
               ))}
             </View>
