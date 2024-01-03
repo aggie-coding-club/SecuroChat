@@ -194,28 +194,48 @@ const getUserConversations = async (userID) => {
 
 /**
  * Query responsible for determining whether a conversation exists or not. If such a conversation does exist, its data is collected.
- * @param {Array<string>} selectedParticipantIDS - array of all participant string UUIDs
+ * @param {string} userID - string representing client's uuid
+ * @param {Set<string>} selectedParticipantIDS - array of all participant string UUIDs
  * @returns {Promise<string>} - Returns a promise of a string containing conversation id of successful. Else returns an empty string
  */
-const doesConversationExist = async (selectedParticipantIDS) => {
+const doesConversationExist = async (userID, selectedParticipantIDS) => {
     try {
         const queryText = `
             SELECT
-                conversation_id
+                conversation_id,
+                COUNT(DISTINCT participant_id) AS total_users,
+                ARRAY_AGG(user_id) AS conversation_participants
             FROM 
                 users_conversations
             WHERE
-                user_id = ANY($1)
-            GROUP BY 
+                conversation_id IN (
+                    SELECT DISTINCT conversation_id
+                    FROM users_conversations
+                    WHERE user_id = $1
+                )
+            GROUP BY
                 conversation_id
-            HAVING 
-                COUNT(DISTINCT user_id) = $2
             ;
         `;
-        const values = [selectedParticipantIDS, selectedParticipantIDS.length];
+        const values = [userID];
         const response = await db.query(queryText, values);
-        
-        return response.rows.length > 0 ? response.rows[0].conversation_id : null;
+        // obtaining appropriate conversation_id of pre-existing conversation if one exists
+        for (let row of response.rows) {
+            if (row.total_users === selectedParticipantIDS.size.toString()) {
+                // ensuring that all participants in conversation match participants in selectedParticipantIDS
+                let conversationFound = true;
+                for (let entry of row.conversation_participants) {
+                    if (!selectedParticipantIDS.has(entry)) {
+                        conversationFound = false;
+                        break;
+                    }
+                }
+                if (conversationFound) {
+                    return row.conversation_id;
+                }
+            }
+        }
+        return null;
     } 
     catch (error) {
         console.error('Error when determining if conversation exists', error);

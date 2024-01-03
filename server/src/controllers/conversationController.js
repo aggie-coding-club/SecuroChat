@@ -81,14 +81,14 @@ const conversationExists = async (req, res) => {
 
         // obtain userData of all selected participants
         const { selectedParticipants } = req.query;
-        const selectedParticipantIDS = [];
+        const selectedParticipantIDS = new Set();
         for (let item of selectedParticipants) {
-            selectedParticipantIDS.push(item.userID);
+            selectedParticipantIDS.add(item.userID);
         }
-        selectedParticipantIDS.push(decodedJWT.userID);
+        selectedParticipantIDS.add(decodedJWT.userID);
 
         // determining if conversation already exists
-        const conversationID = await userConversationModel.doesConversationExist(selectedParticipantIDS);
+        const conversationID = await userConversationModel.doesConversationExist(decodedJWT.userID, selectedParticipantIDS);
 
         // obtaining conversation data if conversation already exists
         let conversationObject = null;
