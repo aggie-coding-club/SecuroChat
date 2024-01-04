@@ -33,10 +33,15 @@ const createMessagesTable = async () => {
  * @param {string} userID - string representing UUID of the sender of the message
  * @param {string} messageText - string of message content 
  * @param {string} conversationID - string conversationID which message belongs to
+ * @param {string} timeMessageSent - string containing time data where message was initially sent
  * @returns {Promise<string>} - Returns promise of messageID if successful, otherwise throws an error
  */
-const createMessage = async (userID, messageText, conversationID) => {
+const createMessage = async (userID, messageText, conversationID, timeMessageSent) => {
   try {
+    // using sql transactions to make sql statements atomic 
+    await db.query("BEGIN");
+
+    // creates new message entry in messages table
     const queryText = `
         INSERT INTO messages(user_id, messages_text, conversation_id)
         VALUES($1, $2, $3)
@@ -46,9 +51,14 @@ const createMessage = async (userID, messageText, conversationID) => {
     const values = [userID, messageText, conversationID];
     const response = await db.query(queryText, values);
     const message_id = response.rows[0].message_id;
+    
+    // updating last message id of conversation and last updated time
+    await updateLastMessageID(message_id, conversationID, timeMessageSent);
+    await db.query("COMMIT");
     return message_id;
   } 
   catch (error) {
+    await db.query("ROLLBACK");
     console.error('Error creating new message', error);
     throw error;
   }
@@ -135,9 +145,39 @@ const updateMessage = async (messageID, newMessageText) => {
   }
 };
 
+/**
+ * Query responsible for updating last message ID of conversation and last updated time
+ * @param {string} messageID - string representing message ID
+ * @param {string} conversationID - string representing conversationID
+ * @param {string} timeMessageSent - string representing time the message was sent
+ * @returns {Promise<boolean>} - Returns promise of a boolean if successful, otherwise throws an error
+ */
+const updateLastMessageID = async (messageID, conversationID, timeMessageSent) => {
+  try {
+      const queryText = `
+          UPDATE
+              conversations
+          SET 
+              last_message_id = $1, updated_at = $2
+          WHERE
+              conversation_id = $3
+          ;
+      `;
+      const values = [messageID, timeMessageSent, conversationID];
+      await db.query(queryText, values);
+
+      return true;
+  } 
+  catch (error) {
+      console.error('Error when fetching user conversations', error);
+      throw error;    
+  }
+};
+
 module.exports = {
   createMessage,
   getMessagesByConversation,
   deleteMessage,
   updateMessage,
+  updateLastMessageID,
 };

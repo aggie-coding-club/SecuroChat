@@ -23,12 +23,13 @@ const sendMessage = async (req, res) => {
     const decodedJWT = jwt.verify(token, process.env.JWT_SECRET);
 
     // obtaining data from request body
-    const { conversationID, messageText } = req.body;
+    const { conversationID, messageText, timeMessageSent } = req.body;
 
     await messageModel.createMessage(
       decodedJWT.userID,
       messageText,
-      conversationID
+      conversationID,
+      timeMessageSent,
     );
     res
       .status(200)
@@ -55,7 +56,6 @@ const fetchMessagesByConversation = async (req, res) => {
     jwt.verify(token, process.env.JWT_SECRET);
 
     const { conversationID } = req.query;
-
     const messages = await messageModel.getMessagesByConversation(
       conversationID
     );

@@ -162,6 +162,11 @@ const getLastMessageOfConversation = async (conversationID) => {
     }
 };
 
+/**
+ * Query responsible for returning object data from a specific conversation ID
+ * @param {string} conversationID - string representing conversation ID
+ * @returns {Promise<Object>} - promise of an object if successful. Otherwise throws an error
+ */
 const getConversationData = async (conversationID) => {
     try {
         const queryText = `

@@ -172,6 +172,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     gap: 10,
+    minWidth: 65,
   },
   unreadConversationTime: {
     color: "#0078D4",

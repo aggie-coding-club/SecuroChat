@@ -107,22 +107,22 @@ const ChatScreen = ({ navigation }) => {
     return filteredChatParticipants[0].username;
   };
 
-  // function responsible for fetching message data from conversation
-  const fetchConversationMessages = async () => {
-    try {
-      const apiURL = "messages/fetchMessagesByConversation";
-      const response = await api.get(apiURL, {
-        params: { conversationID: conversationObject.conversation_id },
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      setMessages(response.data);
-    } catch (error) {
-      console.error("Error while fetching messages of conversation: ", error);
-      return false;
-    }
-  };
+  // // function responsible for fetching message data from conversation
+  // const fetchConversationMessages = async () => {
+  //   try {
+  //     const apiURL = "messages/fetchMessagesByConversation";
+  //     const response = await api.get(apiURL, {
+  //       params: { conversationID: conversationObject.conversation_id },
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //     });
+  //     setMessages(response.data);
+  //   } catch (error) {
+  //     console.error("Error while fetching messages of conversation: ", error);
+  //     return false;
+  //   }
+  // };
 
   // function responsible for creating new conversation in database
   const createNewConversation = async (newMessageText) => {
@@ -151,6 +151,35 @@ const ChatScreen = ({ navigation }) => {
     }
   };
 
+  // function responsible for sending a new message within the conversation
+  const sendMessage = async (messageObject) => {
+    try {
+      console.log(messageObject.timeMessageSent)
+      const apiURL = "messages/sendMessage";
+      await api.post(
+        apiURL,
+        {
+          conversationID: conversationObject.conversation_id,
+          messageText: messageObject.messageContent,
+          timeMessageSent: messageObject.timeMessageSent,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return true;
+    } 
+    catch (error) {
+      console.error(
+        "Error while creating new conversation in database: ",
+        error
+      );
+      return false;
+    }
+  };
+
   const handleMessageSubmit = () => {
     if (messageText.trim() !== "") {
       const newMessage = {
@@ -163,7 +192,7 @@ const ChatScreen = ({ navigation }) => {
 
       // action depending on if conversation is already existing or not
       if (isChatCreated) {
-        console.log("Whats UPPPPPP");
+        sendMessage(newMessage);
       } else {
         createNewConversation(newMessage);
       }
@@ -236,9 +265,9 @@ const ChatScreen = ({ navigation }) => {
 
       <KeyboardAvoidingView style={sendSection} behavior="padding">
         <View style={sendContent}>
-          <TouchableOpacity>
+          {/* <TouchableOpacity>
             <AntDesign name="plus" size={30} color="#0078D4" />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           <ExpandableTextBox
             callbackText={handleTextChange}
             currentValue={messageText}
@@ -292,7 +321,6 @@ const styles = StyleSheet.create({
   },
   sendSection: {
     paddingTop: 10,
-    marginTop: 15,
   },
   sendContent: {
     marginBottom: 10,
