@@ -4,6 +4,7 @@
 
 const db = require('../../database');
 const messageModel = require('../models/messageModel');
+const readReceiptsModel = require('../models/readReceiptsModel');
 
 /**
  * Query responsible for creating user_conversations table
@@ -165,6 +166,7 @@ const getUserConversations = async (userID) => {
         for (let row of result.rows) {
             const conversationParticipants = await getConversationParticipants(row.conversation_id);
             const messagesData = await messageModel.getMessagesByConversation(row.conversation_id);
+            const numUnreadMessages = await readReceiptsModel.getUnreadMessageCount(userID, row.conversation_id);
             const conversationObject = {
                 conversation_id: row.conversation_id, 
                 conversation_title: row.conversation_title, 
@@ -176,6 +178,7 @@ const getUserConversations = async (userID) => {
                 conversation_participants: conversationParticipants,
                 conversation_icon_color: row.group_icon_color,
                 messagesData: messagesData,
+                numUnreadMessages: numUnreadMessages,
             };
             userConversations.push(conversationObject);
         }

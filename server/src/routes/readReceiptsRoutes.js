@@ -6,8 +6,8 @@ const express = require('express');
 const readReceiptsController = require('../controllers/readReceiptsController');
 const router = express.Router();
 
-// create a new read receipt
-router.post('/', readReceiptsController.createReadReceipt);
 
-// get read receipts for a message
-router.get('/:messageId', readReceiptsController.getReadReceiptsByMessageId);
+// create a new read receipt
+router.post('/markMessagesAsRead', readReceiptsController.markMessagesAsRead);
+
+module.exports = router;

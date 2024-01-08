@@ -18,8 +18,6 @@ import MessagesToRead from "../components/MessagesToRead";
  * @param {object} props - Javascript object containing react native props
  * @param {object} props.conversationObject - object containing conversation data
  * @property {string} props.bubbleSize - Sets the size of the profile picture bubble
- * @property {boolean} props.notSeen - boolean being true if user has chats not yet read, false otherwise
- * @property {number} props.numMessagesNotRead - number representing number of messages user has not read
  * @property {function} props.onPress - function that is called onPress
  */
 const ConversationTab = (props) => {
@@ -122,16 +120,16 @@ const ConversationTab = (props) => {
         </Text>
         <Text style={conversationText}>{props.conversationObject.messages_text}</Text>
       </View>
-      {props.notSeen && (
+      {props.conversationObject.numUnreadMessages > 0 && (
         <View style={unreadConversationInfo}>
           <Text style={unreadConversationTime}>{timeDateDisplay()}</Text>
           <MessagesToRead
-            numMessagesNotRead={props.numMessagesNotRead}
+            numMessagesNotRead={props.conversationObject.numUnreadMessages}
             bubbleSize={25}
           />
         </View>
       )}
-      {!props.notSeen && (
+      {props.conversationObject.numUnreadMessages === 0 && (
         <View style={readConversationInfo}>
           <Text style={readConversationTime}>
             {timeDateDisplay()}
@@ -182,11 +180,13 @@ const styles = StyleSheet.create({
   readConversationInfo: {
     display: "flex",
     alignSelf: "flex-start",
+    minWidth: 65,
   },
   readConversationTime: {
     color: "#8C8989",
     fontFamily: "RobotoCondensed_400Regular",
     fontSize: 18,
+    alignSelf: 'center'
   },
 });
 

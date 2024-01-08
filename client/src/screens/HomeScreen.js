@@ -72,7 +72,7 @@ const HomeScreen = ({ navigation }) => {
       clearInterval(intervalID);
     };
   }, []);
-
+  //console.log(conversations)
     const { rootContainer, header, headerIcons, sectionTitle, scrollSection, emptySection, emptyText, sparkleText } = styles;
     return (
         <SafeAreaView style={rootContainer}>
@@ -98,8 +98,6 @@ const HomeScreen = ({ navigation }) => {
                             key={index}
                             conversationObject={item}
                             bubbleSize={45}
-                            numMessagesNotRead={3}
-                            notSeen={true}
                             onPress={() => navigateToStack(item)}
                         />
                     ))}

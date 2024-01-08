@@ -25,7 +25,6 @@ import BackButton from "../components/BackButton";
 import ActivityIndicator from "../components/ActivityIndicator";
 import ExpandableTextBox from "../components/ExpandableTextBox";
 import ChatMessage from "../components/ChatMessage";
-import { AntDesign } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useAuth } from "../AuthContext";
 import { useRoute } from "@react-navigation/native";
@@ -63,11 +62,14 @@ const ChatScreen = ({ navigation }) => {
 
   // use effect running upon initial component mount
   useEffect(() => {
-    // function determining whether this chat already exists and loading in appropriate data if so
-
 
     // function call to determine title of conversation
     generateInitialHeaderContent();
+
+    // marking unread messages as read upon opening chat screen
+    if ((conversationObject && conversationObject.numUnreadMessages)) {
+      markMessagesAsRead();
+    }
   }, []);
 
   const handleTextChange = (text) => {
@@ -107,23 +109,6 @@ const ChatScreen = ({ navigation }) => {
     return filteredChatParticipants[0].username;
   };
 
-  // // function responsible for fetching message data from conversation
-  // const fetchConversationMessages = async () => {
-  //   try {
-  //     const apiURL = "messages/fetchMessagesByConversation";
-  //     const response = await api.get(apiURL, {
-  //       params: { conversationID: conversationObject.conversation_id },
-  //       headers: {
-  //         Authorization: `Bearer ${token}`,
-  //       },
-  //     });
-  //     setMessages(response.data);
-  //   } catch (error) {
-  //     console.error("Error while fetching messages of conversation: ", error);
-  //     return false;
-  //   }
-  // };
-
   // function responsible for creating new conversation in database
   const createNewConversation = async (newMessageText) => {
     try {
@@ -154,7 +139,6 @@ const ChatScreen = ({ navigation }) => {
   // function responsible for sending a new message within the conversation
   const sendMessage = async (messageObject) => {
     try {
-      console.log(messageObject.timeMessageSent)
       const apiURL = "messages/sendMessage";
       await api.post(
         apiURL,
@@ -174,6 +158,31 @@ const ChatScreen = ({ navigation }) => {
     catch (error) {
       console.error(
         "Error while creating new conversation in database: ",
+        error
+      );
+      return false;
+    }
+  };
+
+  const markMessagesAsRead = async () => {
+    try {
+      const apiURL = "readReceipts/markMessagesAsRead";
+      await api.post(
+        apiURL,
+        {
+          conversationID: conversationObject.conversation_id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return true;
+    } 
+    catch (error) {
+      console.error(
+        "Error while marking messages as read ",
         error
       );
       return false;
@@ -296,7 +305,9 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-around",
+    justifyContent: "space-between",
+    marginLeft: 15,
+    marginRight: 15,
   },
   headerSection: {
     display: "flex",
@@ -316,11 +327,9 @@ const styles = StyleSheet.create({
   messageSection: {
     flex: 12,
     backgroundColor: "#FFFFFF",
-    paddingTop: 15,
-    paddingBottom: 15,
   },
   sendSection: {
-    paddingTop: 10,
+    paddingTop: 12,
   },
   sendContent: {
     marginBottom: 10,

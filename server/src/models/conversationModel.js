@@ -52,7 +52,7 @@ const createConversation = async (creatorID, isDirectMessage, allParticipantID, 
         const conversationsQueryText = `
             INSERT INTO conversations(conversation_title, creator_id, is_direct_message, num_participants, group_icon_color)
             VALUES($1, $2, $3, $4, $5)
-            RETURNING conversation_id
+            RETURNING conversation_id, created_at
             ;
         `;
 
@@ -61,9 +61,10 @@ const createConversation = async (creatorID, isDirectMessage, allParticipantID, 
         const conversationsValues = ["", creatorID, isDirectMessage, allParticipantID.length, groupIconColor];
         const result = await db.query(conversationsQueryText, conversationsValues);
         const conversationID = result.rows[0].conversation_id;
+        const timeMessageSent = result.rows[0].created_at;
 
         // creating first initial message in messages table
-        const messageID = await messageModel.createMessage(creatorID, messageContent, conversationID);
+        const messageID = await messageModel.createMessage(creatorID, messageContent, conversationID, timeMessageSent);
         const messageQueryText = `
             UPDATE conversations
             SET last_message_id = $1
@@ -78,6 +79,7 @@ const createConversation = async (creatorID, isDirectMessage, allParticipantID, 
 
         // committing the transaction
         await db.query(`COMMIT`);
+
         return true;
     } 
     catch (error) {

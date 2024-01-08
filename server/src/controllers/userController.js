@@ -144,10 +144,32 @@ const acceptFriendRequest = async (req, res) => {
     }
 };
 
+// controller for updating a user's online status
+const updateUserOnlineStatus = async (req, res) => {
+    try {
+        const tokenHeader = req.header('Authorization');
+        const token = tokenHeader.split(' ')[1]; // obtaining the actual token
+        if (!token) {
+            // handles the case where the token is not present
+            return res.status(401).json({ error: 'Unauthorized: JSON Web Token missing' });
+        }
+
+        // verifying json web token and obtaining sender userID
+        const decodedJWT = jwt.verify(token, process.env.JWT_SECRET);
+
+        const { lastOnline } = req.body;  
+    } 
+    catch (error) {
+        console.log(`Error occured updating client's online status`);
+        res.status(500).json({ error: `Internal server error.`});
+    }
+};
+
 module.exports = {
     sendFriendRequest,
     fetchAllCurrentFriendData,
     fetchFriendData,
     rejectFriendRequest,
     acceptFriendRequest,
+    updateUserOnlineStatus,
 };

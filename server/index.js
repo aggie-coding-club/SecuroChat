@@ -15,6 +15,7 @@ const authRoutes = require('./src/routes/authRoutes');
 const messageRoutes = require('./src/routes/messageRoutes');
 const userRoutes = require('./src/routes/userRoutes');
 const conversationRoutes = require('./src/routes/conversationRoutes.js');
+const readReceiptRoutes = require('./src/routes/readReceiptsRoutes.js');
 const chatSocketHandler = require('./src/sockets/chatSocket');  // Adjust the path as necessary
 
 
@@ -43,6 +44,7 @@ app.use('/auth', authRoutes);
 app.use('/messages', messageRoutes);  
 app.use('/user', userRoutes);
 app.use('/conversations', conversationRoutes);
+app.use('/readReceipts', readReceiptRoutes); 
 
 // Socket.IO
 io.on('connection', (socket) => {
