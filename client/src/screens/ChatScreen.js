@@ -98,7 +98,7 @@ const ChatScreen = ({ navigation }) => {
     // setting up periodic updates with set Interval
     const intervalID = setInterval(() => {
       checkConversationOnlineStatus()
-    }, 10000); 
+    }, 30000); 
 
     // cleanup function preventing memory leaks
     return () => {
