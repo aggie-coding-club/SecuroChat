@@ -1,7 +1,7 @@
 // GeneralInput.js
 // A custom React Native component that generates input boxes based on passed in props
 
-import React, {useState} from "react";
+import React, { useState } from "react";
 import { StyleSheet, TextInput } from "react-native";
 
 /**
@@ -17,11 +17,11 @@ import { StyleSheet, TextInput } from "react-native";
  * @property {string} props.onInputChange - Function handling when input text changes which passes data to parent component
  */
 const GeneralInput = (props) => {
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState("");
   const handleChangeText = (text) => {
     setInputValue(text);
     props.onInputChange(text); //sends data to parent component
-  }
+  };
   const { inputStyle } = styles;
   return (
     <TextInput

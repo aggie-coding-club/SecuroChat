@@ -72,7 +72,14 @@ const FriendEntry = (props) => {
   // function responsible for determining whether chat with these selected participants exists
   const isNewChat = async () => {
     try {
-      const selectedParticipants = [{ iconColor: props.color, userID: props.userID, userInitials: props.username.substring(0, 2).toUpperCase(), username: props.username }];
+      const selectedParticipants = [
+        {
+          iconColor: props.color,
+          userID: props.userID,
+          userInitials: props.username.substring(0, 2).toUpperCase(),
+          username: props.username,
+        },
+      ];
       const apiURL = "/conversations/conversationExists";
       const response = await api.get(apiURL, {
         params: { selectedParticipants },
@@ -81,7 +88,7 @@ const FriendEntry = (props) => {
         },
       });
 
-      return { conversationObject: response.data, selectedParticipants};
+      return { conversationObject: response.data, selectedParticipants };
     } catch (error) {
       console.error("Error while determining if isNewChat: ", error);
       return false;
@@ -90,15 +97,23 @@ const FriendEntry = (props) => {
 
   // function responsible for navigation to the created default chat screen upon button press
   const toChatScreen = (conversationData) => {
-    let parameters = conversationData.conversationObject ? {isChatCreated: true, conversationObject: conversationData.conversationObject} : {isChatCreated: false, potentialChatParticipants: conversationData.selectedParticipants}
+    let parameters = conversationData.conversationObject
+      ? {
+          isChatCreated: true,
+          conversationObject: conversationData.conversationObject,
+        }
+      : {
+          isChatCreated: false,
+          potentialChatParticipants: conversationData.selectedParticipants,
+        };
     props.navigation.navigate("ChatScreen", parameters);
   };
 
   // function handling on messageButtonPress
   const onMessageButtonPress = async () => {
     try {
-        const conversationObject = await isNewChat();
-        toChatScreen(conversationObject);
+      const conversationObject = await isNewChat();
+      toChatScreen(conversationObject);
     } catch (error) {
       console.error(
         "Error while handling on-press of friend message button: ",

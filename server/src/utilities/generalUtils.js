@@ -1,7 +1,6 @@
 // generalUtils.js
 // contains general helper methods used throughout the application
 
-
 // function responsible for choosing random color
 const randomColor = () => {
   const colorOptions = [
@@ -16,24 +15,22 @@ const randomColor = () => {
   return colorOptions[randomIndex];
 };
 
-  // function responsible for generating header title for chat
-  const formatDefaultConversationTitle = () => {
-    let title = "";
-    for (let i = 0; i < chatParticipants.length; ++i) {
-      if (i === chatParticipants.length - 1) {
-        title += chatParticipants[i].username;
-      }
-      else if (i === chatParticipants.length - 2) {
-        title += chatParticipants[i].username + " & ";
-      }
-      else {
-        title += chatParticipants[i].username + ", ";
-      }
+// function responsible for generating header title for chat
+const formatDefaultConversationTitle = () => {
+  let title = "";
+  for (let i = 0; i < chatParticipants.length; ++i) {
+    if (i === chatParticipants.length - 1) {
+      title += chatParticipants[i].username;
+    } else if (i === chatParticipants.length - 2) {
+      title += chatParticipants[i].username + " & ";
+    } else {
+      title += chatParticipants[i].username + ", ";
     }
-    return title;
-  };
+  }
+  return title;
+};
 
 module.exports = {
-    randomColor,
-    formatDefaultConversationTitle,
+  randomColor,
+  formatDefaultConversationTitle,
 };

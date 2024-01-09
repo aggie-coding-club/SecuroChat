@@ -45,10 +45,15 @@ const AddConversationScreen = ({ navigation }) => {
 
   // function responsible for navigation to the created default chat screen upon button press
   const toChatScreen = (conversationObject) => {
-    let parameters = conversationObject ? {isChatCreated: true, conversationObject} : {isChatCreated: false, potentialChatParticipants: selectedParticipants}
+    let parameters = conversationObject
+      ? { isChatCreated: true, conversationObject }
+      : {
+          isChatCreated: false,
+          potentialChatParticipants: selectedParticipants,
+        };
     navigation.navigate("ChatScreen", parameters);
   };
-  
+
   // function responsible for handling buttonPress
   const onButtonPress = async () => {
     const conversationObject = await isNewChat();
@@ -61,7 +66,9 @@ const AddConversationScreen = ({ navigation }) => {
     if (data.isSelected) {
       newSelectedParticipants.push(data.userData);
     } else {
-      const indexToRemove = newSelectedParticipants.findIndex((item) => item.username === data.userData.username);
+      const indexToRemove = newSelectedParticipants.findIndex(
+        (item) => item.username === data.userData.username
+      );
       newSelectedParticipants.splice(indexToRemove, 1);
     }
     setSelectedParticipants(newSelectedParticipants);
@@ -84,13 +91,11 @@ const AddConversationScreen = ({ navigation }) => {
       });
 
       return response.data;
-    }
-    catch (error) {
+    } catch (error) {
       console.error("Error while determining if isNewChat: ", error);
       return false;
     }
   };
-
 
   // function responsible for fetching all of user's friend's usernames
   const fetchAllCurrentFriendData = async () => {
@@ -139,7 +144,9 @@ const AddConversationScreen = ({ navigation }) => {
         <Text style={headerTitle}>Select Participants</Text>
       </View>
       <View style={participantSection}>
-        {selectedParticipants.length > 0 && (<Text style={participantSectionText}>To</Text>)}
+        {selectedParticipants.length > 0 && (
+          <Text style={participantSectionText}>To</Text>
+        )}
         <ScrollView
           ref={participantScrollViewRef}
           style={selectedUserContainer}
@@ -167,9 +174,11 @@ const AddConversationScreen = ({ navigation }) => {
         ))}
       </ScrollView>
 
-      {selectedParticipants.length > 0 && (<View style={buttonContainer}>
-        <GeneralButton content={"Create New Chat"} onPress={onButtonPress} />
-      </View>)}
+      {selectedParticipants.length > 0 && (
+        <View style={buttonContainer}>
+          <GeneralButton content={"Create New Chat"} onPress={onButtonPress} />
+        </View>
+      )}
     </SafeAreaView>
   );
 };

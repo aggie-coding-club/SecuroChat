@@ -8,13 +8,7 @@
  */
 
 import React from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  SafeAreaView,
-  StatusBar,
-} from "react-native";
+import { View, Text, StyleSheet, SafeAreaView, StatusBar } from "react-native";
 import NumberInput from "../components/NumberInput";
 import BackButton from "../components/BackButton";
 
@@ -25,7 +19,7 @@ import BackButton from "../components/BackButton";
 const PhoneVerificationScreen = ({ navigation }) => {
   const navigateToNextScreen = () => {
     navigation.navigate("TabScreen");
-  }
+  };
 
   const {
     veriPhone,
@@ -40,7 +34,10 @@ const PhoneVerificationScreen = ({ navigation }) => {
   return (
     <SafeAreaView style={rootContainer}>
       <StatusBar></StatusBar>
-      <BackButton style={backButton} onPress={() => navigation.goBack()}></BackButton>
+      <BackButton
+        style={backButton}
+        onPress={() => navigation.goBack()}
+      ></BackButton>
       <View style={pageHeader}>
         <Text style={veriPhone}>Verify your Number</Text>
         <Text style={enterCodeText}>
@@ -49,7 +46,11 @@ const PhoneVerificationScreen = ({ navigation }) => {
       </View>
 
       <View style={containers}>
-        <NumberInput content="" color="#1E1E1E" onConditionMet={navigateToNextScreen}></NumberInput>
+        <NumberInput
+          content=""
+          color="#1E1E1E"
+          onConditionMet={navigateToNextScreen}
+        ></NumberInput>
         <Text style={loginInfo}>
           Didn't get a code? <Text style={inlineLink}>Resend the code</Text>
         </Text>

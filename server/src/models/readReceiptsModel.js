@@ -1,16 +1,16 @@
 /* readReceiptsModel.js
  * Defines database schema/model for read receipts table
-*/
+ */
 
-const db = require('../../database');
+const db = require("../../database");
 
 /**
  * Query responsible for creating the read receipts table
  * @returns {Promise<boolean>} - Returns promise of true if successful. Otherwise throws an error
  */
 const createReadReceiptTable = async () => {
-    try {
-        const queryText = `
+  try {
+    const queryText = `
             CREATE TABLE read_receipts(
                 read_receipts_id SERIAL PRIMARY KEY,
                 user_id UUID NOT NULL REFERENCES users(user_id),
@@ -18,13 +18,12 @@ const createReadReceiptTable = async () => {
                 time_read TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
             );
         `;
-        await db.query(queryText);
-        return true;
-    } 
-    catch (error) {
-        console.error('Error creating read receipts table', error);
-        throw error;
-    }
+    await db.query(queryText);
+    return true;
+  } catch (error) {
+    console.error("Error creating read receipts table", error);
+    throw error;
+  }
 };
 
 // /**
@@ -48,7 +47,7 @@ const createReadReceiptTable = async () => {
 //         await db.query(queryText, values);
 
 //         return true;
-//     } 
+//     }
 //     catch (error) {
 //         console.error('Error creating read receipts entry', error);
 //         throw error;
@@ -62,8 +61,8 @@ const createReadReceiptTable = async () => {
  * @returns {Promise<boolean>} - Returns promise of true if successful. Otherwise throws an error
  */
 const createReadReceipt = async (userID, conversationID) => {
-    try {
-        const queryText = `
+  try {
+    const queryText = `
             INSERT INTO 
                 read_receipts (user_id, message_id)
             SELECT
@@ -82,15 +81,14 @@ const createReadReceipt = async (userID, conversationID) => {
                 AND m.user_id != $1
             ;
         `;
-        const values = [userID, conversationID];
-        await db.query(queryText, values);
+    const values = [userID, conversationID];
+    await db.query(queryText, values);
 
-        return true;
-    }
-    catch(error) {
-         console.error('Error creating read receipts entry', error);
-         throw error;
-    }
+    return true;
+  } catch (error) {
+    console.error("Error creating read receipts entry", error);
+    throw error;
+  }
 };
 
 /**
@@ -100,8 +98,8 @@ const createReadReceipt = async (userID, conversationID) => {
  * @returns {Promise<number>} - Returns a promise of a number if successful. Otherwise throws an error.
  */
 const getUnreadMessageCount = async (userID, conversationID) => {
-    try {
-        const queryText = `
+  try {
+    const queryText = `
             SELECT 
                 COUNT(DISTINCT m.message_id) AS unread_count
             FROM    
@@ -116,19 +114,19 @@ const getUnreadMessageCount = async (userID, conversationID) => {
                 AND m.user_id != $1
             ;
         `;
-        const values = [userID, conversationID];
-        const response = await db.query(queryText, values);
-        
-        return response.rows.length > 0 ? parseInt(response.rows[0].unread_count, 10) : 0
-    } 
-    catch (error) {
-        console.error('Error creating getting unread message count', error);
-        throw error;
-    }
+    const values = [userID, conversationID];
+    const response = await db.query(queryText, values);
+
+    return response.rows.length > 0
+      ? parseInt(response.rows[0].unread_count, 10)
+      : 0;
+  } catch (error) {
+    console.error("Error creating getting unread message count", error);
+    throw error;
+  }
 };
 
-
 module.exports = {
-    createReadReceipt,
-    getUnreadMessageCount,
+  createReadReceipt,
+  getUnreadMessageCount,
 };

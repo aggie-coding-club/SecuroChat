@@ -39,7 +39,9 @@ const ConversationTab = (props) => {
 
     // using default conversation name instead and removing client's username from participant array
     const chatParticipants = props.conversationObject.conversation_participants;
-    let filteredChatParticipants = chatParticipants.filter((obj) => obj.username !== globalClientUsername);
+    let filteredChatParticipants = chatParticipants.filter(
+      (obj) => obj.username !== globalClientUsername
+    );
 
     // action if conversation is a group chat
     if (filteredChatParticipants.length > 1) {
@@ -54,8 +56,8 @@ const ConversationTab = (props) => {
         }
       }
       return title;
-    } 
-    
+    }
+
     // action when conversation is a direct message
     return filteredChatParticipants[0].username;
   };
@@ -71,8 +73,10 @@ const ConversationTab = (props) => {
 
   // function responsible for determining icon color of conversation
   const getIconColor = () => {
-    return props.conversationObject.conversation_participants.length === 2 ? getDirectMessageIconColor() : props.conversationObject.conversation_icon_color;
-  }
+    return props.conversationObject.conversation_participants.length === 2
+      ? getDirectMessageIconColor()
+      : props.conversationObject.conversation_icon_color;
+  };
 
   // function responsible for determining time/date to display on conversation
   const timeDateDisplay = () => {
@@ -118,7 +122,9 @@ const ConversationTab = (props) => {
         <Text numberOfLines={1} ellipsizeMode="tail" style={conversationTitle}>
           {conversationName}
         </Text>
-        <Text style={conversationText}>{props.conversationObject.messages_text}</Text>
+        <Text style={conversationText}>
+          {props.conversationObject.messages_text}
+        </Text>
       </View>
       {props.conversationObject.numUnreadMessages > 0 && (
         <View style={unreadConversationInfo}>
@@ -131,9 +137,7 @@ const ConversationTab = (props) => {
       )}
       {props.conversationObject.numUnreadMessages === 0 && (
         <View style={readConversationInfo}>
-          <Text style={readConversationTime}>
-            {timeDateDisplay()}
-          </Text>
+          <Text style={readConversationTime}>{timeDateDisplay()}</Text>
         </View>
       )}
     </TouchableOpacity>
@@ -186,7 +190,7 @@ const styles = StyleSheet.create({
     color: "#8C8989",
     fontFamily: "RobotoCondensed_400Regular",
     fontSize: 18,
-    alignSelf: 'center'
+    alignSelf: "center",
   },
 });
 

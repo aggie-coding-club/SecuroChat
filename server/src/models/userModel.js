@@ -1,16 +1,16 @@
 /* userModel.js
  * Defines database schema/model for users table
-*/
+ */
 
-const db = require('../../database');
+const db = require("../../database");
 
 /**
  * Creates users table responsible of managing user information and data
  * @returns {Promise<boolean>} Returns promise of true is successful. Otherwise throws error
  */
 const createUserModel = async () => {
-    try {
-        const queryText = `
+  try {
+    const queryText = `
             CREATE TABLE users (
                 user_id UUID PRIMARY KEY,
                 username VARCHAR(50) NOT NULL UNIQUE,
@@ -19,13 +19,12 @@ const createUserModel = async () => {
                 icon_color VARCHAR(7) NOT NULL
             );
         `;
-        await db.query(queryText);
-        return true;
-    } 
-    catch (error) {
-        console.log('Failed to create Users table');
-        throw error;
-    }
+    await db.query(queryText);
+    return true;
+  } catch (error) {
+    console.log("Failed to create Users table");
+    throw error;
+  }
 };
 
 /**
@@ -36,20 +35,19 @@ const createUserModel = async () => {
  * @returns {Promise<boolean>} Returns promise of true if successful. Otherwise throws error.
  */
 const createUserEntry = async (userID, username, phone, iconColor) => {
-    try {
-        const queryText = `
+  try {
+    const queryText = `
             INSERT INTO users(user_id, username, phone, icon_color) 
             VALUES ($1, $2, $3, $4) 
             ;
         `;
-        const values = [userID, username, phone, iconColor];
-        await db.query(queryText, values);
-        return true;
-    } 
-    catch (error) {
-        console.log('Failed to create new user entry');
-        throw error;
-    }
+    const values = [userID, username, phone, iconColor];
+    await db.query(queryText, values);
+    return true;
+  } catch (error) {
+    console.log("Failed to create new user entry");
+    throw error;
+  }
 };
 
 /**
@@ -58,20 +56,19 @@ const createUserEntry = async (userID, username, phone, iconColor) => {
  * @returns {Promise<boolean>} Returns promise of true if successful. Otherwise throws error
  */
 const deleteUserEntry = async (userID) => {
-    try {
-        const queryText = `
+  try {
+    const queryText = `
             DELETE FROM users 
             WHERE user_id = $1
             ;
         `;
-        const values = [userID];
-        await db.query(queryText, values);
-        return true;
-    } 
-    catch (error) {
-        console.log('Failed to delete user from users table');
-        throw error;
-    }
+    const values = [userID];
+    await db.query(queryText, values);
+    return true;
+  } catch (error) {
+    console.log("Failed to delete user from users table");
+    throw error;
+  }
 };
 
 /**
@@ -80,20 +77,19 @@ const deleteUserEntry = async (userID) => {
  * @returns {Promise<string>} Returns the user's username as a string if successful. Otherwise throws error
  */
 const getUsername = async (userID) => {
-    try {
-        const queryText = `
+  try {
+    const queryText = `
             SELECT username FROM users 
             WHERE user_id = $1 
             ;
         `;
-        const values = [userID];
-        const result = await db.query(queryText, values);
-        return result.rows[0].username.toString();
-    }
-    catch (error) {
-        console.log('Failed to retrieve username');
-        throw error;
-    }
+    const values = [userID];
+    const result = await db.query(queryText, values);
+    return result.rows[0].username.toString();
+  } catch (error) {
+    console.log("Failed to retrieve username");
+    throw error;
+  }
 };
 
 /**
@@ -102,24 +98,23 @@ const getUsername = async (userID) => {
  * @returns {Promise<Object>} Returns object containing userID and profileColor if successful. Otherwise throws an error.
  */
 const getUserInfo = async (username) => {
-    try {
-        const queryText = `
+  try {
+    const queryText = `
             SELECT user_id, icon_color FROM users 
             WHERE username = $1
             ;
         `;
-        const values = [username];
-        const result = await db.query(queryText, values);
-        const userInfo = {
-            userID: result.rows[0].user_id,
-            iconColor: result.rows[0].icon_color,
-        };
-        return userInfo;
-    } 
-    catch (error) {
-        console.log('Failed to retrieve userID');
-        throw error;
-    }
+    const values = [username];
+    const result = await db.query(queryText, values);
+    const userInfo = {
+      userID: result.rows[0].user_id,
+      iconColor: result.rows[0].icon_color,
+    };
+    return userInfo;
+  } catch (error) {
+    console.log("Failed to retrieve userID");
+    throw error;
+  }
 };
 
 /**
@@ -128,20 +123,19 @@ const getUserInfo = async (username) => {
  * @returns {Promise<string>} Returns timestamp of last time online as a string. Otherwise throws error
  */
 const getLastOnline = async (userID) => {
-    try {
-        const queryText = `
+  try {
+    const queryText = `
             SELECT last_online FROM users 
             WHERE user_id = $1
             ;
         `;
-        const values = [userID];
-        const result = await db.query(queryText, values);
-        return result.rows[0].last_online.toString();
-    }
-    catch (error) {
-        console.log('Failed to retrieve last online information');
-        throw error;
-    }
+    const values = [userID];
+    const result = await db.query(queryText, values);
+    return result.rows[0].last_online.toString();
+  } catch (error) {
+    console.log("Failed to retrieve last online information");
+    throw error;
+  }
 };
 
 /**
@@ -151,20 +145,19 @@ const getLastOnline = async (userID) => {
  * @returns {Promise<boolean>} Returns true if successful. Otherwise throws error
  */
 const setUsername = async (newUsername, userID) => {
-    try {
-        const queryText = `
+  try {
+    const queryText = `
             UPDATE users SET username = $1
             WHERE user_id = $2
             ;
         `;
-        const values = [newUsername, userID];
-        await db.query(queryText, values);
-        return true;
-    }
-    catch (error) {
-        console.log('New username failed at setting');
-        throw error;
-    }
+    const values = [newUsername, userID];
+    await db.query(queryText, values);
+    return true;
+  } catch (error) {
+    console.log("New username failed at setting");
+    throw error;
+  }
 };
 
 /**
@@ -174,20 +167,19 @@ const setUsername = async (newUsername, userID) => {
  * @returns {Promise<boolean>} Returns true if successful. Otherwise throws error
  */
 const setLastOnline = async (newLastOnline, userID) => {
-    try {
-        const queryText = `
+  try {
+    const queryText = `
             UPDATE users SET last_online = $1
             WHERE user_id = $2
             ;
         `;
-        const values = [newLastOnline, userID];
-        await db.query(queryText, values);
-        return true;
-    } 
-    catch (error) {
-        console.log('Setting last online failed');
-        throw error;
-    }
+    const values = [newLastOnline, userID];
+    await db.query(queryText, values);
+    return true;
+  } catch (error) {
+    console.log("Setting last online failed");
+    throw error;
+  }
 };
 
 /**
@@ -196,21 +188,20 @@ const setLastOnline = async (newLastOnline, userID) => {
  * @returns {Promise<boolean>} Returns true if candidateUUID is unique. Throws error otherwise
  */
 const isUniqueUUID = async (candidateUUID) => {
-    try {
-        const queryText = `
+  try {
+    const queryText = `
             SELECT user_id FROM users
             WHERE user_id = $1
             ;
         `;
-        const values = [candidateUUID];
-        const result = await db.query(queryText, values);
-        const isUnique = result.rows.length > 0 ? false: true;
-        return isUnique;
-    }
-    catch (error) {
-        console.error('Error verifying uniqueness of generated UUID');
-        throw error;
-    }
+    const values = [candidateUUID];
+    const result = await db.query(queryText, values);
+    const isUnique = result.rows.length > 0 ? false : true;
+    return isUnique;
+  } catch (error) {
+    console.error("Error verifying uniqueness of generated UUID");
+    throw error;
+  }
 };
 
 /**
@@ -220,56 +211,54 @@ const isUniqueUUID = async (candidateUUID) => {
  * @returns {Promise<string>} Returns true if user information is unique. Else throws error
  */
 const isUniqueUser = async (candidateUsername, candidatePhone) => {
-    try {
-        const queryText = `
+  try {
+    const queryText = `
             SELECT user_id FROM users
             WHERE username = $1 OR phone = $2
             ;
         `;
-        const values = [candidateUsername, candidatePhone];
-        const result = await db.query(queryText, values);
-        const isUnique = result.rows.length > 0 ? false : true;
-        return isUnique;
-    }
-    catch (error) {
-        console.error("Failed to check if user is unique");
-        throw error;
-    }
+    const values = [candidateUsername, candidatePhone];
+    const result = await db.query(queryText, values);
+    const isUnique = result.rows.length > 0 ? false : true;
+    return isUnique;
+  } catch (error) {
+    console.error("Failed to check if user is unique");
+    throw error;
+  }
 };
 
 /**
  * Query responsible for updating user's online status
- * @param {string} userID 
- * @param {string} timeLastOnline 
+ * @param {string} userID
+ * @param {string} timeLastOnline
  * @returns {Promise<boolean>} = Returns promise of true if successful. Otherwise throws an error
  */
 const updateUserOnlineStatus = async (userID, timeLastOnline) => {
-    try {
-        const queryText = `
+  try {
+    const queryText = `
            UPDATE users
            SET last_online = $1
            WHERE user_id = $2
            ; 
         `;
-        const values = [timeLastOnline, userID];
-        await db.query(queryText, values);
-        return true;
-    } 
-    catch (error) {
-        console.error("Failed to update user's online status");
-        throw error; 
-    }
+    const values = [timeLastOnline, userID];
+    await db.query(queryText, values);
+    return true;
+  } catch (error) {
+    console.error("Failed to update user's online status");
+    throw error;
+  }
 };
 
 module.exports = {
-    createUserEntry,
-    deleteUserEntry,
-    getUsername,
-    getLastOnline,
-    getUserInfo,
-    setUsername,
-    setLastOnline,
-    isUniqueUUID,
-    isUniqueUser,
-    updateUserOnlineStatus,
-}
+  createUserEntry,
+  deleteUserEntry,
+  getUsername,
+  getLastOnline,
+  getUserInfo,
+  setUsername,
+  setLastOnline,
+  isUniqueUUID,
+  isUniqueUser,
+  updateUserOnlineStatus,
+};

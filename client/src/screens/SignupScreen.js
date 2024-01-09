@@ -34,6 +34,7 @@ const SignupScreen = ({ navigation }) => {
     infoStyle,
     inlineLink,
     loginInfo,
+    footerContainer,
   } = styles;
   return (
     <SafeAreaView style={rootContainer}>
@@ -70,13 +71,11 @@ const SignupScreen = ({ navigation }) => {
         </Text>
       </View>
 
-      <View>
-        <Text style={loginInfo}>
-          Already have an account?{" "}
-          <Text style={inlineLink} onPress={() => navigation.navigate("LogIn")}>
-            Log in
-          </Text>
-        </Text>
+      <View style={footerContainer}>
+        <Text style={loginInfo}>Already have an account? </Text>
+        <TouchableOpacity onPress={() => navigation.navigate("LogIn")}>
+          <Text style={[inlineLink, loginInfo]}>Log in</Text>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
@@ -160,8 +159,11 @@ const styles = StyleSheet.create({
   },
   loginInfo: {
     fontSize: 16,
-    marginBottom: 30,
     fontFamily: "RobotoCondensed_700Bold",
+  },
+  footerContainer: {
+    flexDirection: "row",
+    marginBottom: 20,
   },
 });
 

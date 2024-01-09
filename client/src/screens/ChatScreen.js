@@ -46,18 +46,19 @@ const ChatScreen = ({ navigation }) => {
   // function responsible for determining online status of chat participants
   const checkConversationOnlineStatus = async () => {
     try {
-      const conversationParticipants = isChatCreated ? conversationObject.conversation_participants : potentialChatParticipants;
+      const conversationParticipants = isChatCreated
+        ? conversationObject.conversation_participants
+        : potentialChatParticipants;
       const apiURL = "/conversations/fetchConversationState";
       const response = await api.get(apiURL, {
-        params: { conversationParticipants: conversationParticipants, },
+        params: { conversationParticipants: conversationParticipants },
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
       setIsConversationOnline(response.data.isConversationOnline);
-    } 
-    catch (error) {
+    } catch (error) {
       console.error(
         "Error while determining conversations online status ",
         error
@@ -82,23 +83,26 @@ const ChatScreen = ({ navigation }) => {
   );
   const [messageText, setMessageText] = useState(""); // message text is the current message actively being types within the textbox
   const [chatTitle, setChatTitle] = useState("");
-  const [isConversationOnline, setIsConversationOnline] = useState(isChatCreated ? conversationObject.onlineConversationStatus : checkConversationOnlineStatus());
+  const [isConversationOnline, setIsConversationOnline] = useState(
+    isChatCreated
+      ? conversationObject.onlineConversationStatus
+      : checkConversationOnlineStatus()
+  );
 
   // use effect running upon initial component mount
   useEffect(() => {
-
     // function call to determine title of conversation
     generateInitialHeaderContent();
 
     // marking unread messages as read upon opening chat screen
-    if ((conversationObject && conversationObject.numUnreadMessages)) {
+    if (conversationObject && conversationObject.numUnreadMessages) {
       markMessagesAsRead();
     }
-  
+
     // setting up periodic updates with set Interval
     const intervalID = setInterval(() => {
-      checkConversationOnlineStatus()
-    }, 30000); 
+      checkConversationOnlineStatus();
+    }, 30000);
 
     // cleanup function preventing memory leaks
     return () => {
@@ -188,8 +192,7 @@ const ChatScreen = ({ navigation }) => {
         }
       );
       return true;
-    } 
-    catch (error) {
+    } catch (error) {
       console.error(
         "Error while creating new conversation in database: ",
         error
@@ -213,12 +216,8 @@ const ChatScreen = ({ navigation }) => {
         }
       );
       return true;
-    } 
-    catch (error) {
-      console.error(
-        "Error while marking messages as read ",
-        error
-      );
+    } catch (error) {
+      console.error("Error while marking messages as read ", error);
       return false;
     }
   };
@@ -276,7 +275,9 @@ const ChatScreen = ({ navigation }) => {
           </Text>
         </View>
         <View style={headerSection}>
-          <ActivityIndicator isOnline={isConversationOnline}></ActivityIndicator>
+          <ActivityIndicator
+            isOnline={isConversationOnline}
+          ></ActivityIndicator>
           <Text>{isConversationOnline ? "Online" : "Away"}</Text>
         </View>
       </View>

@@ -60,7 +60,6 @@ const FriendScreen = ({ navigation }) => {
     }
   };
 
-
   // initializing friend data for client upon component mount with useEffect
   useEffect(() => {
     getUserFriendData();
@@ -112,66 +111,72 @@ const FriendScreen = ({ navigation }) => {
       {onlineFriends.length + offlineFriends.length + friendRequests.length >
         0 && (
         <ScrollView style={friendSection}>
-          {friendRequests.length > 0 && (<View style={requestSection}>
-            <FriendHeader
-              headerTitle={"Requests"}
-              amount={friendRequests.length}
-            />
-            <View>
-              {friendRequests.map((item, index) => (
-                <FriendEntry
-                  key={index}
-                  initials={item.friendUsername.substring(0, 2).toUpperCase()}
-                  color={item.friendIconColor}
-                  bubbleSize={45}
-                  username={item.friendUsername}
-                  isRequest={true}
-                  userID={item.friendID}
-                  navigation={navigation}
-                />
-              ))}
+          {friendRequests.length > 0 && (
+            <View style={requestSection}>
+              <FriendHeader
+                headerTitle={"Requests"}
+                amount={friendRequests.length}
+              />
+              <View>
+                {friendRequests.map((item, index) => (
+                  <FriendEntry
+                    key={index}
+                    initials={item.friendUsername.substring(0, 2).toUpperCase()}
+                    color={item.friendIconColor}
+                    bubbleSize={45}
+                    username={item.friendUsername}
+                    isRequest={true}
+                    userID={item.friendID}
+                    navigation={navigation}
+                  />
+                ))}
+              </View>
             </View>
-          </View>)}
-          {onlineFriends.length > 0 && (<View style={onlineSection}>
-            <FriendHeader
-              headerTitle={"Online"}
-              amount={onlineFriends.length}
-            />
-            <View>
-              {onlineFriends.map((item, index) => (
-                <FriendEntry
-                  key={index}
-                  initials={item.friendUsername.substring(0, 2).toUpperCase()}
-                  color={item.friendIconColor}
-                  bubbleSize={45}
-                  username={item.friendUsername}
-                  isRequest={false}
-                  userID={item.friendID}
-                  navigation={navigation}
-                />
-              ))}
+          )}
+          {onlineFriends.length > 0 && (
+            <View style={onlineSection}>
+              <FriendHeader
+                headerTitle={"Online"}
+                amount={onlineFriends.length}
+              />
+              <View>
+                {onlineFriends.map((item, index) => (
+                  <FriendEntry
+                    key={index}
+                    initials={item.friendUsername.substring(0, 2).toUpperCase()}
+                    color={item.friendIconColor}
+                    bubbleSize={45}
+                    username={item.friendUsername}
+                    isRequest={false}
+                    userID={item.friendID}
+                    navigation={navigation}
+                  />
+                ))}
+              </View>
             </View>
-          </View>)}
-          {offlineFriends.length > 0 && (<View style={offlineSection}>
-            <FriendHeader
-              headerTitle={"Offline"}
-              amount={offlineFriends.length}
-            />
-            <View>
-              {offlineFriends.map((item, index) => (
-                <FriendEntry
-                  key={index}
-                  initials={item.friendUsername.substring(0, 2).toUpperCase()}
-                  color={item.friendIconColor}
-                  bubbleSize={45}
-                  username={item.friendUsername}
-                  isRequest={false}
-                  userID={item.friendID}
-                  navigation={navigation}
-                />
-              ))}
+          )}
+          {offlineFriends.length > 0 && (
+            <View style={offlineSection}>
+              <FriendHeader
+                headerTitle={"Offline"}
+                amount={offlineFriends.length}
+              />
+              <View>
+                {offlineFriends.map((item, index) => (
+                  <FriendEntry
+                    key={index}
+                    initials={item.friendUsername.substring(0, 2).toUpperCase()}
+                    color={item.friendIconColor}
+                    bubbleSize={45}
+                    username={item.friendUsername}
+                    isRequest={false}
+                    userID={item.friendID}
+                    navigation={navigation}
+                  />
+                ))}
+              </View>
             </View>
-          </View>)}
+          )}
         </ScrollView>
       )}
 

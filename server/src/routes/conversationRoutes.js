@@ -1,13 +1,16 @@
 /* conversationRoutes.js
  * Configures API routes for conversation interactions
-*/
+ */
 
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const conversationController = require('../controllers/conversationController');
+const conversationController = require("../controllers/conversationController");
 
 // Route for creating a conversation
-router.post('/createNewConversation', conversationController.createNewConversation);
+router.post(
+  "/createNewConversation",
+  conversationController.createNewConversation
+);
 
 // Route for deleting a conversation
 
@@ -16,12 +19,18 @@ router.post('/createNewConversation', conversationController.createNewConversati
 // Route for adding users to a conversation
 
 // Route for fetching user's conversations
-router.get('/fetchUserConversations', conversationController.fetchUserConversations);
+router.get(
+  "/fetchUserConversations",
+  conversationController.fetchUserConversations
+);
 
 // Route for determining whether a conversation already exists
-router.get('/conversationExists', conversationController.conversationExists);
+router.get("/conversationExists", conversationController.conversationExists);
 
 // Route for fetching conversation state
-router.get('/fetchConversationState', conversationController.fetchConversationOnlineStatus);
+router.get(
+  "/fetchConversationState",
+  conversationController.fetchConversationOnlineStatus
+);
 
 module.exports = router;

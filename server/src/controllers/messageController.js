@@ -29,7 +29,7 @@ const sendMessage = async (req, res) => {
       decodedJWT.userID,
       messageText,
       conversationID,
-      timeMessageSent,
+      timeMessageSent
     );
     res
       .status(200)
