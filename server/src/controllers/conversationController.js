@@ -5,6 +5,7 @@
 const jwt = require('jsonwebtoken');
 const conversationModel = require('../models/conversationModel');
 const userConversationModel = require('../models/userConversationsModel');
+const messageModel = require('../models/messageModel');
 
 // controller method creating new conversation
 const createNewConversation = async (req,res) => {
@@ -93,7 +94,7 @@ const conversationExists = async (req, res) => {
         // obtaining conversation data if conversation already exists
         let conversationObject = null;
         if (conversationID) {
-            conversationObject = await conversationModel.getConversationData(conversationID);
+            conversationObject = await conversationModel.getConversationData(decodedJWT.userID, conversationID);
         }
         res.status(200).json(conversationObject);
 
@@ -104,9 +105,42 @@ const conversationExists = async (req, res) => {
     }
 };
 
+const fetchConversationOnlineStatus = async (req, res) => {
+    try {
+        const tokenHeader = req.header('Authorization');
+        const token = tokenHeader.split(' ')[1];
+        if (!token) {
+            // handles the case where the token is not present
+            return res.status(401).json({ error: 'Unauthorized: JSON Web Token missing' });
+        }
+
+        // verifying json web token and obtaining client userID
+        const decodedJWT = jwt.verify(token, process.env.JWT_SECRET);
+
+        // obtaining data regarding conversation
+        const { conversationParticipants, conversationID } = req.query;
+        const conversationIDs = [];
+        for (let item of conversationParticipants) {
+            if (item !== decodedJWT.clientID) {
+                conversationIDs.push(item.userID);
+            }
+        }
+
+        // collecting data from database
+        const isConversationOnline = await userConversationModel.checkConversationOnlineStatus(decodedJWT.userID, conversationIDs);
+
+        res.status(200).json({isConversationOnline: isConversationOnline, });
+    } 
+    catch (error) {
+        console.error('Error when fetching conversation state ', error);
+        res.status(500).json({ error: 'Internal server error.'});
+    }
+};
+
 
 module.exports = {
     createNewConversation,
     fetchUserConversations,
     conversationExists,
+    fetchConversationOnlineStatus,
 };

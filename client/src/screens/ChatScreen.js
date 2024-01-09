@@ -43,6 +43,29 @@ const ChatScreen = ({ navigation }) => {
   const { isChatCreated, potentialChatParticipants, conversationObject } =
     route.params;
 
+  // function responsible for determining online status of chat participants
+  const checkConversationOnlineStatus = async () => {
+    try {
+      const conversationParticipants = isChatCreated ? conversationObject.conversation_participants : potentialChatParticipants;
+      const apiURL = "/conversations/fetchConversationState";
+      const response = await api.get(apiURL, {
+        params: { conversationParticipants: conversationParticipants, },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setIsConversationOnline(response.data.isConversationOnline);
+    } 
+    catch (error) {
+      console.error(
+        "Error while determining conversations online status ",
+        error
+      );
+      return false;
+    }
+  };
+
   //   chatParicipantElement: {
   //     userID: props.userID,
   //     username: props.username,
@@ -59,6 +82,7 @@ const ChatScreen = ({ navigation }) => {
   );
   const [messageText, setMessageText] = useState(""); // message text is the current message actively being types within the textbox
   const [chatTitle, setChatTitle] = useState("");
+  const [isConversationOnline, setIsConversationOnline] = useState(isChatCreated ? conversationObject.onlineConversationStatus : checkConversationOnlineStatus());
 
   // use effect running upon initial component mount
   useEffect(() => {
@@ -70,6 +94,16 @@ const ChatScreen = ({ navigation }) => {
     if ((conversationObject && conversationObject.numUnreadMessages)) {
       markMessagesAsRead();
     }
+  
+    // setting up periodic updates with set Interval
+    const intervalID = setInterval(() => {
+      checkConversationOnlineStatus()
+    }, 10000); 
+
+    // cleanup function preventing memory leaks
+    return () => {
+      clearInterval(intervalID);
+    };
   }, []);
 
   const handleTextChange = (text) => {
@@ -242,8 +276,8 @@ const ChatScreen = ({ navigation }) => {
           </Text>
         </View>
         <View style={headerSection}>
-          <ActivityIndicator isOnline={true}></ActivityIndicator>
-          <Text>Online</Text>
+          <ActivityIndicator isOnline={isConversationOnline}></ActivityIndicator>
+          <Text>{isConversationOnline ? "Online" : "Away"}</Text>
         </View>
       </View>
 

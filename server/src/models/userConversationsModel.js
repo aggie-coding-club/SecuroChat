@@ -167,6 +167,14 @@ const getUserConversations = async (userID) => {
             const conversationParticipants = await getConversationParticipants(row.conversation_id);
             const messagesData = await messageModel.getMessagesByConversation(row.conversation_id);
             const numUnreadMessages = await readReceiptsModel.getUnreadMessageCount(userID, row.conversation_id);
+            // creating array of conversation participant IDs to determine conversation status
+            const conversationParticipantIDs = [];
+            for (let item of conversationParticipants) {
+                if (item.userID !== userID) {
+                    conversationParticipantIDs.push(item.userID);
+                }
+            }
+            const onlineConversationStatus = await checkConversationOnlineStatus(userID, conversationParticipantIDs);
             const conversationObject = {
                 conversation_id: row.conversation_id, 
                 conversation_title: row.conversation_title, 
@@ -179,6 +187,7 @@ const getUserConversations = async (userID) => {
                 conversation_icon_color: row.group_icon_color,
                 messagesData: messagesData,
                 numUnreadMessages: numUnreadMessages,
+                onlineConversationStatus: onlineConversationStatus,
             };
             userConversations.push(conversationObject);
         }
@@ -246,6 +255,39 @@ const doesConversationExist = async (userID, selectedParticipantIDS) => {
     }
 };
 
+/**
+ * Query responsible for determining whether conversation has currently online participants. 
+ * @param {string} clientID - string uuid of requesting client
+ * @param {Array<string>} conversationUserIDs - Array of conversation participant UUIDs
+ * @returns {Promise<boolean>} - Returns boolean promise of true if there are conversation participants online. Otherwise returns false
+ */
+const checkConversationOnlineStatus = async (clientID, conversationUserIDs) => {
+    try {
+        const onlineOfflineInterval = "5 minutes";
+
+        const queryText = `
+            SELECT 
+                last_online
+            FROM 
+                users
+            WHERE
+                user_id = ANY($1) 
+                AND user_id != $2
+                AND NOW() - last_online <= interval '5 minutes'
+            ;
+        `;
+        const values = [conversationUserIDs, clientID];
+        const response = await db.query(queryText, values);
+
+        return response.rows.length > 0 ? true : false;
+
+    } 
+    catch (error) {
+        console.error('Error when checking conversation online status', error);
+        throw error; 
+    }
+};
+
 
 
 module.exports = {
@@ -254,4 +296,5 @@ module.exports = {
     getConversationParticipants,
     getUserConversations,
     doesConversationExist,
+    checkConversationOnlineStatus,
 };

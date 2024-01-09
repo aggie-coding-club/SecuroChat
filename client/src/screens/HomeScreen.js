@@ -91,7 +91,7 @@ const HomeScreen = ({ navigation }) => {
     const intervalID = setInterval(() => {
       getUserConversationData();
       updateUserOnlineStatus(new Date());
-    }, 10000); // fetches updated every second
+    }, 10000); 
 
     // cleanup function preventing memory leaks
     return () => {

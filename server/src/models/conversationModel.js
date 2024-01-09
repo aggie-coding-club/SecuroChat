@@ -166,10 +166,11 @@ const getLastMessageOfConversation = async (conversationID) => {
 
 /**
  * Query responsible for returning object data from a specific conversation ID
+ * @param {string} userID - string uuid of client
  * @param {string} conversationID - string representing conversation ID
  * @returns {Promise<Object>} - promise of an object if successful. Otherwise throws an error
  */
-const getConversationData = async (conversationID) => {
+const getConversationData = async (userID, conversationID) => {
     try {
         const queryText = `
             SELECT 
@@ -200,6 +201,14 @@ const getConversationData = async (conversationID) => {
         // creating conversation object for specified conversation
         const conversationParticipants = await userConversationModel.getConversationParticipants(resultRow.conversation_id);
         const messagesData = await messageModel.getMessagesByConversation(resultRow.conversation_id);
+        // creating array of conversation participant IDs to determine conversation status
+        const conversationParticipantIDs = [];
+        for (let item of conversationParticipants) {
+            if (item.userID !== userID) {
+                conversationParticipantIDs.push(item.userID);
+            }
+        }
+        const onlineConversationStatus = await userConversationModel.checkConversationOnlineStatus(userID, conversationParticipantIDs);
         const conversationObject = {
             conversation_id: resultRow.conversation_id,
             conversation_title: resultRow.conversation_title,
@@ -211,6 +220,7 @@ const getConversationData = async (conversationID) => {
             conversation_participants: conversationParticipants,
             conversation_icon_color: resultRow.conversation_icon_color,
             messagesData: messagesData,
+            onlineConversationStatus: onlineConversationStatus,
         };
 
         return conversationObject;

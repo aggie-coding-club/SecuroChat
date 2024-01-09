@@ -21,4 +21,7 @@ router.get('/fetchUserConversations', conversationController.fetchUserConversati
 // Route for determining whether a conversation already exists
 router.get('/conversationExists', conversationController.conversationExists);
 
+// Route for fetching conversation state
+router.get('/fetchConversationState', conversationController.fetchConversationOnlineStatus);
+
 module.exports = router;

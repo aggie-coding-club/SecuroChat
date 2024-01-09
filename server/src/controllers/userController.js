@@ -158,7 +158,6 @@ const updateUserOnlineStatus = async (req, res) => {
         const decodedJWT = jwt.verify(token, process.env.JWT_SECRET);
 
         const { lastOnline } = req.body; 
-        //console.log(lastOnline);
         
         // updating last_online time
         await userModel.updateUserOnlineStatus(decodedJWT.userID, lastOnline);
