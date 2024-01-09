@@ -101,9 +101,9 @@ const FriendScreen = ({ navigation }) => {
         </TouchableOpacity>
         <Text style={sectionTitle}>Friends</Text>
         <View style={headerIcons}>
-          <TouchableOpacity>
+          {/* <TouchableOpacity>
             <Ionicons name="create-outline" size={30} color="black" />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           <TouchableOpacity onPress={() => navigation.navigate("AddFriend")}>
             <Ionicons name="ios-person-add-outline" size={30} color="black" />
           </TouchableOpacity>
@@ -197,12 +197,13 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-around",
+    justifyContent: "space-between",
+    marginLeft: 30,
+    marginRight: 30,
   },
   sectionTitle: {
     fontFamily: "RobotoCondensed_400Regular",
     fontSize: 25,
-    marginLeft: 35,
   },
   headerIcons: {
     display: "flex",

@@ -157,7 +157,12 @@ const updateUserOnlineStatus = async (req, res) => {
         // verifying json web token and obtaining sender userID
         const decodedJWT = jwt.verify(token, process.env.JWT_SECRET);
 
-        const { lastOnline } = req.body;  
+        const { lastOnline } = req.body; 
+        //console.log(lastOnline);
+        
+        // updating last_online time
+        await userModel.updateUserOnlineStatus(decodedJWT.userID, lastOnline);
+        res.status(200).json({success: true, message: 'successfully updated client online status'});
     } 
     catch (error) {
         console.log(`Error occured updating client's online status`);

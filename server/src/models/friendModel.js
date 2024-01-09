@@ -48,7 +48,8 @@ const getUserFriendData = async (userID) => {
         const onlineFriends = [];
         const offlineFriends = [];
 
-        const currentTime = new Date(); 
+        const currentLocalTime = new Date(); 
+        const currentUTCTime = new Date(currentLocalTime.getTime() + currentLocalTime.getTimezoneOffset() * 60000);
         
         // iterating through rows of result populating arrays
         for (const row of result.rows) {
@@ -62,11 +63,11 @@ const getUserFriendData = async (userID) => {
             if (row.status) {
                 if (row.last_online) {
                     const lastOnlineTime = new Date(row.last_online);
-                    const timeDifference = currentTime - lastOnlineTime;
-                    const minutesSinceLastOnline = timeDifference / (1000 * 60);
+                    const timeDifference = Math.abs(currentUTCTime - lastOnlineTime) / 60000;
     
-                    // assuming thresholds of 10 minutes for online status
-                    if (minutesSinceLastOnline <= 10) {
+                    // assuming thresholds of 5 minutes for online status
+                    const minuteDeadline = 5;
+                    if (timeDifference <= minuteDeadline) {
                         onlineFriends.push(friendObject);
                     }
                     else {
@@ -227,7 +228,7 @@ const acceptFriendRequest = async (recipientUserID, senderUserID) => {
         console.log(`Failed to accept friend request`);
         throw error;
     }
-}
+};
 
 module.exports = {
     getUserFriendData,

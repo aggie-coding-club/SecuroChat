@@ -237,6 +237,30 @@ const isUniqueUser = async (candidateUsername, candidatePhone) => {
     }
 };
 
+/**
+ * Query responsible for updating user's online status
+ * @param {string} userID 
+ * @param {string} timeLastOnline 
+ * @returns {Promise<boolean>} = Returns promise of true if successful. Otherwise throws an error
+ */
+const updateUserOnlineStatus = async (userID, timeLastOnline) => {
+    try {
+        const queryText = `
+           UPDATE users
+           SET last_online = $1
+           WHERE user_id = $2
+           ; 
+        `;
+        const values = [timeLastOnline, userID];
+        await db.query(queryText, values);
+        return true;
+    } 
+    catch (error) {
+        console.error("Failed to update user's online status");
+        throw error; 
+    }
+};
+
 module.exports = {
     createUserEntry,
     deleteUserEntry,
@@ -247,4 +271,5 @@ module.exports = {
     setLastOnline,
     isUniqueUUID,
     isUniqueUser,
+    updateUserOnlineStatus,
 }

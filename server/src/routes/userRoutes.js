@@ -21,4 +21,7 @@ router.delete('/rejectFriendRequest', userController.rejectFriendRequest);
 // Route for accepting friend request
 router.post('/acceptFriendRequest', userController.acceptFriendRequest);
 
+// Route for updating user's online status
+router.put('/updateUserOnlineStatus', userController.updateUserOnlineStatus);
+
 module.exports = router;

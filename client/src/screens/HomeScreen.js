@@ -12,7 +12,6 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, StatusBar, TouchableOpacity, ScrollView } from "react-native";
 import ProfilePicture from '../components/ProfilePicture';
 import ConversationTab from '../components/ConversationTab';
-import { Feather } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 import api from '../api';
 import { useAuth } from '../AuthContext';
@@ -58,6 +57,32 @@ const HomeScreen = ({ navigation }) => {
         }
     };
 
+    // function responsible for updating client online status
+    const updateUserOnlineStatus = async (lastOnline) => {
+        try {
+            const apiURL = "/user/updateUserOnlineStatus";
+            await api.put(
+                apiURL,
+                {
+                  lastOnline: lastOnline,
+                },
+                {
+                  headers: {
+                    Authorization: `Bearer ${token}`,
+                  },
+                }
+              );
+            return true;
+        } 
+        catch (error) {
+            console.error(
+                "Error while updating client's online status: ",
+                error
+              );
+              return false;
+        }
+    };
+
   // initializing user's conversations data upon component mount with useEffect
   useEffect(() => {
     getUserConversationData();
@@ -65,6 +90,7 @@ const HomeScreen = ({ navigation }) => {
     // setting up periodic updates with set Interval
     const intervalID = setInterval(() => {
       getUserConversationData();
+      updateUserOnlineStatus(new Date());
     }, 10000); // fetches updated every second
 
     // cleanup function preventing memory leaks
@@ -83,9 +109,9 @@ const HomeScreen = ({ navigation }) => {
                 </TouchableOpacity>
                 <Text style={sectionTitle}>Chats</Text>
                 <View style={headerIcons}>
-                    <TouchableOpacity>
+                    {/* <TouchableOpacity>
                         <Feather name="camera" size={28} color="black" />
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                     <TouchableOpacity onPress={() => navigation.navigate("AddConversation")}>
                         <Ionicons name="create-outline" size={30} color="black" />
                     </TouchableOpacity>
@@ -126,18 +152,18 @@ const styles = StyleSheet.create({
         display: "flex",
         flexDirection: "row",
         alignItems: "center",
-        justifyContent: "space-around",
+        justifyContent: "space-between",
+        marginLeft: 30,
+        marginRight: 30,
     },
     sectionTitle: {
         fontFamily: "RobotoCondensed_400Regular",
         fontSize: 25,
-        marginLeft: 35,
     },
     headerIcons: {
         display: "flex",
         flexDirection: "row",
         alignItems: "center",
-        gap: 25,
     },
     emptySection: {
         flex: 0.75,
