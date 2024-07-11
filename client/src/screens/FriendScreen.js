@@ -21,7 +21,7 @@ import {
 import ProfilePicture from "../components/ProfilePicture";
 import FriendHeader from "../components/FriendHeader";
 import FriendEntry from "../components/FriendEntry";
-import { Ionicons } from "@expo/vector-icons";
+import { AntDesign } from '@expo/vector-icons';
 import api from "../api";
 import { useAuth } from "../AuthContext";
 
@@ -100,71 +100,80 @@ const FriendScreen = ({ navigation }) => {
         </TouchableOpacity>
         <Text style={sectionTitle}>Friends</Text>
         <View style={headerIcons}>
-          <TouchableOpacity>
-            <Ionicons name="create-outline" size={30} color="black" />
-          </TouchableOpacity>
           <TouchableOpacity onPress={() => navigation.navigate("AddFriend")}>
-            <Ionicons name="ios-person-add-outline" size={30} color="black" />
+            <AntDesign name="adduser" size={30} color="black" />
           </TouchableOpacity>
         </View>
       </View>
       {onlineFriends.length + offlineFriends.length + friendRequests.length >
         0 && (
         <ScrollView style={friendSection}>
-          {friendRequests.length > 0 && (<View style={requestSection}>
-            <FriendHeader
-              headerTitle={"Requests"}
-              amount={friendRequests.length}
-            />
-            <View>
-              {friendRequests.map((item, index) => (
-                <FriendEntry
-                  key={index}
-                  initials={item.friendUsername.substring(0, 2).toUpperCase()}
-                  color={item.friendIconColor}
-                  bubbleSize={45}
-                  username={item.friendUsername}
-                  isRequest={true}
-                />
-              ))}
+          {friendRequests.length > 0 && (
+            <View style={requestSection}>
+              <FriendHeader
+                headerTitle={"Requests"}
+                amount={friendRequests.length}
+              />
+              <View>
+                {friendRequests.map((item, index) => (
+                  <FriendEntry
+                    key={index}
+                    initials={item.friendUsername.substring(0, 2).toUpperCase()}
+                    color={item.friendIconColor}
+                    bubbleSize={45}
+                    username={item.friendUsername}
+                    isRequest={true}
+                    userID={item.friendID}
+                    navigation={navigation}
+                  />
+                ))}
+              </View>
             </View>
-          </View>)}
-          {onlineFriends.length > 0 && (<View style={onlineSection}>
-            <FriendHeader
-              headerTitle={"Online"}
-              amount={onlineFriends.length}
-            />
-            <View>
-              {onlineFriends.map((item, index) => (
-                <FriendEntry
-                  key={index}
-                  initials={item.friendUsername.substring(0, 2).toUpperCase()}
-                  color={item.friendIconColor}
-                  bubbleSize={45}
-                  username={item.friendUsername}
-                  isRequest={false}
-                />
-              ))}
+          )}
+          {onlineFriends.length > 0 && (
+            <View style={onlineSection}>
+              <FriendHeader
+                headerTitle={"Online"}
+                amount={onlineFriends.length}
+              />
+              <View>
+                {onlineFriends.map((item, index) => (
+                  <FriendEntry
+                    key={index}
+                    initials={item.friendUsername.substring(0, 2).toUpperCase()}
+                    color={item.friendIconColor}
+                    bubbleSize={45}
+                    username={item.friendUsername}
+                    isRequest={false}
+                    userID={item.friendID}
+                    navigation={navigation}
+                  />
+                ))}
+              </View>
             </View>
-          </View>)}
-          {offlineFriends.length > 0 && (<View style={offlineSection}>
-            <FriendHeader
-              headerTitle={"Offline"}
-              amount={offlineFriends.length}
-            />
-            <View>
-              {offlineFriends.map((item, index) => (
-                <FriendEntry
-                  key={index}
-                  initials={item.friendUsername.substring(0, 2).toUpperCase()}
-                  color={item.friendIconColor}
-                  bubbleSize={45}
-                  username={item.friendUsername}
-                  isRequest={false}
-                />
-              ))}
+          )}
+          {offlineFriends.length > 0 && (
+            <View style={offlineSection}>
+              <FriendHeader
+                headerTitle={"Offline"}
+                amount={offlineFriends.length}
+              />
+              <View>
+                {offlineFriends.map((item, index) => (
+                  <FriendEntry
+                    key={index}
+                    initials={item.friendUsername.substring(0, 2).toUpperCase()}
+                    color={item.friendIconColor}
+                    bubbleSize={45}
+                    username={item.friendUsername}
+                    isRequest={false}
+                    userID={item.friendID}
+                    navigation={navigation}
+                  />
+                ))}
+              </View>
             </View>
-          </View>)}
+          )}
         </ScrollView>
       )}
 
@@ -190,12 +199,13 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-around",
+    justifyContent: "space-between",
+    marginLeft: 30,
+    marginRight: 30,
   },
   sectionTitle: {
     fontFamily: "RobotoCondensed_400Regular",
     fontSize: 25,
-    marginLeft: 35,
   },
   headerIcons: {
     display: "flex",

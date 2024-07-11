@@ -18,8 +18,6 @@ import MessagesToRead from "../components/MessagesToRead";
  * @param {object} props - Javascript object containing react native props
  * @param {object} props.conversationObject - object containing conversation data
  * @property {string} props.bubbleSize - Sets the size of the profile picture bubble
- * @property {boolean} props.notSeen - boolean being true if user has chats not yet read, false otherwise
- * @property {number} props.numMessagesNotRead - number representing number of messages user has not read
  * @property {function} props.onPress - function that is called onPress
  */
 const ConversationTab = (props) => {
@@ -41,7 +39,9 @@ const ConversationTab = (props) => {
 
     // using default conversation name instead and removing client's username from participant array
     const chatParticipants = props.conversationObject.conversation_participants;
-    let filteredChatParticipants = chatParticipants.filter((obj) => obj.username !== globalClientUsername);
+    let filteredChatParticipants = chatParticipants.filter(
+      (obj) => obj.username !== globalClientUsername
+    );
 
     // action if conversation is a group chat
     if (filteredChatParticipants.length > 1) {
@@ -56,8 +56,8 @@ const ConversationTab = (props) => {
         }
       }
       return title;
-    } 
-    
+    }
+
     // action when conversation is a direct message
     return filteredChatParticipants[0].username;
   };
@@ -73,8 +73,10 @@ const ConversationTab = (props) => {
 
   // function responsible for determining icon color of conversation
   const getIconColor = () => {
-    return props.conversationObject.conversation_participants.length === 2 ? getDirectMessageIconColor() : props.conversationObject.conversation_icon_color;
-  }
+    return props.conversationObject.conversation_participants.length === 2
+      ? getDirectMessageIconColor()
+      : props.conversationObject.conversation_icon_color;
+  };
 
   // function responsible for determining time/date to display on conversation
   const timeDateDisplay = () => {
@@ -120,22 +122,22 @@ const ConversationTab = (props) => {
         <Text numberOfLines={1} ellipsizeMode="tail" style={conversationTitle}>
           {conversationName}
         </Text>
-        <Text style={conversationText}>{props.conversationObject.messages_text}</Text>
+        <Text style={conversationText}>
+          {props.conversationObject.messages_text}
+        </Text>
       </View>
-      {props.notSeen && (
+      {props.conversationObject.numUnreadMessages > 0 && (
         <View style={unreadConversationInfo}>
           <Text style={unreadConversationTime}>{timeDateDisplay()}</Text>
           <MessagesToRead
-            numMessagesNotRead={props.numMessagesNotRead}
+            numMessagesNotRead={props.conversationObject.numUnreadMessages}
             bubbleSize={25}
           />
         </View>
       )}
-      {!props.notSeen && (
+      {props.conversationObject.numUnreadMessages === 0 && (
         <View style={readConversationInfo}>
-          <Text style={readConversationTime}>
-            {timeDateDisplay()}
-          </Text>
+          <Text style={readConversationTime}>{timeDateDisplay()}</Text>
         </View>
       )}
     </TouchableOpacity>
@@ -172,6 +174,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     gap: 10,
+    minWidth: 65,
   },
   unreadConversationTime: {
     color: "#0078D4",
@@ -181,11 +184,13 @@ const styles = StyleSheet.create({
   readConversationInfo: {
     display: "flex",
     alignSelf: "flex-start",
+    minWidth: 65,
   },
   readConversationTime: {
     color: "#8C8989",
     fontFamily: "RobotoCondensed_400Regular",
     fontSize: 18,
+    alignSelf: "center",
   },
 });
 

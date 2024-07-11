@@ -1,6 +1,5 @@
 const bcrypt = require("bcryptjs");
 
-
 /**
  * Hashes a plaintext password.
  * @param {string} password - The plaintext password to hash.

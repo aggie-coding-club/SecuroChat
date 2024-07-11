@@ -44,19 +44,20 @@ const AddConversationScreen = ({ navigation }) => {
   const participantScrollViewRef = useRef();
 
   // function responsible for navigation to the created default chat screen upon button press
-  const toChatScreen = () => {
-    if (selectedParticipants.length) {
-      const parameters = {
-        isChatCreated: false,
-        potentialChatParticipants: selectedParticipants,
-      };
-      navigation.navigate("ChatScreen", parameters);
-    }
+  const toChatScreen = (conversationObject) => {
+    let parameters = conversationObject
+      ? { isChatCreated: true, conversationObject }
+      : {
+          isChatCreated: false,
+          potentialChatParticipants: selectedParticipants,
+        };
+    navigation.navigate("ChatScreen", parameters);
   };
-  
+
   // function responsible for handling buttonPress
-  const onButtonPress = () => {
-    toChatScreen();
+  const onButtonPress = async () => {
+    const conversationObject = await isNewChat();
+    toChatScreen(conversationObject);
   };
 
   // function handling action when a user is SelectedUser component is pressed
@@ -65,7 +66,9 @@ const AddConversationScreen = ({ navigation }) => {
     if (data.isSelected) {
       newSelectedParticipants.push(data.userData);
     } else {
-      const indexToRemove = newSelectedParticipants.findIndex((item) => item.username === data.userData.username);
+      const indexToRemove = newSelectedParticipants.findIndex(
+        (item) => item.username === data.userData.username
+      );
       newSelectedParticipants.splice(indexToRemove, 1);
     }
     setSelectedParticipants(newSelectedParticipants);
@@ -74,6 +77,24 @@ const AddConversationScreen = ({ navigation }) => {
   // function responsible for scrolling to end each time new SelectedUser component is added
   const scrollToRight = () => {
     participantScrollViewRef.current.scrollToEnd({ animated: true });
+  };
+
+  // function responsible for determining whether chat with these selected participants exists
+  const isNewChat = async () => {
+    try {
+      const apiURL = "/conversations/conversationExists";
+      const response = await api.get(apiURL, {
+        params: { selectedParticipants },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      return response.data;
+    } catch (error) {
+      console.error("Error while determining if isNewChat: ", error);
+      return false;
+    }
   };
 
   // function responsible for fetching all of user's friend's usernames
@@ -123,7 +144,9 @@ const AddConversationScreen = ({ navigation }) => {
         <Text style={headerTitle}>Select Participants</Text>
       </View>
       <View style={participantSection}>
-        {selectedParticipants.length > 0 && (<Text style={participantSectionText}>To</Text>)}
+        {selectedParticipants.length > 0 && (
+          <Text style={participantSectionText}>To</Text>
+        )}
         <ScrollView
           ref={participantScrollViewRef}
           style={selectedUserContainer}
@@ -151,9 +174,11 @@ const AddConversationScreen = ({ navigation }) => {
         ))}
       </ScrollView>
 
-      <View style={buttonContainer}>
-        <GeneralButton content={"Create New Chat"} onPress={onButtonPress} />
-      </View>
+      {selectedParticipants.length > 0 && (
+        <View style={buttonContainer}>
+          <GeneralButton content={"Create New Chat"} onPress={onButtonPress} />
+        </View>
+      )}
     </SafeAreaView>
   );
 };
@@ -185,7 +210,6 @@ const styles = StyleSheet.create({
     marginLeft: 15,
   },
   participantSection: {
-    marginTop: 20,
     gap: 5,
   },
   buttonContainer: {

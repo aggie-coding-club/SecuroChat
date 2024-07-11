@@ -15,21 +15,26 @@ import {
   Text,
   StyleSheet,
   StatusBar,
+  TouchableOpacity,
 } from "react-native";
 import GeneralInput from "../components/GeneralInput";
 import GeneralButton from "../components/GeneralButton";
 import BackButton from "../components/BackButton";
 import api from "../api";
-import { useAuth } from '../AuthContext';
-
+import { useAuth } from "../AuthContext";
 
 /**
  * LoginScreen is a custom component that generates the login screen for SecuroChat
  * @param {object} navigation - Prop passed in from React Navigation to screen component
  */
 const LoginScreen = ({ navigation }) => {
-  // setting useAuth hook for userAuthentication 
-  const { setJSONWebToken, setGlobalClientUsername, setDefaultProfileColor, setGlobalClientID } = useAuth();
+  // setting useAuth hook for userAuthentication
+  const {
+    setJSONWebToken,
+    setGlobalClientUsername,
+    setDefaultProfileColor,
+    setGlobalClientID,
+  } = useAuth();
 
   // getting and managing states for login text inputs
   const [usernameData, setUsername] = useState("");
@@ -44,7 +49,7 @@ const LoginScreen = ({ navigation }) => {
 
   const handleLogin = async () => {
     try {
-      const apiURL = 'auth/login';
+      const apiURL = "auth/login";
       const response = await api.post(apiURL, {
         username: usernameData,
         password: passwordData,
@@ -55,9 +60,8 @@ const LoginScreen = ({ navigation }) => {
       setDefaultProfileColor(response.data.iconColor);
       setGlobalClientID(response.data.userID);
       return true;
-    } 
-    catch (error) {
-      console.error('Error during login: ', error);
+    } catch (error) {
+      console.error("Error during login: ", error);
       return false;
     }
   };
@@ -80,6 +84,7 @@ const LoginScreen = ({ navigation }) => {
     subText,
     link,
     bottomText,
+    footerContainer,
   } = styles;
   return (
     <SafeAreaView style={fullPage}>
@@ -108,27 +113,20 @@ const LoginScreen = ({ navigation }) => {
           onInputChange={handlePasswordChange}
         ></GeneralInput>
         <View style={finishButton}>
-          <GeneralButton
-            content="Log In"
-            onPress={handleLoginPress}
-          />
+          <GeneralButton content="Log In" onPress={handleLoginPress} />
         </View>
-        <View style={passwordForgot}>
-          <Text
-            style={subText}
-            onPress={() => navigation.navigate("ForgotPassword")}
-          >
-            Forgot Password?
-          </Text>
-        </View>
+        <TouchableOpacity
+          style={passwordForgot}
+          onPress={() => navigation.navigate("ForgotPassword")}
+        >
+          <Text style={subText}>Forgot Password?</Text>
+        </TouchableOpacity>
       </View>
-      <View>
-        <Text style={bottomText}>
-          Don't have an account?{" "}
-          <Text style={link} onPress={() => navigation.navigate("SignUp")}>
-            Sign Up
-          </Text>
-        </Text>
+      <View style={footerContainer}>
+        <Text style={bottomText}>Don't have an account? </Text>
+        <TouchableOpacity onPress={() => navigation.navigate("SignUp")}>
+          <Text style={[bottomText, link]}>Sign Up</Text>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
@@ -168,6 +166,7 @@ const styles = StyleSheet.create({
   passwordForgot: {
     alignItems: "center",
     justifyContent: "center",
+    marginTop: 5,
   },
   subText: {
     fontSize: 18,
@@ -177,11 +176,14 @@ const styles = StyleSheet.create({
   bottomText: {
     fontFamily: "RobotoCondensed_700Bold",
     fontSize: 16,
-    marginBottom: 30,
   },
   link: {
     fontFamily: "RobotoCondensed_700Bold",
     color: "#0078D4",
+  },
+  footerContainer: {
+    flexDirection: "row",
+    marginBottom: 20,
   },
 });
 

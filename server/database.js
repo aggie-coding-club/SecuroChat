@@ -2,8 +2,8 @@
  * Responsible for configuring and connecting to postgresql database
  */
 
-const { Pool } = require('pg');
-const dotenv = require('dotenv');
+const { Pool } = require("pg");
+const dotenv = require("dotenv");
 
 dotenv.config(); // Load environment variables from .env file
 
@@ -24,9 +24,9 @@ const pool = new Pool({
 const connect = async () => {
   try {
     await pool.connect();
-    console.log('Connected to the database');
+    console.log("Connected to the database");
   } catch (error) {
-    console.error('Error connecting to the database:', error);
+    console.error("Error connecting to the database:", error);
   }
 };
 
