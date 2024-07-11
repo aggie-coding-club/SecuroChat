@@ -21,7 +21,7 @@ import {
 import ProfilePicture from "../components/ProfilePicture";
 import FriendHeader from "../components/FriendHeader";
 import FriendEntry from "../components/FriendEntry";
-import { Ionicons } from "@expo/vector-icons";
+import { AntDesign } from '@expo/vector-icons';
 import api from "../api";
 import { useAuth } from "../AuthContext";
 
@@ -100,11 +100,8 @@ const FriendScreen = ({ navigation }) => {
         </TouchableOpacity>
         <Text style={sectionTitle}>Friends</Text>
         <View style={headerIcons}>
-          {/* <TouchableOpacity>
-            <Ionicons name="create-outline" size={30} color="black" />
-          </TouchableOpacity> */}
           <TouchableOpacity onPress={() => navigation.navigate("AddFriend")}>
-            <Ionicons name="ios-person-add-outline" size={30} color="black" />
+            <AntDesign name="adduser" size={30} color="black" />
           </TouchableOpacity>
         </View>
       </View>
