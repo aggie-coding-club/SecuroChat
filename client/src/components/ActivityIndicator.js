@@ -10,19 +10,17 @@ import { StyleSheet, View } from "react-native";
  * @property {boolean} props.isOnline - boolean representing users online status
  */
 const ActivityIndicator = (props) => {
-    const iconColor = props.isOnline ? "#42DB1C" : "#FF4D41";
-    const { circle } = styles;
-    return(
-        <View style={[circle, {backgroundColor: iconColor}]}></View>
-    );
+  const iconColor = props.isOnline ? "#42DB1C" : "#FF4D41";
+  const { circle } = styles;
+  return <View style={[circle, { backgroundColor: iconColor }]}></View>;
 };
 
 const styles = StyleSheet.create({
-    circle: {
-        width: 8,
-        height: 8,
-        borderRadius: 50,
-    }
+  circle: {
+    width: 8,
+    height: 8,
+    borderRadius: 50,
+  },
 });
 
 export default ActivityIndicator;

@@ -1,6 +1,6 @@
 /* NumberInput.js
  * A custom react native component generating input boxes for phone number verification
-*/
+ */
 
 import React, { useRef } from "react";
 import { StyleSheet, TextInput, View } from "react-native";
@@ -18,8 +18,7 @@ const NumberInput = (props) => {
   const handleTextInput = (text, index) => {
     if (index < 5 && text.length === 1) {
       inputRefs[index + 1].current.focus();
-    }
-    else {
+    } else {
       props.onConditionMet();
     }
   };
@@ -39,8 +38,7 @@ const NumberInput = (props) => {
             onChangeText={(text) => handleTextInput(text, index)}
             autoFocus={index === 0}
           />
-        ))
-      }
+        ))}
     </View>
   );
 };
@@ -49,15 +47,15 @@ const styles = StyleSheet.create({
   inputStyle: {
     borderWidth: 1.5,
     borderColor: "#C0C0C0",
-    width: 55, 
-    height: 60, 
+    width: 55,
+    height: 60,
     padding: 18,
     borderRadius: 16,
     fontSize: 20,
-    margin: 3, 
+    margin: 3,
   },
   container: {
-    flexDirection: "row", 
+    flexDirection: "row",
     paddingTop: 60,
   },
 });

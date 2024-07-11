@@ -10,17 +10,33 @@
  */
 
 import React, { useState } from "react";
-import { View, Text, StyleSheet, SafeAreaView, StatusBar } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  SafeAreaView,
+  StatusBar,
+  TouchableOpacity,
+} from "react-native";
 import GeneralInput from "../components/GeneralInput";
 import GeneralButton from "../components/GeneralButton";
 import BackButton from "../components/BackButton";
-import api from '../api';
+import api from "../api";
+import { useAuth } from "../AuthContext";
 
 /**
  * CreateAccountScreen is a custom component that generates the createAccount screen for SecuroChat
  * @param {object} navigation - Prop passed in from React Navigation to screen component
  */
 const CreateAccountScreen = ({ navigation }) => {
+  // setting useAuth hook for userAuthentication
+  const {
+    setJSONWebToken,
+    setGlobalClientUsername,
+    setDefaultProfileColor,
+    setGlobalClientID,
+  } = useAuth();
+
   //handling state deciding whether to show or hide pageHeader
   const [isHeaderHidden, setIsHeaderHidden] = useState(false);
   const hideHeader = () => {
@@ -31,10 +47,11 @@ const CreateAccountScreen = ({ navigation }) => {
   };
 
   // handling state for input boxes
-  const [username, setUsername] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [usernameData, setUsername] = useState("");
+  const [phoneNumberData, setPhoneNumber] = useState("");
+  const [passwordData, setPassword] = useState("");
+  const [confirmPasswordData, setConfirmPassword] = useState("");
+
   const handleUsernameChange = (value) => {
     setUsername(value);
   };
@@ -48,30 +65,35 @@ const CreateAccountScreen = ({ navigation }) => {
     setConfirmPassword(value);
   };
 
-
   const handleRegister = async () => {
     try {
-      const response = await api.post('http://localhost:3001/auth/register', {
-        username, 
-        phoneNumber, 
-        password,
-      }, { withCredentials: true });
+      const publicKeyData = Math.floor(Math.random() * 100000); // temp data to fill publicKey in database
+      const apiURL = "/auth/register";
+      const response = await api.post(apiURL, {
+        username: usernameData,
+        phone: phoneNumberData,
+        password: passwordData,
+        publicKey: publicKeyData,
+      });
 
-      console.log(response.data);
-    }
-    catch (error) {
-      console.error('Error during registration: ', error);
+      setJSONWebToken(response.data.token);
+      setGlobalClientUsername(usernameData);
+      setDefaultProfileColor(response.data.iconColor);
+      setGlobalClientID(response.data.userID);
+      return true;
+    } catch (error) {
+      console.error("Error during registration: ", error);
+      return false;
     }
   };
 
   const verifyPasswordMatch = () => {
-    return password === confirmPassword;
+    return passwordData === confirmPasswordData;
   };
 
-  const handleRegisterPress = () => {
-    if (verifyPasswordMatch()){
-      handleRegister();
-      navigation.navigate("PhoneVerification")
+  const handleRegisterPress = async () => {
+    if (verifyPasswordMatch() && (await handleRegister())) {
+      navigation.navigate("PhoneVerification");
     }
   };
 
@@ -86,11 +108,15 @@ const CreateAccountScreen = ({ navigation }) => {
     infoStyle,
     inlineLink,
     loginInfo,
+    footerContainer,
   } = styles;
   return (
     <SafeAreaView style={rootContainer}>
       <StatusBar></StatusBar>
-      <BackButton style={backButton} onPress={() => navigation.goBack()}></BackButton>
+      <BackButton
+        style={backButton}
+        onPress={() => navigation.goBack()}
+      ></BackButton>
 
       {/*This evaluates state and decides generation of header content */}
       {!isHeaderHidden && (
@@ -148,10 +174,11 @@ const CreateAccountScreen = ({ navigation }) => {
         </View>
       </View>
 
-      <View>
-        <Text style={loginInfo}>
-          Already have an account? <Text style={inlineLink} onPress={() => navigation.navigate("LogIn")}>Log in</Text>
-        </Text>
+      <View style={footerContainer}>
+        <Text style={loginInfo}>Already have an account? </Text>
+        <TouchableOpacity onPress={() => navigation.navigate("LogIn")}>
+          <Text style={[inlineLink, loginInfo]}>Log in</Text>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
@@ -205,8 +232,11 @@ const styles = StyleSheet.create({
   },
   loginInfo: {
     fontSize: 16,
-    marginBottom: 30,
     fontFamily: "RobotoCondensed_700Bold",
+  },
+  footerContainer: {
+    flexDirection: "row",
+    marginBottom: 20,
   },
 });
 

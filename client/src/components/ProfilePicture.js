@@ -22,9 +22,11 @@ const ProfilePicture = (props) => {
     width: bubbleSize,
     height: bubbleSize,
     borderRadius: bubbleSize,
-  }
+  };
   return (
-    <View style={[ container, { backgroundColor: `${props.color}30` }, bubbleStyle ]}>
+    <View
+      style={[container, { backgroundColor: `${props.color}30` }, bubbleStyle]}
+    >
       <Text style={[initials, { color: props.color, fontSize: textSize }]}>
         {props.initials}
       </Text>
@@ -38,7 +40,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   initials: {
-    fontFamily: "RobotoCondensed_400Regular"
+    fontFamily: "RobotoCondensed_400Regular",
   },
 });
 
