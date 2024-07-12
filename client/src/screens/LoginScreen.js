@@ -20,6 +20,7 @@ import {
 import GeneralInput from "../components/GeneralInput";
 import GeneralButton from "../components/GeneralButton";
 import BackButton from "../components/BackButton";
+import Popup from "../components/Popup";
 import api from "../api";
 import { useAuth } from "../AuthContext";
 
@@ -39,6 +40,8 @@ const LoginScreen = ({ navigation }) => {
   // getting and managing states for login text inputs
   const [usernameData, setUsername] = useState("");
   const [passwordData, setPassword] = useState("");
+  const [activatePopup, setActivatePopup] = useState(false);
+  const [loginErrorMessage, setLoginErrorMessage] = useState("");
 
   const handleUsernameChange = (value) => {
     setUsername(value);
@@ -61,7 +64,9 @@ const LoginScreen = ({ navigation }) => {
       setGlobalClientID(response.data.userID);
       return true;
     } catch (error) {
-      console.error("Error during login: ", error);
+      console.error(error.response.data.error);
+      setLoginErrorMessage(error.response.data.error);
+      setActivatePopup(true);
       return false;
     }
   };
@@ -79,7 +84,6 @@ const LoginScreen = ({ navigation }) => {
     introBottom,
     header,
     infoSet,
-    finishButton,
     passwordForgot,
     subText,
     link,
@@ -112,8 +116,8 @@ const LoginScreen = ({ navigation }) => {
           returnKeyType={"go"}
           onInputChange={handlePasswordChange}
         ></GeneralInput>
-        <View style={finishButton}>
-          <GeneralButton content="Log In" onPress={handleLoginPress} />
+        <View >
+          <GeneralButton content="Log In" onPress={handleLoginPress} isInactive={!usernameData || !passwordData} />
         </View>
         <TouchableOpacity
           style={passwordForgot}
@@ -122,6 +126,9 @@ const LoginScreen = ({ navigation }) => {
           <Text style={subText}>Forgot Password?</Text>
         </TouchableOpacity>
       </View>
+      <Popup isVisible={activatePopup} content={loginErrorMessage} onClose={() => {
+        setActivatePopup(false);
+      }} />
       <View style={footerContainer}>
         <Text style={bottomText}>Don't have an account? </Text>
         <TouchableOpacity onPress={() => navigation.navigate("SignUp")}>

@@ -9,11 +9,12 @@ import { Text, StyleSheet, TouchableOpacity } from "react-native";
  * @param {object} props - The components props
  * @property {string} props.content - The text content within the button
  * @property {function} props.onPress - function logic that executes when button is pressed
+ * @property {boolean} props.isInactive - determines whether button is inactive
  */
 const GeneralButton = (props) => {
   const { buttonStyle, textStyle } = styles;
   return (
-    <TouchableOpacity style={buttonStyle} onPress={props.onPress}>
+    <TouchableOpacity style={[buttonStyle, props.isInactive ? { opacity: 0.5} : { opacity : 1 }]} onPress={props.onPress} disabled={props.isInactive}>
       <Text style={textStyle}>{props.content}</Text>
     </TouchableOpacity>
   );
@@ -22,10 +23,10 @@ const GeneralButton = (props) => {
 const styles = StyleSheet.create({
   buttonStyle: {
     fontSize: 30,
-    backgroundColor: "#0078D4",
     width: 300,
     padding: 18,
     borderRadius: 16,
+    backgroundColor: "#0078D4",
   },
   textStyle: {
     color: "#FFFFFF",

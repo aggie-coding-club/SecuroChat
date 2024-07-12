@@ -165,6 +165,7 @@ const CreateAccountScreen = ({ navigation }) => {
           <GeneralButton
             content="Register"
             onPress={handleRegisterPress}
+            isInactive={!usernameData || !phoneNumberData || !passwordData || !confirmPasswordData}
           ></GeneralButton>
           <Text style={infoStyle}>
             By signing up, you agree to our{" "}
