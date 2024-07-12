@@ -1,8 +1,8 @@
 // GeneralButton.js
 // This is a custom React Native component that generates a button given specified props
 
-import React from "react";
-import { Text, StyleSheet, TouchableOpacity } from "react-native";
+import React, { useState } from "react";
+import { Text, StyleSheet, TouchableOpacity, ActivityIndicator } from "react-native";
 
 /**
  * GeneralButton is a component that generates a unique button given specified props
@@ -10,12 +10,13 @@ import { Text, StyleSheet, TouchableOpacity } from "react-native";
  * @property {string} props.content - The text content within the button
  * @property {function} props.onPress - function logic that executes when button is pressed
  * @property {boolean} props.isInactive - determines whether button is inactive
+ * @property {boolean} props.isLoading - indicates whether the button should show a loading indicator
  */
 const GeneralButton = (props) => {
   const { buttonStyle, textStyle } = styles;
   return (
-    <TouchableOpacity style={[buttonStyle, props.isInactive ? { opacity: 0.5} : { opacity : 1 }]} onPress={props.onPress} disabled={props.isInactive}>
-      <Text style={textStyle}>{props.content}</Text>
+    <TouchableOpacity style={[buttonStyle, props.isInactive ? { opacity: 0.5} : { opacity : 1 }]} onPress={props.onPress} disabled={props.isInactive || props.isLoading}>
+      {props.isLoading ? <ActivityIndicator color={"#FFFFFF"} /> : <Text style={textStyle}>{props.content}</Text> }
     </TouchableOpacity>
   );
 };

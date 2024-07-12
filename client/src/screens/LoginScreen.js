@@ -42,6 +42,7 @@ const LoginScreen = ({ navigation }) => {
   const [passwordData, setPassword] = useState("");
   const [activatePopup, setActivatePopup] = useState(false);
   const [loginErrorMessage, setLoginErrorMessage] = useState("");
+  const [isButtonLoading, setIsButtonLoading] = useState(false);
 
   const handleUsernameChange = (value) => {
     setUsername(value);
@@ -72,9 +73,11 @@ const LoginScreen = ({ navigation }) => {
   };
 
   const handleLoginPress = async () => {
+    setIsButtonLoading(true);
     if (await handleLogin()) {
       navigation.navigate("TabScreen");
     }
+    setIsButtonLoading(false);
   };
 
   const {
@@ -117,7 +120,7 @@ const LoginScreen = ({ navigation }) => {
           onInputChange={handlePasswordChange}
         ></GeneralInput>
         <View >
-          <GeneralButton content="Log In" onPress={handleLoginPress} isInactive={!usernameData || !passwordData} />
+          <GeneralButton content="Log In" onPress={handleLoginPress} isInactive={!usernameData || !passwordData} isLoading={isButtonLoading} />
         </View>
         <TouchableOpacity
           style={passwordForgot}
@@ -126,9 +129,7 @@ const LoginScreen = ({ navigation }) => {
           <Text style={subText}>Forgot Password?</Text>
         </TouchableOpacity>
       </View>
-      <Popup isVisible={activatePopup} content={loginErrorMessage} onClose={() => {
-        setActivatePopup(false);
-      }} />
+      <Popup isVisible={activatePopup} content={loginErrorMessage} onClose={() => setActivatePopup(false)} />
       <View style={footerContainer}>
         <Text style={bottomText}>Don't have an account? </Text>
         <TouchableOpacity onPress={() => navigation.navigate("SignUp")}>
