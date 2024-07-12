@@ -51,7 +51,7 @@ const LoginScreen = ({ navigation }) => {
     try {
       const apiURL = "auth/login";
       const response = await api.post(apiURL, {
-        username: usernameData,
+        username: usernameData.toLowerCase(),
         password: passwordData,
       });
 
