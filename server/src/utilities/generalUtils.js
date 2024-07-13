@@ -30,7 +30,22 @@ const formatDefaultConversationTitle = () => {
   return title;
 };
 
+const validateUsername = (username) => {
+  const regex = /^[a-zA-Z0-9]+$/;
+  return regex.test(username);
+}
+
+const validatePhoneNumber = (phoneNumber) => {
+  if (phoneNumber.length !== 10) {
+      return false;
+  }
+  return /^\d+$/.test(phoneNumber);
+}
+
+
 module.exports = {
   randomColor,
   formatDefaultConversationTitle,
+  validateUsername,
+  validatePhoneNumber,
 };

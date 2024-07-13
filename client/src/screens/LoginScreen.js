@@ -111,6 +111,7 @@ const LoginScreen = ({ navigation }) => {
           color="#1E1E1E"
           returnKeyType={"next"}
           onInputChange={handleUsernameChange}
+          lockInput={isButtonLoading}
         ></GeneralInput>
         <GeneralInput
           content="Password"
@@ -118,6 +119,7 @@ const LoginScreen = ({ navigation }) => {
           secureTextEntry={true}
           returnKeyType={"go"}
           onInputChange={handlePasswordChange}
+          lockInput={isButtonLoading}
         ></GeneralInput>
         <View >
           <GeneralButton content="Log In" onPress={handleLoginPress} isInactive={!usernameData || !passwordData} isLoading={isButtonLoading} />

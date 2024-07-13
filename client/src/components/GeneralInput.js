@@ -15,6 +15,7 @@ import { StyleSheet, TextInput } from "react-native";
  * @property {string} props.returnKeyType - Determines the type within return key of the keyboard
  * @property {string} props.keyboardType - Determines which keyboard to open on focus
  * @property {string} props.onInputChange - Function handling when input text changes which passes data to parent component
+ * @property {boolean} props.lockInput - boolean determining if input is editable or not
  */
 const GeneralInput = (props) => {
   const [inputValue, setInputValue] = useState("");
@@ -35,6 +36,7 @@ const GeneralInput = (props) => {
       returnKeyType={props.returnKeyType}
       keyboardType={props.keyboardType}
       onChangeText={handleChangeText}
+      editable={!props.lockInput}
     />
   );
 };

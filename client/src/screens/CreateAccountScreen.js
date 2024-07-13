@@ -23,6 +23,7 @@ import GeneralButton from "../components/GeneralButton";
 import BackButton from "../components/BackButton";
 import api from "../api";
 import { useAuth } from "../AuthContext";
+import Popup from "../components/Popup";
 
 /**
  * CreateAccountScreen is a custom component that generates the createAccount screen for SecuroChat
@@ -51,6 +52,9 @@ const CreateAccountScreen = ({ navigation }) => {
   const [phoneNumberData, setPhoneNumber] = useState("");
   const [passwordData, setPassword] = useState("");
   const [confirmPasswordData, setConfirmPassword] = useState("");
+  const [activatePopup, setActivatePopup] = useState(false);
+  const [signupErrorMessage, setSignupErrorMessage] = useState("");
+  const [isButtonLoading, setIsButtonLoading] = useState(false);
 
   const handleUsernameChange = (value) => {
     setUsername(value);
@@ -70,31 +74,40 @@ const CreateAccountScreen = ({ navigation }) => {
       const publicKeyData = Math.floor(Math.random() * 100000); // temp data to fill publicKey in database
       const apiURL = "/auth/register";
       const response = await api.post(apiURL, {
-        username: usernameData,
+        username: usernameData.toLowerCase(),
         phone: phoneNumberData,
         password: passwordData,
         publicKey: publicKeyData,
       });
 
       setJSONWebToken(response.data.token);
-      setGlobalClientUsername(usernameData);
+      setGlobalClientUsername(usernameData.toLowerCase());
       setDefaultProfileColor(response.data.iconColor);
       setGlobalClientID(response.data.userID);
       return true;
     } catch (error) {
-      console.error("Error during registration: ", error);
+      console.error(error.response.data.error);
+      setSignupErrorMessage(error.response.data.error);
+      setActivatePopup(true);
       return false;
     }
   };
 
   const verifyPasswordMatch = () => {
-    return passwordData === confirmPasswordData;
+    if (passwordData !== confirmPasswordData) {
+      setSignupErrorMessage("Passwords do not match. Please try again.");
+      setActivatePopup(true);
+      return false
+    }
+    return true;
   };
 
   const handleRegisterPress = async () => {
+    setIsButtonLoading(true);
     if (verifyPasswordMatch() && (await handleRegister())) {
       navigation.navigate("PhoneVerification");
     }
+    setIsButtonLoading(false);
   };
 
   const {
@@ -133,6 +146,7 @@ const CreateAccountScreen = ({ navigation }) => {
           onBlur={showHeader}
           returnKeyType={"next"}
           onInputChange={handleUsernameChange}
+          lockInput={isButtonLoading}
         ></GeneralInput>
         <GeneralInput
           content="Phone Number"
@@ -142,6 +156,7 @@ const CreateAccountScreen = ({ navigation }) => {
           returnKeyType={"next"}
           keyboardType={"phone-pad"}
           onInputChange={handlePhoneChange}
+          lockInput={isButtonLoading}
         ></GeneralInput>
         <GeneralInput
           content="Password"
@@ -151,6 +166,7 @@ const CreateAccountScreen = ({ navigation }) => {
           secureTextEntry={true}
           returnKeyType={"next"}
           onInputChange={handlePasswordChange}
+          lockInput={isButtonLoading}
         ></GeneralInput>
         <GeneralInput
           content="Re-enter Password"
@@ -160,12 +176,14 @@ const CreateAccountScreen = ({ navigation }) => {
           secureTextEntry={true}
           returnKeyType={"go"}
           onInputChange={handleConfirmPassword}
+          lockInput={isButtonLoading}
         ></GeneralInput>
         <View style={actionContainer}>
           <GeneralButton
             content="Register"
             onPress={handleRegisterPress}
             isInactive={!usernameData || !phoneNumberData || !passwordData || !confirmPasswordData}
+            isLoading={isButtonLoading}
           ></GeneralButton>
           <Text style={infoStyle}>
             By signing up, you agree to our{" "}
@@ -174,7 +192,7 @@ const CreateAccountScreen = ({ navigation }) => {
           </Text>
         </View>
       </View>
-
+      <Popup isVisible={activatePopup} content={signupErrorMessage} onClose={() => setActivatePopup(false)} />
       <View style={footerContainer}>
         <Text style={loginInfo}>Already have an account? </Text>
         <TouchableOpacity onPress={() => navigation.navigate("LogIn")}>

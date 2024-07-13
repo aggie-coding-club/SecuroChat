@@ -15,6 +15,14 @@ const register = async (req, res) => {
   try {
     const { username, password, phone, publicKey } = req.body;
 
+    // validating input
+    if (!generalUtils.validateUsername(username)) {
+      return res.status(400).json({ error: 'Username can only contain letters and numbers.' });
+    }
+    if (!generalUtils.validatePhoneNumber(phone)) {
+      return res.status(400).json({ error: 'Phone number is invalid. Please enter a 10-digit phone number.' });
+    }
+
     // hashing and salting the requested password
     const hashedPassword = await passwordUtils.hashPassword(password);
 
@@ -41,7 +49,7 @@ const register = async (req, res) => {
         publicKey
       );
     } else {
-      throw new Error("Error: User with these credentials already exists");
+      return res.status(409).json({ error: 'User already exists. Please choose a different username and/or phone number.' });
     }
 
     // creating json web token for new user
