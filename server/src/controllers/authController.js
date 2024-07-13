@@ -70,7 +70,7 @@ const login = async (req, res) => {
     if (!userAuthenticated) {
       return res
         .status(401)
-        .json({ error: "Invalid username and/or password" });
+        .json({ error: "Login failed. Please verify your username and password." });
     }
 
     // generating json web token for authenticated user

@@ -178,7 +178,7 @@ const authenticateUser = async (candidateUsername, candidatePassword) => {
     const result = await db.query(queryText, values);
 
     // verifying that username exists in database
-    if (result.rows.length < 0) {
+    if (result.rows.length <= 0) {
       return false;
     }
 
